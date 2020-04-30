@@ -5,15 +5,17 @@
 ## API features:
 
 **WordPress**
-    - Register/Sign Up API for Users
-    - Login (with email or username)
-    - Get Users Info
-    - Update Users Info
-    - Update Users Password
+
+* Register/Sign Up API for Users
+* Login (with email or username)
+* Get Users Info
+* Update Users Info
+* Update Users Password
 
 **WooCommerce**:
-    - Get Customers Info (Billing and Shipping)
-    - Update Customers details
+
+* Get Customers Info (Billing and Shipping)
+* Update Customers details
 
 To use this API you must have the [WP Json API Plugin](https://woosignal.com/plugins/wordpress/wp-json-api) installed first on your WordPress site, you can download it via the WooSignal website.
 
