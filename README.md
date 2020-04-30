@@ -45,6 +45,7 @@ void main() {
 WPJsonAPI.instance.initWith(baseUrl: "https://mysite.com");
 
 ...
+```
 
 
 ##2 - Call a method from the request callback
