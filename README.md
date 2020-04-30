@@ -48,7 +48,7 @@ WPJsonAPI.instance.initWith(baseUrl: "https://mysite.com");
 ```
 
 
-## 2 - Call a method from the request callback
+### Call a method from the request callback
 ``` dart
 WPUserLoginResponse wpUserLoginResponse = await WPJsonAPI.instance
           .api((request) => request.wpLogin(
@@ -150,7 +150,7 @@ WPUserResetPasswordResponse wpUserResetPasswordResponse = await WPJsonAPI.instan
 ```
 
 #### WooCommerce - Get users info in WooCommerce
-- Used to get WooCommerce info for a given user, pass in the userToken which you should have stored somewhere safe in shared_pref or other
+- Used to get WooCommerce info for a given user
 - The first parameter is the **userToken** which is returned from the login/register response. You should have this saved somewhere e.g. shared_pref
 
 ``` dart
