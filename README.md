@@ -12,7 +12,7 @@
 * Update Users Info
 * Update Users Password
 
-**WooCommerce**:
+**WooCommerce**
 
 * Get Customers Info (Billing and Shipping)
 * Update Customers details
