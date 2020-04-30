@@ -34,7 +34,7 @@ Import wp_json_api.dart
 import 'package:wp_json_api/wp_json_api.dart';
 ```
 
-### Examples using Wp JSON API
+### Example using Wp JSON API
 
 ``` dart
 import 'package:wp_json_api/wp_json_api.dart';
@@ -48,7 +48,7 @@ WPJsonAPI.instance.initWith(baseUrl: "https://mysite.com");
 ```
 
 
-##2 - Call a method from the request callback
+## 2 - Call a method from the request callback
 ``` dart
 WPUserLoginResponse wpUserLoginResponse = await WPJsonAPI.instance
           .api((request) => request.wpLogin(
