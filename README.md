@@ -2,7 +2,7 @@
 
 [Official WooSignal package](https://woosignal.com)
 
-API features:
+## API features:
 
 **WordPress**
     - Register/Sign Up API for Users
