@@ -23,6 +23,7 @@ import 'package:wp_json_api/models/responses/WCCustomerInfoResponse.dart';
 import 'package:wp_json_api/models/responses/WCCustomerUpdatedResponse.dart';
 import 'package:wp_json_api/models/responses/WPNonceResponse.dart';
 import 'package:wp_json_api/models/responses/WPNonceVerifiedResponse.dart';
+import 'package:wp_json_api/models/responses/WPUserInfoUpdatedResponse.dart';
 import 'package:wp_json_api/models/responses/WPUserLoginResponse.dart';
 import 'package:wp_json_api/models/responses/WPUserRegisterResponse.dart';
 import 'package:wp_json_api/models/responses/WPUserResetPasswordResponse.dart';
@@ -34,7 +35,8 @@ import 'package:http/http.dart' as http;
 class WPAppNetworkManager {
   WPAppNetworkManager._privateConstructor();
 
-  static final WPAppNetworkManager instance = WPAppNetworkManager._privateConstructor();
+  static final WPAppNetworkManager instance =
+      WPAppNetworkManager._privateConstructor();
 
   Future<WPUserLoginResponse> wpLogin(
       {String email,
@@ -45,7 +47,6 @@ class WPAppNetworkManager {
     WPNonceResponse wpNonceResponse = await wpNonce();
 
     if (wpNonceResponse != null) {
-
       Map<String, dynamic> payload = {};
       if (username != null) payload["username"] = username;
       if (email != null) payload["email"] = email;
@@ -53,18 +54,12 @@ class WPAppNetworkManager {
       payload["nonce"] = wpNonceResponse.data.nonce;
       if (tokenExpiryAt != null) payload["expiry"] = tokenExpiryAt;
 
-      String url = _urlForRouteType(WPRouteType.UserLogin) + "" + _getAuthQueryForType(authType);
-
-      final response = await http.post(Uri.parse(url),
-          body: jsonEncode(payload),
-      headers: {HttpHeaders.contentTypeHeader: "application/json"});
-
-      final json = jsonDecode(response.body);
-
-      _devLogger(
-          url: response.request.url.toString(),
-          payload: payload.toString(),
-          result: json.toString());
+      final json = await _http(
+          method: "POST",
+          url: _urlForRouteType(WPRouteType.UserLogin) +
+              "" +
+              _getAuthQueryForType(authType),
+          body: payload);
 
       return _jsonHasBadStatus(json)
           ? null
@@ -89,22 +84,11 @@ class WPAppNetworkManager {
     };
     if (expiry != null) payload["expiry"] = expiry;
 
-    String url = _urlForRouteType(WPRouteType.UserRegister);
-
     if (wpNonceResponse != null) {
-      final response = await http.post(
-        Uri.parse(url),
-        body: jsonEncode(payload),
-        headers: {HttpHeaders.contentTypeHeader: "application/json"}
-      );
-
-      final json = jsonDecode(response.body);
-
-      _devLogger(
-        url: response.request.url.toString(),
-        payload: payload.toString(),
-        result: json.toString(),
-      );
+      final json = await _http(
+          method: "POST",
+          url: _urlForRouteType(WPRouteType.UserRegister),
+          body: payload);
 
       return _jsonHasBadStatus(json)
           ? null
@@ -115,18 +99,10 @@ class WPAppNetworkManager {
   }
 
   Future<WPNonceResponse> wpNonce() async {
-    String url = _urlForRouteType(WPRouteType.AuthNonce);
-
-    final response = await http.get(
-      Uri.parse(url),
+    final json = await _http(
+      method: "GET",
+      url: _urlForRouteType(WPRouteType.AuthNonce),
     );
-
-    final json = jsonDecode(response.body);
-
-    _devLogger(
-        url: response.request.url.toString(),
-        payload: response.request.url.queryParametersAll.toString(),
-        result: json.toString());
 
     return _jsonHasBadStatus(json) ? null : WPNonceResponse.fromJson(json);
   }
@@ -135,15 +111,10 @@ class WPAppNetworkManager {
       {@required String nonce}) async {
     Map<String, dynamic> payload = {"nonce": nonce};
 
-    final response = await http.post(_urlForRouteType(WPRouteType.AuthVerify),
-        body: payload,);
-
-    final json = jsonDecode(response.body);
-
-    _devLogger(
-        url: response.request.url.toString(),
-        payload: payload.toString(),
-        result: json.toString());
+    final json = await _http(
+        method: "POST",
+        url: _urlForRouteType(WPRouteType.AuthVerify),
+        body: payload);
 
     return _jsonHasBadStatus(json)
         ? null
@@ -151,44 +122,30 @@ class WPAppNetworkManager {
   }
 
   Future<WPUserInfoResponse> wpGetUserInfo(String userToken) async {
-    final response = await http.get(
-      _urlForRouteType(WPRouteType.UserInfo),
-      headers: _authHeader(userToken),
-    );
-
-    final json = jsonDecode(response.body);
-
-    _devLogger(url: response.request.url.toString(), result: json.toString());
+    final json = await _http(
+        method: "GET",
+        url: _urlForRouteType(WPRouteType.UserInfo),
+        userToken: userToken);
 
     return _jsonHasBadStatus(json) ? null : WPUserInfoResponse.fromJson(json);
   }
 
-  Future<WPUserInfoResponse> wpUpdateUserInfo(userToken,
+  Future<WPUserInfoUpdatedResponse> wpUpdateUserInfo(userToken,
       {String firstName, String lastName, String displayName}) async {
     Map<String, dynamic> payload = {};
     if (firstName != null) payload["first_name"] = firstName;
     if (lastName != null) payload["last_name"] = lastName;
     if (displayName != null) payload["display_name"] = displayName;
 
-    Map<String, String> headers = {
-      HttpHeaders.contentTypeHeader: "application/json",
-    };
-    headers.addAll(_authHeader(userToken));
+    final json = await _http(
+        method: "POST",
+        url: _urlForRouteType(WPRouteType.UserUpdateInfo),
+        userToken: userToken,
+        body: payload);
 
-    final response = await http.post(
-      _urlForRouteType(WPRouteType.UserUpdateInfo),
-      body: payload,
-      headers: headers,
-    );
-
-    final json = jsonDecode(response.body);
-
-    _devLogger(
-        url: response.request.url.toString(),
-        payload: payload.toString(),
-        result: json.toString());
-
-    return _jsonHasBadStatus(json) ? null : WPUserInfoResponse.fromJson(json);
+    return _jsonHasBadStatus(json)
+        ? null
+        : WPUserInfoUpdatedResponse.fromJson(json);
   }
 
   Future<WPUserResetPasswordResponse> wpResetPassword(
@@ -197,23 +154,11 @@ class WPAppNetworkManager {
   }) async {
     Map<String, dynamic> payload = {"password": password};
 
-    Map<String, String> headers = {
-      HttpHeaders.contentTypeHeader: "application/json",
-    };
-    headers.addAll(_authHeader(userToken));
-
-    final response = await http.post(
-      _urlForRouteType(WPRouteType.UserUpdatePassword),
-      body: payload,
-      headers: headers,
-    );
-
-    final json = jsonDecode(response.body);
-
-    _devLogger(
-        url: response.request.url.toString(),
-        payload: payload.toString(),
-        result: json.toString());
+    final json = await _http(
+        method: "POST",
+        url: _urlForRouteType(WPRouteType.UserUpdatePassword),
+        body: payload,
+        userToken: userToken);
 
     return _jsonHasBadStatus(json)
         ? null
@@ -221,14 +166,10 @@ class WPAppNetworkManager {
   }
 
   Future<WCCustomerInfoResponse> wcCustomerInfo(String userToken) async {
-    final response = await http.get(
-      _urlForRouteType(WPRouteType.WCCustomerInfo),
-      headers: _authHeader(userToken),
-    );
-
-    final json = jsonDecode(response.body);
-
-    _devLogger(url: response.request.url.toString(), result: json.toString());
+    final json = await _http(
+        method: "GET",
+        url: _urlForRouteType(WPRouteType.WCCustomerInfo),
+        userToken: userToken);
 
     return _jsonHasBadStatus(json)
         ? null
@@ -266,62 +207,91 @@ class WPAppNetworkManager {
     if (lastName != null) payload["last_name"] = lastName;
     if (displayName != null) payload["display_name"] = displayName;
 
+    Map<String, dynamic> shippingPayload = {};
     if (shippingFirstName != null)
-      payload["shipping"]["first_name"] = shippingFirstName;
+      shippingPayload["first_name"] = shippingFirstName;
     if (shippingLastName != null)
-      payload["shipping"]["last_name"] = shippingLastName;
-    if (shippingCompany != null)
-      payload["shipping"]["company"] = shippingCompany;
+      shippingPayload["last_name"] = shippingLastName;
+    if (shippingCompany != null) shippingPayload["company"] = shippingCompany;
     if (shippingAddress1 != null)
-      payload["shipping"]["address_1"] = shippingAddress1;
+      shippingPayload["address_1"] = shippingAddress1;
     if (shippingAddress2 != null)
-      payload["shipping"]["address_2"] = shippingAddress2;
-    if (shippingCity != null) payload["shipping"]["city"] = shippingCity;
-    if (shippingState != null) payload["shipping"]["state"] = shippingState;
+      shippingPayload["address_2"] = shippingAddress2;
+    if (shippingCity != null) shippingPayload["city"] = shippingCity;
+    if (shippingState != null) shippingPayload["state"] = shippingState;
     if (shippingPostcode != null)
-      payload["shipping"]["postcode"] = shippingPostcode;
-    if (shippingCountry != null)
-      payload["shipping"]["country"] = shippingCountry;
-    if (shippingEmail != null) payload["shipping"]["email"] = shippingEmail;
-    if (shippingPhone != null) payload["shipping"]["phone"] = shippingPhone;
+      shippingPayload["postcode"] = shippingPostcode;
+    if (shippingCountry != null) shippingPayload["country"] = shippingCountry;
+    if (shippingEmail != null) shippingPayload["email"] = shippingEmail;
+    if (shippingPhone != null) shippingPayload["phone"] = shippingPhone;
 
+    Map<String, dynamic> billingPayload = {};
     if (billingFirstName != null)
-      payload["billing"]["first_name"] = billingFirstName;
-    if (billingLastName != null)
-      payload["billing"]["last_name"] = billingLastName;
-    if (billingCompany != null) payload["billing"]["company"] = billingCompany;
-    if (billingAddress1 != null)
-      payload["billing"]["address_1"] = billingAddress1;
-    if (billingAddress2 != null)
-      payload["billing"]["address_2"] = billingAddress2;
-    if (billingCity != null) payload["billing"]["city"] = billingCity;
-    if (billingState != null) payload["billing"]["state"] = billingState;
-    if (billingPostcode != null)
-      payload["billing"]["postcode"] = billingPostcode;
-    if (billingCountry != null) payload["billing"]["country"] = billingCountry;
-    if (billingEmail != null) payload["billing"]["email"] = billingEmail;
-    if (billingPhone != null) payload["billing"]["phone"] = billingPhone;
+      billingPayload["first_name"] = billingFirstName;
+    if (billingLastName != null) billingPayload["last_name"] = billingLastName;
+    if (billingCompany != null) billingPayload["company"] = billingCompany;
+    if (billingAddress1 != null) billingPayload["address_1"] = billingAddress1;
+    if (billingAddress2 != null) billingPayload["address_2"] = billingAddress2;
+    if (billingCity != null) billingPayload["city"] = billingCity;
+    if (billingState != null) billingPayload["state"] = billingState;
+    if (billingPostcode != null) billingPayload["postcode"] = billingPostcode;
+    if (billingCountry != null) billingPayload["country"] = billingCountry;
+    if (billingEmail != null) billingPayload["email"] = billingEmail;
+    if (billingPhone != null) billingPayload["phone"] = billingPhone;
 
-    Map<String, String> headers = {
-      HttpHeaders.contentTypeHeader: "application/json",
-    };
-    headers.addAll(_authHeader(userToken));
+    if (shippingPayload.isNotEmpty) {
+      payload["shipping"] = shippingPayload;
+    }
 
-    final response = await http.post(
-      _urlForRouteType(WPRouteType.WCCustomerUpdateInfo),
-      body: payload,
-      headers: headers,
-    );
-    final json = jsonDecode(response.body);
+    if (billingPayload.isNotEmpty) {
+      payload["billing"] = billingPayload;
+    }
 
-    _devLogger(
-        url: response.request.url.toString(),
-        payload: payload.toString(),
-        result: json.toString());
+    final json = await _http(
+        method: "POST",
+        url: _urlForRouteType(WPRouteType.WCCustomerUpdateInfo),
+        body: payload,
+        userToken: userToken);
 
     return _jsonHasBadStatus(json)
         ? null
         : WCCustomerUpdatedResponse.fromJson(json);
+  }
+
+  dynamic _http(
+      {@required String method,
+      @required String url,
+      dynamic body,
+      String userToken}) async {
+    var response;
+    if (method == "GET") {
+      response = await http.get(
+        url,
+        headers: (userToken == null ? null : _authHeader(userToken)),
+      );
+    } else if (method == "POST") {
+      Map<String, String> headers = {
+        HttpHeaders.contentTypeHeader: "application/json",
+      };
+      if (userToken != null) {
+        headers.addAll(_authHeader(userToken));
+      }
+
+      response = await http.post(
+        url,
+        body: jsonEncode(body),
+        headers: headers,
+      );
+    }
+
+    _devLogger(
+        url: response.request.url.toString(),
+        payload: method == "GET"
+            ? response.request.url.queryParametersAll.toString()
+            : body.toString(),
+        result: response.body.toString());
+
+    return jsonDecode(response.body);
   }
 
   _devLogger({@required String url, String payload, String result}) {
@@ -350,7 +320,8 @@ class WPAppNetworkManager {
         return "?auth=email";
       case WPAuthType.WpUsername:
         return "?auth=username";
-      default: {
+      default:
+        {
           return "";
         }
     }
@@ -385,7 +356,7 @@ class WPAppNetworkManager {
         }
       case WPRouteType.UserUpdateInfo:
         {
-          return "/wpapp/api/$apiVersion/user/info";
+          return "/wpapp/api/$apiVersion/update/user/info";
         }
       case WPRouteType.UserUpdatePassword:
         {

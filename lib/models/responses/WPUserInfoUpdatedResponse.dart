@@ -13,48 +13,21 @@
 // IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
 // WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 
-class WPUserRegisterResponse {
-  Data data;
+class WPUserInfoUpdatedResponse {
   String message;
   int status;
 
-  WPUserRegisterResponse({this.data, this.message, this.status});
+  WPUserInfoUpdatedResponse({this.message, this.status});
 
-  WPUserRegisterResponse.fromJson(Map<String, dynamic> json) {
-    data = json['data'] != null ? new Data.fromJson(json['data']) : null;
+  WPUserInfoUpdatedResponse.fromJson(Map<String, dynamic> json) {
     message = json['message'];
     status = json['status'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    if (this.data != null) {
-      data['data'] = this.data.toJson();
-    }
     data['message'] = this.message;
     data['status'] = this.status;
-    return data;
-  }
-}
-
-class Data {
-  int userId;
-  String userToken;
-  int expiry;
-
-  Data({this.userId, this.userToken, this.expiry});
-
-  Data.fromJson(Map<String, dynamic> json) {
-    userId = json['user_id'];
-    userToken = json['user_token'];
-    expiry = json['expiry'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.userId;
-    data['user_token'] = this.userToken;
-    data['expiry'] = this.expiry;
     return data;
   }
 }

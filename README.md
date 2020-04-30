@@ -1,6 +1,6 @@
 # WordPress and WooCommerce JSON API Dart package for Flutter
 
-[Official WooSignal WooCommerce package](https://woosignal.com)
+[Official WooSignal WordPress/WooCommerce package](https://woosignal.com)
 
 API features:
 
@@ -15,27 +15,170 @@ API features:
     - Get Customers Info (Billing and Shipping)
     - Update Customers details
 
-To use this API you must have the [WP Json API Plugin](https://woosignal.com/plugins/wp-json-api) installed first on your WordPress site, you can download it via the WooSignal website.
+To use this API you must have the [WP Json API Plugin](https://woosignal.com/plugins/wordpress/wpapp-json-api) installed first on your WordPress site, you can download it via the WooSignal website.
 
 ### Examples using Wp JSON API
 
 ``` dart
 import 'package:woosignal/wp_json_api.dart';
+...
+
+void main() {
+
+WPJsonAPI.instance.initWith(baseUrl: "https://mysite.com");
 
 ...
 
-#1 - Set the base url (e.g. https://mysite.com)
+
+##2 - Call a method from the request callback
 ``` dart
-String base_url = "https://mywordpress-site.com";
-WPJsonAPI.instance.initWith(baseUrl: base_url);
+WPUserLoginResponse wpUserLoginResponse = await WPJsonAPI.instance
+          .api((request) => request.wpLogin(
+            email: email,
+            password: password
+          ));
 ```
 
-#2 - Call a method from the request api
+### Available API Requests
+
+###WordPress - Get Nonce
+- Used for returning a valid nonce
 ``` dart
-WPUserLoginResponse wpUserLoginResponse = await WPJsonAPI.instance.api((request) {
-       return request.wpLogin(email: email, password: password);
-       });
+WPNonceResponse wpNonceResponse = await WPJsonAPI.instance
+          .api((request) => request.wpNonce());
 ```
+
+###WordPress - Verify Nonce
+- Used for verifying register and login request
+``` dart
+WPNonceVerifiedResponse wpNonceVerifiedResponse = await WPJsonAPI.instance
+          .api((request) => request.wpNonceVerify(
+            nonce: nonce
+          ));
+```
+
+###WordPress - Login with email
+- Used to login a user
+
+``` dart
+WPUserLoginResponse wpUserLoginResponse = await WPJsonAPI.instance
+      .api((request) => request.wpLogin(
+          email: email,
+          password: password,
+          authType: WPAuthType.WpEmail
+      ));
+```
+
+###WordPress - Login with username
+- Used to login a user
+
+``` dart
+WPUserLoginResponse wpUserLoginResponse = await WPJsonAPI.instance
+      .api((request) => request.wpLogin(
+          email: email,
+          password: password,
+          authType: WPAuthType.WpUsername
+      ));
+```
+
+###WordPress - Register
+- Used to register a user
+- The username parameter is required, ensure that this is unquie
+
+``` dart
+WPUserRegisterResponse wpUserRegisterResponse = await WPJsonAPI.instance
+      .api((request) => request.wpRegister(
+          email: email,
+          password: password,
+          username: username
+      ));
+```
+
+###WordPress - Get Users Info
+- Used to get a WordPress users info
+- The first parameter is the userToken which is returned from the login/register response. You should have this saved somewhere e.g. shared_pref
+
+``` dart
+WPUserInfoResponse wpUserInfoResponse = await WPJsonAPI.instance
+        .api((request) => request.wpGetUserInfo(
+            userToken
+          ));
+```
+
+###WordPress - Update Users Info
+- Used to update a WordPress users info
+- The first parameter is the userToken which is returned from the login/register response. You should have this saved somewhere e.g. shared_pref
+
+``` dart
+WPUserInfoUpdatedResponse wpUserInfoUpdatedResponse = await WPJsonAPI.instance
+        .api((request) => request.wpUpdateUserInfo(
+          userToken,
+          firstName: firstName,
+          lastName: lastName,
+          displayName: displayName
+      ));
+```
+
+###WordPress - Update users password
+- Used to update a users password
+- The first parameter is the userToken which is returned from the login/register response. You should have this saved somewhere e.g. shared_pref
+
+``` dart
+WPUserResetPasswordResponse wpUserResetPasswordResponse = await WPJsonAPI.instance
+        .api((request) => request.wpResetPassword(
+            userToken,
+            password: password
+        ));
+```
+
+###WooCommerce - Get users info in WooCommerce
+- Used to get WooCommerce info for a given user, pass in the userToken which you should have stored somewhere safe in shared_pref or other
+- The first parameter is the userToken which is returned from the login/register response. You should have this saved somewhere e.g. shared_pref
+
+``` dart
+WCCustomerInfoResponse wcCustomerInfoResponse = await WPJsonAPI.instance
+          .api((request) => request.wcCustomerInfo(
+          userToken
+      ));
+```
+
+###WooCommerce - Update users info in WooCommerce
+- Used to update a users WooCommerce details
+- All the parameter are optional so if you wanted to just update the name, you could just add first_name and last_name
+- The first parameter is the userToken which is returned from the login/register response. You should have this saved somewhere e.g. shared_pref
+
+``` dart
+WCCustomerUpdatedResponse wcCustomerUpdatedResponse = await WPJsonAPI.instance
+        .api((request) => request.wcUpdateCustomerInfo(
+            userToken,
+            firstName: firstName,
+            lastName: lastName,
+            displayName: displayName,
+            billingFirstName: billingFirstName,
+            billingLastName: billingLastName,
+            billingCompany: billingCompany,
+            billingAddress1: billingAddress1,
+            billingAddress2: billingAddress2,
+            billingCity: billingCity,
+            billingState: billingState,
+            billingPostcode: billingPostcode,
+            billingCountry: billingCountry,
+            billingEmail: billingEmail,
+            billingPhone: billingPhone,
+            shippingFirstName: shippingFirstName,
+            shippingLastName: shippingLastName,
+            shippingCompany: shippingCompany,
+            shippingAddress1: shippingAddress1,
+            shippingAddress2: shippingAddress2,
+            shippingCity: shippingCity,
+            shippingState: shippingState,
+            shippingPostcode: shippingPostcode,
+            shippingCountry: shippingCountry,
+            shippingEmail: shippingEmail,
+            shippingPhone: shippingPhone
+        ));
+```
+
 For help getting started with WooSignal, view our
 [online documentation](https://woosignal.com/docs/wordpress-json-api-flutter/1.0/overview), which offers a more detailed guide.
 

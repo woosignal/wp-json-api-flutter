@@ -16,6 +16,7 @@
 library wp_json_api;
 
 import 'package:flutter/widgets.dart';
+import 'package:wp_json_api/helpers/typedefs.dart';
 import 'package:wp_json_api/networking/network_manager.dart';
 
 class WPJsonAPI {
@@ -56,7 +57,7 @@ class WPJsonAPI {
     return this._baseUrl + this._apiPath;
   }
 
-  api(Function(WPAppNetworkManager) networkManager) {
-    return networkManager(WPAppNetworkManager.instance);
+  api(RequestCallback request) {
+    return request(WPAppNetworkManager.instance);
   }
 }

@@ -38,18 +38,21 @@ class WPUserLoginResponse {
 }
 
 class Data {
+  int userId;
   String userToken;
   int expiry;
 
-  Data({this.userToken, this.expiry});
+  Data({this.userId, this.userToken, this.expiry});
 
   Data.fromJson(Map<String, dynamic> json) {
+    userId = json['user_id'];
     userToken = json['user_token'];
     expiry = json['expiry'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['user_id'] = this.userId;
     data['user_token'] = this.userToken;
     data['expiry'] = this.expiry;
     return data;
