@@ -1,3 +1,7 @@
+## [0.1.3] - 2020-06-03
+
+* pubspec.yaml update
+
 ## [0.1.2] - 2020-05-01
 
 * Readme update
