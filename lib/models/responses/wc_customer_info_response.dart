@@ -44,6 +44,7 @@ class Data {
   String avatar;
   Shipping shipping;
   Billing billing;
+  List<MetaData> metaData;
 
   Data(
       {this.firstName,
@@ -51,7 +52,8 @@ class Data {
       this.displayName,
       this.avatar,
       this.shipping,
-      this.billing});
+      this.billing,
+        this.metaData});
 
   Data.fromJson(Map<String, dynamic> json) {
     firstName = json['first_name'];
@@ -63,6 +65,13 @@ class Data {
         : null;
     billing =
         json['billing'] != null ? new Billing.fromJson(json['billing']) : null;
+
+    if (json['meta_data'] != null && Map.of(json['meta_data']).isNotEmpty) {
+      this.metaData = [];
+      Map.from(json['meta_data']).forEach((key, value) {
+        this.metaData.add(MetaData.fromJson(key, value));
+      });
+    }
   }
 
   Map<String, dynamic> toJson() {
@@ -77,7 +86,32 @@ class Data {
     if (this.billing != null) {
       data['billing'] = this.billing.toJson();
     }
+    if (this.metaData != null) {
+      data['meta_data'] = this.metaData.map((e) => e.toJson()).toList();
+    }
     return data;
+  }
+
+  /// Returns an array of meta data from a WP MetaData [key]
+  ///
+  /// Returns List<dynamic>
+  List<dynamic> getMetaDataArrayWhere(String key) {
+     MetaData metaData = this.metaData.firstWhere((e) => e.key == key, orElse: () => null);
+     if (metaData == null || metaData.value == null) {
+       return null;
+     }
+     return metaData.value;
+  }
+
+  /// Returns a single meta data value from a WP MetaData [key]
+  ///
+  /// Returns dynamic
+  dynamic getMetaDataFirstWhere(String key) {
+    MetaData metaData = this.metaData.firstWhere((e) => e.key == key, orElse: () => null);
+    if (metaData == null || metaData.value == null || metaData.value.length < 1) {
+      return null;
+    }
+    return metaData.value.first;
   }
 }
 
@@ -183,6 +217,26 @@ class Billing {
     data['country'] = this.country;
     data['email'] = this.email;
     data['phone'] = this.phone;
+    return data;
+  }
+}
+
+class MetaData {
+  String key;
+  List<dynamic> value;
+
+  MetaData({this.key, this.value});
+
+  MetaData.fromJson(String key, List<dynamic> value) {
+    this.key = key;
+    this.value = value;
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, List<dynamic>> data = new Map<String, List<dynamic>>();
+    if (key != null) {
+      data[key] = this.value;
+    }
     return data;
   }
 }

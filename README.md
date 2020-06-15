@@ -25,7 +25,7 @@ In your flutter project add the dependency:
 ``` dart 
 dependencies:
   ...
-  wp_json_api: ^0.1.3
+  wp_json_api: ^0.1.4
 ```
 
 ### Usage example #
@@ -50,11 +50,15 @@ WPJsonAPI.instance.initWith(baseUrl: "https://mysite.com");
 
 ### Call a method from the request callback
 ``` dart
+try {
 WPUserLoginResponse wpUserLoginResponse = await WPJsonAPI.instance
           .api((request) => request.wpLogin(
             email: email,
             password: password
           ));
+} on Exception catch (e) {
+    print(e);
+}
 ```
 
 ### Available API Requests
@@ -202,5 +206,8 @@ For help getting started with WooSignal, view our
 
 ## Usage
 To use this plugin, add `wp_json_api` as a [dependency in your pubspec.yaml file](https://flutter.io/platform-plugins/).
+
+## Note
+Install WordPress plugin "WP JSON API" 2.0.x or later for version 0.1.4
 
 Disclaimer: This plugin is not affiliated with or supported by Automattic, Inc. All logos and trademarks are the property of their respective owners.

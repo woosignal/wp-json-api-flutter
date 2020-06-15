@@ -1,3 +1,13 @@
+## [0.1.4] - 2020-06-16
+
+* Meta data now is returned for users
+* Ability to store, update and delete meta data on WP_User
+* Throw exceptions for requests
+* Handle async await in callback
+* Updated models
+* Refactor model file names
+* More documentation added in code
+
 ## [0.1.3] - 2020-06-03
 
 * pubspec.yaml update

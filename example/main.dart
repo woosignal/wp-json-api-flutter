@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:wp_json_api/enums/WPAuthType.dart';
-import 'package:wp_json_api/models/responses/WPUserInfoResponse.dart';
-import 'package:wp_json_api/models/responses/WPUserLoginResponse.dart';
+import 'package:wp_json_api/enums/wp_auth_type.dart';
+import 'package:wp_json_api/models/responses/wp_user_info_response.dart';
+import 'package:wp_json_api/models/responses/wp_user_login_response.dart';
 import 'package:wp_json_api/wp_json_api.dart';
 
 void main() => runApp(MyApp());
@@ -50,12 +50,17 @@ class _MyHomePageState extends State<MyHomePage> {
     String email = _tfEmailController.text;
     String password = _tfPasswordController.text;
 
+    WPUserLoginResponse wpUserLoginResponse;
     // LOGIN
-    WPUserLoginResponse wpUserLoginResponse =
-        await WPJsonAPI.instance.api((request) {
-      return request.wpLogin(
-          email: email, password: password, authType: WPAuthType.WpEmail);
-    });
+    try {
+      wpUserLoginResponse =
+      await WPJsonAPI.instance.api((request) {
+        return request.wpLogin(
+            email: email, password: password, authType: WPAuthType.WpEmail);
+      });
+    } on Exception catch (e) {
+      print(e);
+    }
 
     if (wpUserLoginResponse != null) {
       print(wpUserLoginResponse.data.userToken);

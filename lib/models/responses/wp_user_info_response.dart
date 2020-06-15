@@ -42,26 +42,43 @@ class Data {
   String firstName;
   String lastName;
   String username;
+  String userNicename;
+  String displayName;
+  String userStatus;
   String email;
   String avatar;
+  List<MetaData> metaData;
   String createdAt;
 
   Data(
       {this.id,
-      this.firstName,
-      this.lastName,
-      this.username,
-      this.email,
-      this.avatar,
-      this.createdAt});
+        this.firstName,
+        this.lastName,
+        this.username,
+        this.userNicename,
+        this.displayName,
+        this.userStatus,
+        this.email,
+        this.avatar,
+        this.metaData,
+        this.createdAt});
 
   Data.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     firstName = json['first_name'];
     lastName = json['last_name'];
     username = json['username'];
+    userNicename = json['user_nicename'];
+    displayName = json['display_name'];
+    userStatus = json['user_status'];
     email = json['email'];
     avatar = json['avatar'];
+    if (json['meta_data'] != null && Map.of(json['meta_data']).isNotEmpty) {
+      this.metaData = [];
+      Map.from(json['meta_data']).forEach((key, value) {
+        this.metaData.add(MetaData.fromJson(key, value));
+      });
+    }
     createdAt = json['created_at'];
   }
 
@@ -71,9 +88,57 @@ class Data {
     data['first_name'] = this.firstName;
     data['last_name'] = this.lastName;
     data['username'] = this.username;
+    data['user_nicename'] = this.userNicename;
+    data['display_name'] = this.displayName;
+    data['user_status'] = this.userStatus;
     data['email'] = this.email;
     data['avatar'] = this.avatar;
+    if (this.metaData != null) {
+      data['meta_data'] = this.metaData.map((e) => e.toJson()).toList();
+    }
     data['created_at'] = this.createdAt;
+    return data;
+  }
+
+  /// Returns an array of meta data from a WP MetaData [key]
+  ///
+  /// Returns List<dynamic>
+  List<dynamic> getMetaDataArrayWhere(String key) {
+    MetaData metaData = this.metaData.firstWhere((e) => e.key == key, orElse: () => null);
+    if (metaData == null || metaData.value == null) {
+      return null;
+    }
+    return metaData.value;
+  }
+
+  /// Returns a single meta data value from a WP MetaData [key]
+  ///
+  /// Returns dynamic
+  dynamic getMetaDataFirstWhere(String key) {
+    MetaData metaData = this.metaData.firstWhere((e) => e.key == key, orElse: () => null);
+    if (metaData == null || metaData.value == null || metaData.value.length < 1) {
+      return null;
+    }
+    return metaData.value.first;
+  }
+}
+
+class MetaData {
+  String key;
+  List<dynamic> value;
+
+  MetaData({this.key, this.value});
+
+  MetaData.fromJson(String key, List<dynamic> value) {
+    this.key = key;
+    this.value = value;
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, List<dynamic>> data = new Map<String, List<dynamic>>();
+    if (key != null) {
+      data[key] = this.value;
+    }
     return data;
   }
 }
