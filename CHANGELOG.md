@@ -1,3 +1,7 @@
+## [2.0.0] - 2020-11-18
+
+* Support for v2.0.0 wp-json-api WordPress plugin
+
 ## [0.1.4] - 2020-06-16
 
 * Meta data now is returned for users

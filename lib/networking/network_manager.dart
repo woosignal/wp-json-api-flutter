@@ -192,7 +192,7 @@ class WPAppNetworkManager {
   Future<WPUserInfoResponse> wpGetUserInfo(String userToken) async {
     // send http request
     final json = await _http(
-      method: "GET",
+      method: "POST",
       url: _urlForRouteType(WPRouteType.UserInfo),
       userToken: userToken,
     );
@@ -267,7 +267,7 @@ class WPAppNetworkManager {
   Future<WCCustomerInfoResponse> wcCustomerInfo(String userToken) async {
     // send http request
     final json = await _http(
-      method: "GET",
+      method: "POST",
       url: _urlForRouteType(WPRouteType.WCCustomerInfo),
       userToken: userToken,
     );
@@ -376,22 +376,23 @@ class WPAppNetworkManager {
   Future<dynamic> _http(
       {@required String method,
       @required String url,
-      dynamic body,
+      Map<String, dynamic> body,
       String userToken}) async {
     var response;
     if (method == "GET") {
       response = await http.get(
         url,
-        headers: (userToken == null ? null : _authHeader(userToken)),
       );
     } else if (method == "POST") {
       Map<String, String> headers = {
         HttpHeaders.contentTypeHeader: "application/json",
       };
-      if (userToken != null) {
-        headers.addAll(_authHeader(userToken));
+      if (body == null) {
+        body = {};
       }
-
+      if (userToken != null) {
+        body.addAll({"token": userToken});
+      }
       response = await http.post(
         url,
         body: jsonEncode(body),
@@ -424,14 +425,6 @@ class WPAppNetworkManager {
 
     // logs response if shouldDebug is enabled
     if (WPJsonAPI.instance.shouldDebug()) log(strOutput);
-  }
-
-  /// Sets the authorization header for a request using the
-  /// [userToken] has the API bearer token.
-  ///
-  /// Returns a map of the authorizationHeader.
-  Map<String, String> _authHeader(userToken) {
-    return {HttpHeaders.authorizationHeader: "Bearer " + userToken};
   }
 
   /// Checks if a response payload has a bad status (=> 500).
@@ -471,7 +464,7 @@ class WPAppNetworkManager {
   /// Returns [String] url path for request.
   String _getRouteUrlForType(
     WPRouteType wpRouteType, {
-    String apiVersion = 'v1',
+    String apiVersion = 'v2',
   }) {
     switch (wpRouteType) {
       // AUTH API
