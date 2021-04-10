@@ -1,3 +1,8 @@
+## [3.0.0] - 2021-04-10
+
+* Added null safety support
+* Dependency updates
+
 ## [2.0.0] - 2020-11-18
 
 * Support for v2.0.0 wp-json-api WordPress plugin

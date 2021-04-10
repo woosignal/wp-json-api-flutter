@@ -25,7 +25,7 @@ In your flutter project add the dependency:
 ``` dart 
 dependencies:
   ...
-  wp_json_api: ^2.0.0
+  wp_json_api: ^3.0.0
 ```
 
 ### Usage example #
@@ -208,6 +208,6 @@ For help getting started with WooSignal, view our
 To use this plugin, add `wp_json_api` as a [dependency in your pubspec.yaml file](https://flutter.io/platform-plugins/).
 
 ## Note
-Install WordPress plugin "WP JSON API" 3.0.x or later for version 2.0.0
+Install WordPress plugin "WP JSON API" 3.0.x or later for version 2.0.0+
 
 Disclaimer: This plugin is not affiliated with or supported by Automattic, Inc. All logos and trademarks are the property of their respective owners.

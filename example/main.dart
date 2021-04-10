@@ -20,7 +20,7 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
+  MyHomePage({Key? key, required this.title}) : super(key: key);
 
   final String title;
 
@@ -29,8 +29,8 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  TextEditingController _tfEmailController;
-  TextEditingController _tfPasswordController;
+  late TextEditingController _tfEmailController;
+  late TextEditingController _tfPasswordController;
 
   @override
   void initState() {
@@ -38,7 +38,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
     // INSTALL THE WP JSON API PLUGIN
     // FIRST ON YOUR WORDPRESS STORE
-    // LINK https://woosignal.com/plugins/wordpress/wpapp-json-api
+    // LINK https://woosignal.com/plugins/wordpress/wp-json-api
 
     WPJsonAPI.instance.initWith(baseUrl: "http://mysite.com");
 
@@ -50,14 +50,13 @@ class _MyHomePageState extends State<MyHomePage> {
     String email = _tfEmailController.text;
     String password = _tfPasswordController.text;
 
-    WPUserLoginResponse wpUserLoginResponse;
+    late WPUserLoginResponse? wpUserLoginResponse;
     // LOGIN
     try {
       wpUserLoginResponse =
-      await WPJsonAPI.instance.api((request) {
-        return request.wpLogin(
-            email: email, password: password, authType: WPAuthType.WpEmail);
-      });
+      await WPJsonAPI.instance.api((request) => request.wpLogin(
+            email: email, password: password, authType: WPAuthType.WpEmail)
+      );
     } on Exception catch (e) {
       print(e);
     }
@@ -67,9 +66,9 @@ class _MyHomePageState extends State<MyHomePage> {
       print(wpUserLoginResponse.data.userId);
 
       // GET USER INFO
-      WPUserInfoResponse wpUserInfoResponse =
+      WPUserInfoResponse? wpUserInfoResponse =
           await WPJsonAPI.instance.api((request) {
-        return request.wpGetUserInfo(wpUserLoginResponse.data.userToken);
+        return request.wpGetUserInfo(wpUserLoginResponse?.data.userToken);
       });
 
       if (wpUserInfoResponse != null) {

@@ -1,4 +1,4 @@
-// Copyright (c) 2020, WooSignal Ltd.
+// Copyright (c) 2021, WooSignal Ltd.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms are permitted
@@ -15,7 +15,6 @@
 
 library wp_json_api;
 
-import 'package:flutter/widgets.dart';
 import 'package:wp_json_api/helpers/typedefs.dart';
 import 'package:wp_json_api/networking/network_manager.dart';
 
@@ -29,10 +28,10 @@ class WPJsonAPI {
   static final WPJsonAPI instance = WPJsonAPI._privateConstructor();
 
   /// The base url for the WordPress Site e.g. https://mysitewp.com
-  String _baseUrl;
+  late String _baseUrl;
 
   /// Debug boolean for outputting to the log
-  bool _shouldDebug;
+  bool? _shouldDebug;
 
   /// Default API root for your WordPress site
   String _apiPath = "/wp-json";
@@ -42,7 +41,7 @@ class WPJsonAPI {
   /// [wpJsonPath] is the root path for accessing you sites WordPress APIs
   /// by default this should be "/wp-json".
   initWith(
-      {@required String baseUrl,
+      {required String baseUrl,
       String wpJsonPath = '/wp-json',
       bool shouldDebug = true}) {
     _setBaseApi(baseUrl: baseUrl);
@@ -51,22 +50,22 @@ class WPJsonAPI {
   }
 
   /// Sets the base API in the class
-  _setBaseApi({@required baseUrl}) {
+  _setBaseApi({required baseUrl}) {
     this._baseUrl = baseUrl;
   }
 
   /// Sets the API path in the class
-  _setApiPath({@required path}) {
+  _setApiPath({required path}) {
     this._apiPath = path;
   }
 
   /// Sets the debug value in the class
-  _setShouldDebug({bool value}) {
+  _setShouldDebug({bool? value}) {
     this._shouldDebug = value;
   }
 
   /// Returns the debug value
-  bool shouldDebug() {
+  bool? shouldDebug() {
     return this._shouldDebug;
   }
 

@@ -1,4 +1,4 @@
-// Copyright (c) 2020, WooSignal Ltd.
+// Copyright (c) 2021, WooSignal Ltd.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms are permitted
@@ -14,9 +14,9 @@
 // WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 
 class WPNonceVerifiedResponse {
-  Data data;
-  String message;
-  int status;
+  Data? data;
+  String? message;
+  int? status;
 
   WPNonceVerifiedResponse({this.data, this.message, this.status});
 
@@ -29,7 +29,7 @@ class WPNonceVerifiedResponse {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     if (this.data != null) {
-      data['data'] = this.data.toJson();
+      data['data'] = this.data!.toJson();
     }
     data['message'] = this.message;
     data['status'] = this.status;
@@ -38,7 +38,7 @@ class WPNonceVerifiedResponse {
 }
 
 class Data {
-  bool isValid;
+  bool? isValid;
 
   Data({this.isValid});
 

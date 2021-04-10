@@ -1,4 +1,4 @@
-// Copyright (c) 2020, WooSignal Ltd.
+// Copyright (c) 2021, WooSignal Ltd.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms are permitted
@@ -14,9 +14,9 @@
 // WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 
 class WPUserRegisterResponse {
-  Data data;
-  String message;
-  int status;
+  Data? data;
+  String? message;
+  int? status;
 
   WPUserRegisterResponse({this.data, this.message, this.status});
 
@@ -29,7 +29,7 @@ class WPUserRegisterResponse {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     if (this.data != null) {
-      data['data'] = this.data.toJson();
+      data['data'] = this.data!.toJson();
     }
     data['message'] = this.message;
     data['status'] = this.status;
@@ -38,9 +38,9 @@ class WPUserRegisterResponse {
 }
 
 class Data {
-  int userId;
-  String userToken;
-  int expiry;
+  int? userId;
+  String? userToken;
+  int? expiry;
 
   Data({this.userId, this.userToken, this.expiry});
 

@@ -1,4 +1,4 @@
-// Copyright (c) 2020, WooSignal Ltd.
+// Copyright (c) 2021, WooSignal Ltd.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms are permitted
@@ -14,8 +14,8 @@
 // WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 
 class WPUserInfoUpdatedResponse {
-  String message;
-  int status;
+  String? message;
+  int? status;
 
   WPUserInfoUpdatedResponse({this.message, this.status});
 

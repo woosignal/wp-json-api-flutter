@@ -1,4 +1,4 @@
-// Copyright (c) 2020, WooSignal Ltd.
+// Copyright (c) 2021, WooSignal Ltd.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms are permitted
@@ -16,10 +16,10 @@
 import 'package:wp_json_api/enums/wp_meta_data_action_type.dart';
 
 class UserMetaDataItem {
-  String key;
-  String value;
+  String? key;
+  String? value;
   WPMetaDataActionType action;
-  int unique;
+  int? unique;
 
   UserMetaDataItem({this.key, this.value, this.action = WPMetaDataActionType.Update, this.unique});
 
@@ -27,9 +27,7 @@ class UserMetaDataItem {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['key'] = this.key;
     data['value'] = this.value;
-    if (this.action != null) {
-      data['action'] = _getActionFromType();
-    }
+    data['action'] = _getActionFromType();
     if (this.unique != null) {
       data['unique'] = this.unique;
     }

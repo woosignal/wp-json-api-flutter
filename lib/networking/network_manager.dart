@@ -1,4 +1,4 @@
-// Copyright (c) 2020, WooSignal Ltd.
+// Copyright (c) 2021, WooSignal Ltd.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms are permitted
@@ -17,7 +17,6 @@ import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 
-import 'package:flutter/cupertino.dart';
 import 'package:wp_json_api/enums/wp_auth_type.dart';
 import 'package:wp_json_api/exceptions/empty_username_exception.dart';
 import 'package:wp_json_api/exceptions/existing_user_email_exception.dart';
@@ -63,17 +62,17 @@ class WPAppNetworkManager {
   /// [InvalidUsernameException] if the username is not valid
   /// [Exception] for any other reason.
   Future<WPUserLoginResponse> wpLogin(
-      {String email,
-      String username,
-      @required String password,
+      {String? email,
+      String? username,
+      required String password,
       WPAuthType authType = WPAuthType.WpEmail,
-      String tokenExpiryAt}) async {
+      String? tokenExpiryAt}) async {
 
     // Get nonce from WordPress
     WPNonceResponse wpNonceResponse = await wpNonce();
 
-    // throw exception if nonce null
-    if (wpNonceResponse == null) {
+    // throw exception if there's an error
+    if (!(wpNonceResponse is WPNonceResponse)) {
       throw new InvalidNonceException();
     }
 
@@ -82,7 +81,7 @@ class WPAppNetworkManager {
     if (username != null) payload["username"] = username;
     if (email != null) payload["email"] = email;
     payload["password"] = password;
-    payload["nonce"] = wpNonceResponse.data.nonce;
+    payload["nonce"] = wpNonceResponse.data!.nonce;
     if (tokenExpiryAt != null) payload["expiry"] = tokenExpiryAt;
 
     // send http request
@@ -112,15 +111,15 @@ class WPAppNetworkManager {
   /// [EmptyUsernameException] if the username field has empty
   /// [Exception] if fails.
   Future<WPUserRegisterResponse> wpRegister(
-      {@required String email,
-      @required String password,
-      @required String username,
-      String expiry}) async {
+      {required String email,
+      required String password,
+      required String username,
+      String? expiry}) async {
     // Get nonce from WordPress
     WPNonceResponse wpNonceResponse = await wpNonce();
 
     // throw exception if nonce null
-    if (wpNonceResponse == null) {
+    if (!(wpNonceResponse is WPNonceResponse)) {
       throw InvalidNonceException();
     }
 
@@ -129,7 +128,7 @@ class WPAppNetworkManager {
       "email": email,
       "password": password,
       "username": username,
-      "nonce": wpNonceResponse.data.nonce
+      "nonce": wpNonceResponse.data!.nonce
     };
     if (expiry != null) payload["expiry"] = expiry;
 
@@ -168,7 +167,7 @@ class WPAppNetworkManager {
   /// Returns a [WPNonceVerifiedResponse] future.
   /// Throws an [Exception] if fails
   Future<WPNonceVerifiedResponse> wpNonceVerify(
-      {@required String nonce}) async {
+      {required String nonce}) async {
     Map<String, dynamic> payload = {"nonce": nonce};
 
     // send http request
@@ -211,7 +210,7 @@ class WPAppNetworkManager {
   /// Returns a [WPUserInfoUpdatedResponse] future.
   /// Throws an [Exception] if fails.
   Future<WPUserInfoUpdatedResponse> wpUpdateUserInfo(userToken,
-      {String firstName, String lastName, String displayName, List<UserMetaDataItem> wpUserMetaData}) async {
+      {String? firstName, String? lastName, String? displayName, List<UserMetaDataItem>? wpUserMetaData}) async {
     Map<String, dynamic> payload = {};
     if (firstName != null) payload["first_name"] = firstName;
     if (lastName != null) payload["last_name"] = lastName;
@@ -242,7 +241,7 @@ class WPAppNetworkManager {
   /// Throws an [Exception] if fails.
   Future<WPUserResetPasswordResponse> wpResetPassword(
     String userToken, {
-    @required String password,
+    required String password,
   }) async {
     Map<String, dynamic> payload = {"password": password};
 
@@ -284,31 +283,31 @@ class WPAppNetworkManager {
   /// Returns [WCCustomerUpdatedResponse] future.
   /// Throws an [Exception] if fails.
   Future<WCCustomerUpdatedResponse> wcUpdateCustomerInfo(userToken,
-      {String firstName,
-      String lastName,
-      String displayName,
-      String billingFirstName,
-      String billingLastName,
-      String billingCompany,
-      String billingAddress1,
-      String billingAddress2,
-      String billingCity,
-      String billingState,
-      String billingPostcode,
-      String billingCountry,
-      String billingEmail,
-      String billingPhone,
-      String shippingFirstName,
-      String shippingLastName,
-      String shippingCompany,
-      String shippingAddress1,
-      String shippingAddress2,
-      String shippingCity,
-      String shippingState,
-      String shippingPostcode,
-      String shippingCountry,
-      String shippingEmail,
-      String shippingPhone}) async {
+      {String? firstName,
+      String? lastName,
+      String? displayName,
+      String? billingFirstName,
+      String? billingLastName,
+      String? billingCompany,
+      String? billingAddress1,
+      String? billingAddress2,
+      String? billingCity,
+      String? billingState,
+      String? billingPostcode,
+      String? billingCountry,
+      String? billingEmail,
+      String? billingPhone,
+      String? shippingFirstName,
+      String? shippingLastName,
+      String? shippingCompany,
+      String? shippingAddress1,
+      String? shippingAddress2,
+      String? shippingCity,
+      String? shippingState,
+      String? shippingPostcode,
+      String? shippingCountry,
+      String? shippingEmail,
+      String? shippingPhone}) async {
     Map<String, dynamic> payload = {};
     if (firstName != null) payload["first_name"] = firstName;
     if (lastName != null) payload["last_name"] = lastName;
@@ -374,14 +373,15 @@ class WPAppNetworkManager {
   ///
   /// Returns a [dynamic] response from the server.
   Future<dynamic> _http(
-      {@required String method,
-      @required String url,
-      Map<String, dynamic> body,
-      String userToken}) async {
-    var response;
+      {required String method,
+      required String url,
+      Map<String, dynamic>? body,
+      String? userToken}) async {
+    late var response;
+    Uri uri = Uri.parse(url);
     if (method == "GET") {
       response = await http.get(
-        url,
+        uri,
       );
     } else if (method == "POST") {
       Map<String, String> headers = {
@@ -394,7 +394,7 @@ class WPAppNetworkManager {
         body.addAll({"token": userToken});
       }
       response = await http.post(
-        url,
+        uri,
         body: jsonEncode(body),
         headers: headers,
       );
@@ -418,13 +418,13 @@ class WPAppNetworkManager {
   /// log output if set. This will only log if shouldDebug is enabled.
   ///
   /// Returns void.
-  _devLogger({@required String url, String payload, String result}) {
+  _devLogger({required String url, String? payload, String? result}) {
     String strOutput = "\nREQUEST: " + url;
     if (payload != null) strOutput += "\nPayload: " + payload;
     if (result != null) strOutput += "\nRESULT: " + result;
 
     // logs response if shouldDebug is enabled
-    if (WPJsonAPI.instance.shouldDebug()) log(strOutput);
+    if (WPJsonAPI.instance.shouldDebug()!) log(strOutput);
   }
 
   /// Checks if a response payload has a bad status (=> 500).
@@ -517,7 +517,7 @@ class WPAppNetworkManager {
   /// Throws an exception from the [json] status returned from payload.
   _throwExceptionForStatusCode(json) {
     if (json != null && json['status'] != null) {
-      int statusCode = json["status"];
+      int? statusCode = json["status"];
       String message = json["message"] ?? 'Something went wrong';
 
       switch (statusCode) {

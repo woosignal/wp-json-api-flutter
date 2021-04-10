@@ -1,4 +1,4 @@
-// Copyright (c) 2020, WooSignal Ltd.
+// Copyright (c) 2021, WooSignal Ltd.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms are permitted
@@ -13,10 +13,12 @@
 // IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
 // WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 
+import 'package:collection/collection.dart' show IterableExtension;
+
 class WPUserInfoResponse {
-  Data data;
-  String message;
-  int status;
+  Data? data;
+  String? message;
+  int? status;
 
   WPUserInfoResponse({this.data, this.message, this.status});
 
@@ -29,7 +31,7 @@ class WPUserInfoResponse {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     if (this.data != null) {
-      data['data'] = this.data.toJson();
+      data['data'] = this.data!.toJson();
     }
     data['message'] = this.message;
     data['status'] = this.status;
@@ -38,17 +40,17 @@ class WPUserInfoResponse {
 }
 
 class Data {
-  int id;
-  String firstName;
-  String lastName;
-  String username;
-  String userNicename;
-  String displayName;
-  String userStatus;
-  String email;
-  String avatar;
-  List<MetaData> metaData;
-  String createdAt;
+  int? id;
+  String? firstName;
+  String? lastName;
+  String? username;
+  String? userNicename;
+  String? displayName;
+  String? userStatus;
+  String? email;
+  String? avatar;
+  List<MetaData>? metaData;
+  String? createdAt;
 
   Data(
       {this.id,
@@ -76,7 +78,7 @@ class Data {
     if (json['meta_data'] != null && Map.of(json['meta_data']).isNotEmpty) {
       this.metaData = [];
       Map.from(json['meta_data']).forEach((key, value) {
-        this.metaData.add(MetaData.fromJson(key, value));
+        this.metaData!.add(MetaData.fromJson(key, value));
       });
     }
     createdAt = json['created_at'];
@@ -94,7 +96,7 @@ class Data {
     data['email'] = this.email;
     data['avatar'] = this.avatar;
     if (this.metaData != null) {
-      data['meta_data'] = this.metaData.map((e) => e.toJson()).toList();
+      data['meta_data'] = this.metaData!.map((e) => e.toJson()).toList();
     }
     data['created_at'] = this.createdAt;
     return data;
@@ -103,8 +105,8 @@ class Data {
   /// Returns an array of meta data from a WP MetaData [key]
   ///
   /// Returns List<dynamic>
-  List<dynamic> getMetaDataArrayWhere(String key) {
-    MetaData metaData = this.metaData.firstWhere((e) => e.key == key, orElse: () => null);
+  List<dynamic>? getMetaDataArrayWhere(String key) {
+    MetaData? metaData = this.metaData!.firstWhereOrNull((e) => e.key == key);
     if (metaData == null || metaData.value == null) {
       return null;
     }
@@ -115,17 +117,17 @@ class Data {
   ///
   /// Returns dynamic
   dynamic getMetaDataFirstWhere(String key) {
-    MetaData metaData = this.metaData.firstWhere((e) => e.key == key, orElse: () => null);
-    if (metaData == null || metaData.value == null || metaData.value.length < 1) {
+    MetaData? metaData = this.metaData!.firstWhereOrNull((e) => e.key == key);
+    if (metaData == null || metaData.value == null || metaData.value!.length < 1) {
       return null;
     }
-    return metaData.value.first;
+    return metaData.value!.first;
   }
 }
 
 class MetaData {
-  String key;
-  List<dynamic> value;
+  String? key;
+  List<dynamic>? value;
 
   MetaData({this.key, this.value});
 
@@ -134,8 +136,8 @@ class MetaData {
     this.value = value;
   }
 
-  Map<String, dynamic> toJson() {
-    final Map<String, List<dynamic>> data = new Map<String, List<dynamic>>();
+  Map<String?, dynamic> toJson() {
+    final Map<String?, List<dynamic>?> data = new Map<String?, List<dynamic>?>();
     if (key != null) {
       data[key] = this.value;
     }
