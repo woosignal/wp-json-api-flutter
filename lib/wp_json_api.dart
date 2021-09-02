@@ -20,7 +20,6 @@ import 'package:wp_json_api/networking/network_manager.dart';
 
 /// The base class to initialize and use WPJSONAPI
 class WPJsonAPI {
-
   /// Private constructor for WPJSONAPI
   WPJsonAPI._privateConstructor();
 

@@ -54,16 +54,16 @@ class Data {
 
   Data(
       {this.id,
-        this.firstName,
-        this.lastName,
-        this.username,
-        this.userNicename,
-        this.displayName,
-        this.userStatus,
-        this.email,
-        this.avatar,
-        this.metaData,
-        this.createdAt});
+      this.firstName,
+      this.lastName,
+      this.username,
+      this.userNicename,
+      this.displayName,
+      this.userStatus,
+      this.email,
+      this.avatar,
+      this.metaData,
+      this.createdAt});
 
   Data.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -118,7 +118,9 @@ class Data {
   /// Returns dynamic
   dynamic getMetaDataFirstWhere(String key) {
     MetaData? metaData = this.metaData!.firstWhereOrNull((e) => e.key == key);
-    if (metaData == null || metaData.value == null || metaData.value!.length < 1) {
+    if (metaData == null ||
+        metaData.value == null ||
+        metaData.value!.length < 1) {
       return null;
     }
     return metaData.value!.first;
@@ -137,7 +139,8 @@ class MetaData {
   }
 
   Map<String?, dynamic> toJson() {
-    final Map<String?, List<dynamic>?> data = new Map<String?, List<dynamic>?>();
+    final Map<String?, List<dynamic>?> data =
+        new Map<String?, List<dynamic>?>();
     if (key != null) {
       data[key] = this.value;
     }

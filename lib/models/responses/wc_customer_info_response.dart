@@ -55,7 +55,7 @@ class Data {
       this.avatar,
       this.shipping,
       this.billing,
-        this.metaData});
+      this.metaData});
 
   Data.fromJson(Map<String, dynamic> json) {
     firstName = json['first_name'];
@@ -98,11 +98,11 @@ class Data {
   ///
   /// Returns List<dynamic>
   List<dynamic>? getMetaDataArrayWhere(String key) {
-     MetaData? metaData = this.metaData!.firstWhereOrNull((e) => e.key == key);
-     if (metaData == null || metaData.value == null) {
-       return null;
-     }
-     return metaData.value;
+    MetaData? metaData = this.metaData!.firstWhereOrNull((e) => e.key == key);
+    if (metaData == null || metaData.value == null) {
+      return null;
+    }
+    return metaData.value;
   }
 
   /// Returns a single meta data value from a WP MetaData [key]
@@ -110,7 +110,9 @@ class Data {
   /// Returns dynamic
   dynamic getMetaDataFirstWhere(String key) {
     MetaData? metaData = this.metaData!.firstWhereOrNull((e) => e.key == key);
-    if (metaData == null || metaData.value == null || metaData.value!.length < 1) {
+    if (metaData == null ||
+        metaData.value == null ||
+        metaData.value!.length < 1) {
       return null;
     }
     return metaData.value!.first;
@@ -235,7 +237,8 @@ class MetaData {
   }
 
   Map<String?, dynamic> toJson() {
-    final Map<String?, List<dynamic>?> data = new Map<String?, List<dynamic>?>();
+    final Map<String?, List<dynamic>?> data =
+        new Map<String?, List<dynamic>?>();
     if (key != null) {
       data[key] = this.value;
     }

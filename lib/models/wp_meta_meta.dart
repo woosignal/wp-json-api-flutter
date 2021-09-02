@@ -21,7 +21,11 @@ class UserMetaDataItem {
   WPMetaDataActionType action;
   int? unique;
 
-  UserMetaDataItem({this.key, this.value, this.action = WPMetaDataActionType.Update, this.unique});
+  UserMetaDataItem(
+      {this.key,
+      this.value,
+      this.action = WPMetaDataActionType.Update,
+      this.unique});
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();

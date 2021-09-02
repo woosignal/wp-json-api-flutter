@@ -53,10 +53,9 @@ class _MyHomePageState extends State<MyHomePage> {
     late WPUserLoginResponse? wpUserLoginResponse;
     // LOGIN
     try {
-      wpUserLoginResponse =
-      await WPJsonAPI.instance.api((request) => request.wpLogin(
-            email: email, password: password, authType: WPAuthType.WpEmail)
-      );
+      wpUserLoginResponse = await WPJsonAPI.instance.api((request) =>
+          request.wpLogin(
+              email: email, password: password, authType: WPAuthType.WpEmail));
     } on Exception catch (e) {
       print(e);
     }

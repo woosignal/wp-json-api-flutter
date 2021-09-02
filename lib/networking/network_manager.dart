@@ -69,7 +69,6 @@ class WPAppNetworkManager {
       required String password,
       WPAuthType authType = WPAuthType.WpEmail,
       String? tokenExpiryAt}) async {
-
     // Get nonce from WordPress
     WPNonceResponse wpNonceResponse = await wpNonce();
 
@@ -168,8 +167,7 @@ class WPAppNetworkManager {
   ///
   /// Returns a [WPNonceVerifiedResponse] future.
   /// Throws an [Exception] if fails
-  Future<WPNonceVerifiedResponse> wpNonceVerify(
-      {required String nonce}) async {
+  Future<WPNonceVerifiedResponse> wpNonceVerify({required String nonce}) async {
     Map<String, dynamic> payload = {"nonce": nonce};
 
     // send http request
@@ -212,7 +210,10 @@ class WPAppNetworkManager {
   /// Returns a [WPUserInfoUpdatedResponse] future.
   /// Throws an [Exception] if fails.
   Future<WPUserInfoUpdatedResponse> wpUpdateUserInfo(userToken,
-      {String? firstName, String? lastName, String? displayName, List<UserMetaDataItem>? wpUserMetaData}) async {
+      {String? firstName,
+      String? lastName,
+      String? displayName,
+      List<UserMetaDataItem>? wpUserMetaData}) async {
     Map<String, dynamic> payload = {};
     if (firstName != null) payload["first_name"] = firstName;
     if (lastName != null) payload["last_name"] = lastName;
@@ -242,7 +243,8 @@ class WPAppNetworkManager {
   ///
   /// Returns a [WPUserInfoUpdatedResponse] future.
   /// Throws an [Exception] if fails.
-  Future<WPUserAddRoleResponse> wpUserAddRole(userToken, {required String role}) async {
+  Future<WPUserAddRoleResponse> wpUserAddRole(userToken,
+      {required String role}) async {
     Map<String, dynamic> payload = {};
     payload["role"] = role;
 
@@ -265,7 +267,8 @@ class WPAppNetworkManager {
   ///
   /// Returns a [WPUserInfoUpdatedResponse] future.
   /// Throws an [Exception] if fails.
-  Future<WPUserRemoveRoleResponse> wpUserRemoveRole(userToken, {required String role}) async {
+  Future<WPUserRemoveRoleResponse> wpUserRemoveRole(userToken,
+      {required String role}) async {
     Map<String, dynamic> payload = {};
     payload["role"] = role;
 
@@ -541,11 +544,11 @@ class WPAppNetworkManager {
         {
           return "/wpapp/api/$apiVersion/update/user/info";
         }
-        case WPRouteType.UserAddRole:
+      case WPRouteType.UserAddRole:
         {
           return "/wpapp/api/$apiVersion/update/user/role/add";
         }
-        case WPRouteType.UserRemoveRole:
+      case WPRouteType.UserRemoveRole:
         {
           return "/wpapp/api/$apiVersion/update/user/role/remove";
         }
@@ -603,9 +606,11 @@ class WPAppNetworkManager {
           throw new UserAlreadyExistException();
         case 542:
           throw new EmptyUsernameException();
-        default: {
-          throw new Exception('Something went wrong, please check server response');
-        }
+        default:
+          {
+            throw new Exception(
+                'Something went wrong, please check server response');
+          }
       }
     }
   }
