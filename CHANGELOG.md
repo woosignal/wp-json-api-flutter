@@ -1,3 +1,7 @@
+## [3.1.1] - 2021-09-02
+
+* Update readme
+
 ## [3.1.0] - 2021-09-02
 
 * Ability to add and remove roles from a user
