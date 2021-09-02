@@ -34,9 +34,11 @@ import 'package:wp_json_api/models/responses/wc_customer_info_response.dart';
 import 'package:wp_json_api/models/responses/wc_customer_updated_response.dart';
 import 'package:wp_json_api/models/responses/wp_nonce_response.dart';
 import 'package:wp_json_api/models/responses/wp_nonce_verified_response.dart';
+import 'package:wp_json_api/models/responses/wp_user_add_role_response.dart';
 import 'package:wp_json_api/models/responses/wp_user_info_updated_response.dart';
 import 'package:wp_json_api/models/responses/wp_user_login_response.dart';
 import 'package:wp_json_api/models/responses/wp_user_register_response.dart';
+import 'package:wp_json_api/models/responses/wp_user_remove_role_response.dart';
 import 'package:wp_json_api/models/responses/wp_user_reset_password_response.dart';
 import 'package:wp_json_api/models/wp_meta_meta.dart';
 import 'package:wp_json_api/wp_json_api.dart';
@@ -233,6 +235,52 @@ class WPAppNetworkManager {
     return _jsonHasBadStatus(json)
         ? this._throwExceptionForStatusCode(json)
         : WPUserInfoUpdatedResponse.fromJson(json);
+  }
+
+  /// Sends a request to add a role to a WordPress user. Include a valid
+  /// [userToken] and [role] to send a successful request.
+  ///
+  /// Returns a [WPUserInfoUpdatedResponse] future.
+  /// Throws an [Exception] if fails.
+  Future<WPUserAddRoleResponse> wpUserAddRole(userToken, {required String role}) async {
+    Map<String, dynamic> payload = {};
+    payload["role"] = role;
+
+    // send http request
+    final json = await _http(
+      method: "POST",
+      url: _urlForRouteType(WPRouteType.UserAddRole),
+      userToken: userToken,
+      body: payload,
+    );
+
+    // return response
+    return _jsonHasBadStatus(json)
+        ? this._throwExceptionForStatusCode(json)
+        : WPUserAddRoleResponse.fromJson(json);
+  }
+
+  /// Sends a request to remove a role from a WordPress user. Include a valid
+  /// [userToken] and [role] to send a successful request.
+  ///
+  /// Returns a [WPUserInfoUpdatedResponse] future.
+  /// Throws an [Exception] if fails.
+  Future<WPUserRemoveRoleResponse> wpUserRemoveRole(userToken, {required String role}) async {
+    Map<String, dynamic> payload = {};
+    payload["role"] = role;
+
+    // send http request
+    final json = await _http(
+      method: "POST",
+      url: _urlForRouteType(WPRouteType.UserRemoveRole),
+      userToken: userToken,
+      body: payload,
+    );
+
+    // return response
+    return _jsonHasBadStatus(json)
+        ? this._throwExceptionForStatusCode(json)
+        : WPUserRemoveRoleResponse.fromJson(json);
   }
 
   /// Reset a user password using the [userToken] and new [password] created.
@@ -464,7 +512,7 @@ class WPAppNetworkManager {
   /// Returns [String] url path for request.
   String _getRouteUrlForType(
     WPRouteType wpRouteType, {
-    String apiVersion = 'v2',
+    String apiVersion = 'v3',
   }) {
     switch (wpRouteType) {
       // AUTH API
@@ -492,6 +540,14 @@ class WPAppNetworkManager {
       case WPRouteType.UserUpdateInfo:
         {
           return "/wpapp/api/$apiVersion/update/user/info";
+        }
+        case WPRouteType.UserAddRole:
+        {
+          return "/wpapp/api/$apiVersion/update/user/role/add";
+        }
+        case WPRouteType.UserRemoveRole:
+        {
+          return "/wpapp/api/$apiVersion/update/user/role/remove";
         }
       case WPRouteType.UserUpdatePassword:
         {

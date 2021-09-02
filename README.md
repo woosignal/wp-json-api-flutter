@@ -11,6 +11,8 @@
 * Get Users Info
 * Update Users Info
 * Update Users Password
+* Add role to a user
+* Remove role from a user
 
 **WooCommerce**
 
@@ -25,7 +27,7 @@ In your flutter project add the dependency:
 ``` dart 
 dependencies:
   ...
-  wp_json_api: ^3.0.0
+  wp_json_api: ^3.1.0
 ```
 
 ### Usage example #
@@ -153,6 +155,30 @@ WPUserResetPasswordResponse wpUserResetPasswordResponse = await WPJsonAPI.instan
         ));
 ```
 
+#### WordPress - Add a role to a user
+- Used to add a role to a user in WordPress
+- The first parameter is the **userToken** which is returned from the login/register response. You should have this saved somewhere e.g. shared_pref
+
+``` dart
+WPUserAddRoleResponse wpUserAddRoleResponse = await WPJsonAPI.instance
+        .api((request) => request.wpUserAddRole(
+            userToken,
+            role: "customer" // e.g. customer, subscriber
+        ));
+```
+
+#### WordPress - Remove a role from a user
+- Used to remove a role from a user in WordPress
+- The first parameter is the **userToken** which is returned from the login/register response. You should have this saved somewhere e.g. shared_pref
+
+``` dart
+WPUserRemoveRoleResponse wpUserAddRemoveResponse = await WPJsonAPI.instance
+        .api((request) => request.wpUserRemoveRole(
+            userToken,
+            role: "customer" // e.g. customer, subscriber
+        ));
+```
+
 #### WooCommerce - Get users info in WooCommerce
 - Used to get WooCommerce info for a given user
 - The first parameter is the **userToken** which is returned from the login/register response. You should have this saved somewhere e.g. shared_pref
@@ -208,6 +234,6 @@ For help getting started with WooSignal, view our
 To use this plugin, add `wp_json_api` as a [dependency in your pubspec.yaml file](https://flutter.io/platform-plugins/).
 
 ## Note
-Install WordPress plugin "WP JSON API" 3.0.x or later for version 2.0.0+
+Install WordPress plugin "WP JSON API" 3.1.x from [woosignal](https://woosignal.com/plugins/wordpress/wp-json-api) to use this flutter plugin `wp_json_api` (3.1.0).
 
 Disclaimer: This plugin is not affiliated with or supported by Automattic, Inc. All logos and trademarks are the property of their respective owners.

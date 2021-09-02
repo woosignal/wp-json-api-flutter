@@ -1,3 +1,8 @@
+## [3.1.0] - 2021-09-02
+
+* Ability to add and remove roles from a user
+* Dependency updates
+
 ## [3.0.0] - 2021-04-10
 
 * Added null safety support

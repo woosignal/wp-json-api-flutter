@@ -14,23 +14,31 @@
 // WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 
 enum WPRouteType {
-  /// Route type [WPRouteType.UserUpdatePassword] is used to update a WordPress users password.
+  /// Route type [WPRouteType.UserUpdatePassword] is used to update a WordPress user's password.
   /// For WordPress
   UserUpdatePassword,
 
-  /// Route type [WPRouteType.UserUpdateInfo] is used to update a WordPress users account info.
+  /// Route type [WPRouteType.UserUpdateInfo] is used to update a WordPress user's account info.
   /// For WordPress
   UserUpdateInfo,
 
-  /// Route type [WPRouteType.UserInfo] is used to return a WordPress users info.
+  /// Route type [WPRouteType.UserAddRole] is used to add a role to a WordPress user's account.
+  /// For WordPress
+  UserAddRole,
+
+  /// Route type [WPRouteType.UserRemoveRole] is used to remove a role to a WordPress user's account.
+  /// For WordPress
+  UserRemoveRole,
+
+  /// Route type [WPRouteType.UserInfo] is used to return a WordPress user's info.
   /// For WordPress
   UserInfo,
 
-  /// Route type [WPRouteType.UserRegister] is used to Register a user on WordPress.
+  /// Route type [WPRouteType.UserRegister] is used to Register a user's on WordPress.
   /// For WordPress
   UserRegister,
 
-  /// Route type [WPRouteType.UserLogin] is used to Login a user on WordPress.
+  /// Route type [WPRouteType.UserLogin] is used to Login a user's on WordPress.
   /// For WordPress
   UserLogin,
 
@@ -42,7 +50,7 @@ enum WPRouteType {
   /// For WordPress
   AuthVerify,
 
-  /// Route type [WPRouteType.WCCustomerInfo] is used to get a Customers info.
+  /// Route type [WPRouteType.WCCustomerInfo] is used to get a Customer's info.
   /// For WooCommerce
   WCCustomerInfo,
 
