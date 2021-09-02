@@ -234,6 +234,6 @@ For help getting started with WooSignal, view our
 To use this plugin, add `wp_json_api` as a [dependency in your pubspec.yaml file](https://flutter.io/platform-plugins/).
 
 ## Note
-Install WordPress plugin "WP JSON API" 3.1.x from [woosignal](https://woosignal.com/plugins/wordpress/wp-json-api) to use this flutter plugin `wp_json_api` (3.1.0).
+Install our WordPress plugin "[WP JSON API](https://woosignal.com/plugins/wordpress/wp-json-api)" v3.1.0 to use this flutter plugin.
 
 Disclaimer: This plugin is not affiliated with or supported by Automattic, Inc. All logos and trademarks are the property of their respective owners.
