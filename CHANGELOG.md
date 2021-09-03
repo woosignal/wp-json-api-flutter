@@ -1,3 +1,7 @@
+## [3.1.3] - 2021-09-03
+
+* Add roles to wp_user_info_response
+
 ## [3.1.2] - 2021-09-02
 
 * Ran flutter format

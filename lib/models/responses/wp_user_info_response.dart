@@ -50,6 +50,7 @@ class Data {
   String? email;
   String? avatar;
   List<MetaData>? metaData;
+  List<String>? roles;
   String? createdAt;
 
   Data(
@@ -59,6 +60,7 @@ class Data {
       this.username,
       this.userNicename,
       this.displayName,
+      this.roles,
       this.userStatus,
       this.email,
       this.avatar,
@@ -74,6 +76,12 @@ class Data {
     displayName = json['display_name'];
     userStatus = json['user_status'];
     email = json['email'];
+    roles = [];
+    if (json['roles'] != null) {
+      (json['roles'] as List).forEach((role) {
+        roles!.add(role);
+      });
+    }
     avatar = json['avatar'];
     if (json['meta_data'] != null && Map.of(json['meta_data']).isNotEmpty) {
       this.metaData = [];
@@ -94,6 +102,7 @@ class Data {
     data['display_name'] = this.displayName;
     data['user_status'] = this.userStatus;
     data['email'] = this.email;
+    data['roles'] = (this.roles ?? []).map((e) => e).toList();
     data['avatar'] = this.avatar;
     if (this.metaData != null) {
       data['meta_data'] = this.metaData!.map((e) => e.toJson()).toList();
