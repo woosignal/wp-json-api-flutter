@@ -172,7 +172,7 @@ WPUserAddRoleResponse wpUserAddRoleResponse = await WPJsonAPI.instance
 - The first parameter is the **userToken** which is returned from the login/register response. You should have this saved somewhere e.g. shared_pref
 
 ``` dart
-WPUserRemoveRoleResponse wpUserAddRemoveResponse = await WPJsonAPI.instance
+WPUserRemoveRoleResponse wpUserRemoveRoleResponse = await WPJsonAPI.instance
         .api((request) => request.wpUserRemoveRole(
             userToken,
             role: "customer" // e.g. customer, subscriber
