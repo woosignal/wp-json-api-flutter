@@ -1,4 +1,4 @@
-// Copyright (c) 2021, WooSignal Ltd.
+// Copyright (c) 2022, WooSignal Ltd.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms are permitted
@@ -41,6 +41,10 @@ enum WPRouteType {
   /// Route type [WPRouteType.UserLogin] is used to Login a user's on WordPress.
   /// For WordPress
   UserLogin,
+
+  /// Route type [WPRouteType.UserDelete] is used to delete a user from WordPress.
+  /// For WordPress
+  UserDelete,
 
   /// Route type [WPRouteType.AuthNonce] is used to get a nonce token to authenticate future API requests.
   /// For WordPress

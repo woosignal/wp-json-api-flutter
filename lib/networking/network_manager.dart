@@ -1,4 +1,4 @@
-// Copyright (c) 2021, WooSignal Ltd.
+// Copyright (c) 2022, WooSignal Ltd.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms are permitted
@@ -35,6 +35,7 @@ import 'package:wp_json_api/models/responses/wc_customer_updated_response.dart';
 import 'package:wp_json_api/models/responses/wp_nonce_response.dart';
 import 'package:wp_json_api/models/responses/wp_nonce_verified_response.dart';
 import 'package:wp_json_api/models/responses/wp_user_add_role_response.dart';
+import 'package:wp_json_api/models/responses/wp_user_delete_response.dart';
 import 'package:wp_json_api/models/responses/wp_user_info_updated_response.dart';
 import 'package:wp_json_api/models/responses/wp_user_login_response.dart';
 import 'package:wp_json_api/models/responses/wp_user_register_response.dart';
@@ -260,6 +261,31 @@ class WPAppNetworkManager {
     return _jsonHasBadStatus(json)
         ? this._throwExceptionForStatusCode(json)
         : WPUserAddRoleResponse.fromJson(json);
+  }
+
+  /// Sends a request to delete a WordPress user. Include a valid
+  /// [userToken] and an optional [reassign] argument to send a successful request.
+  ///
+  /// Returns a [WPUserDeleteResponse] future.
+  /// Throws an [Exception] if fails.
+  Future<WPUserDeleteResponse> wpUserDelete(userToken, {int? reassign}) async {
+    Map<String, dynamic> payload = {};
+    if (reassign != null) {
+      payload["reassign"] = reassign;
+    }
+
+    // send http request
+    final json = await _http(
+      method: "POST",
+      url: _urlForRouteType(WPRouteType.UserDelete),
+      userToken: userToken,
+      body: payload,
+    );
+
+    // return response
+    return _jsonHasBadStatus(json)
+        ? this._throwExceptionForStatusCode(json)
+        : WPUserDeleteResponse.fromJson(json);
   }
 
   /// Sends a request to remove a role from a WordPress user. Include a valid
@@ -555,6 +581,10 @@ class WPAppNetworkManager {
       case WPRouteType.UserUpdatePassword:
         {
           return "/wpapp/api/$apiVersion/update/user/password";
+        }
+      case WPRouteType.UserDelete:
+        {
+          return "/wpapp/api/$apiVersion/user/delete";
         }
 
       // WOOCOMMERCE API

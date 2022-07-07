@@ -1,3 +1,8 @@
+## [3.2.0] - 2022-07-07
+
+* New API to delete an account
+* Update code docs
+
 ## [3.1.3] - 2021-09-03
 
 * Add roles to wp_user_info_response

@@ -13,6 +13,7 @@
 * Update Users Password
 * Add role to a user
 * Remove role from a user
+* Delete a user
 
 **WooCommerce**
 
@@ -27,7 +28,7 @@ In your flutter project add the dependency:
 ``` dart 
 dependencies:
   ...
-  wp_json_api: ^3.1.3
+  wp_json_api: ^3.2.0
 ```
 
 ### Usage example #
@@ -176,6 +177,18 @@ WPUserRemoveRoleResponse wpUserRemoveRoleResponse = await WPJsonAPI.instance
         .api((request) => request.wpUserRemoveRole(
             userToken,
             role: "customer" // e.g. customer, subscriber
+        ));
+```
+
+#### WordPress - Delete a user
+- Used to delete a user in WordPress
+- The first parameter is the **userToken** which is returned from the login/register response. You should have this saved somewhere e.g. shared_pref
+- You can pass an optional argument 'reassign' to reassign posts and links to new User ID.
+
+``` dart
+WPUserDeleteResponse wpUserDeleteResponse = await WPJsonAPI.instance
+        .api((request) => request.wpUserDelete(
+            userToken
         ));
 ```
 
