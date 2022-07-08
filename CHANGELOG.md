@@ -1,4 +1,4 @@
-## [3.2.0] - 2022-07-07
+## [3.2.0] - 2022-07-08
 
 * New API to delete an account
 * Update code docs

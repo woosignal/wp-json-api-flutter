@@ -50,7 +50,7 @@ class _MyHomePageState extends State<MyHomePage> {
     String email = _tfEmailController.text;
     String password = _tfPasswordController.text;
 
-    late WPUserLoginResponse? wpUserLoginResponse;
+    WPUserLoginResponse? wpUserLoginResponse;
     // LOGIN
     try {
       wpUserLoginResponse = await WPJsonAPI.instance.api((request) =>
@@ -61,18 +61,18 @@ class _MyHomePageState extends State<MyHomePage> {
     }
 
     if (wpUserLoginResponse != null) {
-      print(wpUserLoginResponse.data.userToken);
-      print(wpUserLoginResponse.data.userId);
+      print(wpUserLoginResponse.data?.userToken);
+      print(wpUserLoginResponse.data?.userId);
 
       // GET USER INFO
       WPUserInfoResponse? wpUserInfoResponse =
           await WPJsonAPI.instance.api((request) {
-        return request.wpGetUserInfo(wpUserLoginResponse?.data.userToken);
+        return request.wpGetUserInfo(wpUserLoginResponse!.data!.userToken!);
       });
 
       if (wpUserInfoResponse != null) {
-        print(wpUserInfoResponse.data.firstName);
-        print(wpUserInfoResponse.data.lastName);
+        print(wpUserInfoResponse.data?.firstName);
+        print(wpUserInfoResponse.data?.lastName);
       } else {
         print("something went wrong");
       }

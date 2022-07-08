@@ -1,6 +1,9 @@
 name: woosignal_woocommerce_example
 description: Demonstrates how to use the wp_json_api plugin.
 
+environment:
+  sdk: '>=2.17.0 <3.0.0'
+
 dependencies:
   flutter:
     sdk: flutter
