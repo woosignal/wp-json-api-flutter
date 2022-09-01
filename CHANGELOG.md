@@ -1,3 +1,7 @@
+## [3.3.0] - 2022-09-01
+
+* Dependency updates
+
 ## [3.2.0] - 2022-07-08
 
 * New API to delete an account
