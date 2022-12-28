@@ -1,4 +1,4 @@
-// Copyright (c) 2022, WooSignal Ltd.
+// Copyright (c) 2023, WooSignal Ltd.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms are permitted
@@ -73,11 +73,6 @@ class WPAppNetworkManager {
     // Get nonce from WordPress
     WPNonceResponse wpNonceResponse = await wpNonce();
 
-    // throw exception if there's an error
-    if (!(wpNonceResponse is WPNonceResponse)) {
-      throw new InvalidNonceException();
-    }
-
     // Creates payload for login
     Map<String, dynamic> payload = {};
     if (username != null) payload["username"] = username;
@@ -119,11 +114,6 @@ class WPAppNetworkManager {
       String? expiry}) async {
     // Get nonce from WordPress
     WPNonceResponse wpNonceResponse = await wpNonce();
-
-    // throw exception if nonce null
-    if (!(wpNonceResponse is WPNonceResponse)) {
-      throw InvalidNonceException();
-    }
 
     // Creates payload for register
     Map<String, dynamic> payload = {
@@ -205,8 +195,7 @@ class WPAppNetworkManager {
 
   /// Sends a request to update details for a WordPress user. Include a valid
   /// [userToken] to send a successful request. Optional parameters include
-  /// a [firstName], [lastName], [displayName] and [UserMetaDataItem] to update
-  /// meta data on the user.
+  /// a [firstName], [lastName], [displayName] or [metaData] to update user's.
   ///
   /// Returns a [WPUserInfoUpdatedResponse] future.
   /// Throws an [Exception] if fails.
@@ -214,14 +203,14 @@ class WPAppNetworkManager {
       {String? firstName,
       String? lastName,
       String? displayName,
-      List<UserMetaDataItem>? wpUserMetaData}) async {
+      List<WpMetaData>? metaData}) async {
     Map<String, dynamic> payload = {};
     if (firstName != null) payload["first_name"] = firstName;
     if (lastName != null) payload["last_name"] = lastName;
     if (displayName != null) payload["display_name"] = displayName;
-    if (wpUserMetaData != null) {
+    if (metaData != null) {
       payload['meta_data'] = {
-        "items": wpUserMetaData.map((e) => e.toJson()).toList()
+        "items": metaData.map((e) => e.toJson()).toList()
       };
     }
 

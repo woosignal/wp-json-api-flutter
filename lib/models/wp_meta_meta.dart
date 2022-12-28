@@ -1,4 +1,4 @@
-// Copyright (c) 2022, WooSignal Ltd.
+// Copyright (c) 2023, WooSignal Ltd.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms are permitted
@@ -15,13 +15,13 @@
 
 import 'package:wp_json_api/enums/wp_meta_data_action_type.dart';
 
-class UserMetaDataItem {
+class WpMetaData {
   String? key;
-  String? value;
+  dynamic value;
   WPMetaDataActionType action;
   int? unique;
 
-  UserMetaDataItem(
+  WpMetaData(
       {this.key,
       this.value,
       this.action = WPMetaDataActionType.Update,

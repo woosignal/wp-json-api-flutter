@@ -1,3 +1,8 @@
+## [3.3.1] - 2022-12-28
+
+* Fix updating meta for users
+* Dependency updates
+
 ## [3.3.0] - 2022-09-01
 
 * Dependency updates
