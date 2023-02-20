@@ -1,13 +1,13 @@
 name: wp_json_api
 description: WordPress and WooCommerce JSON API for Flutter Mobile. API allows you to login, register new users, get users info and more.
-version: 3.3.1
+version: 3.3.2
 homepage: https://woosignal.com
 repository: https://github.com/woosignal/wp-json-api-flutter
 issue_tracker: https://github.com/woosignal/wp-json-api-flutter/issues
 documentation: https://woosignal.com/docs/flutter/wp-json-api
 
 environment:
-  sdk: ">=2.17.0 <3.0.0"
+  sdk: '>=2.19.0 <3.0.0'
   flutter: ">=1.17.0"
 
 dependencies:
@@ -19,5 +19,9 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+
+screenshots:
+  - description: The WooSignal package logo.
+    path: screenshots/logo.png
 
 flutter:

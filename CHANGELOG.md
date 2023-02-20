@@ -1,3 +1,7 @@
+## [3.2.2] - 2022-02-20
+
+* Add logo to package.
+
 ## [3.3.1] - 2022-12-28
 
 * Fix updating meta for users
