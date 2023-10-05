@@ -13,10 +13,10 @@
 // IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
 // WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 
-import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:dio/dio.dart';
 import 'package:wp_json_api/enums/wp_auth_type.dart';
 import 'package:wp_json_api/exceptions/empty_username_exception.dart';
 import 'package:wp_json_api/exceptions/existing_user_email_exception.dart';
@@ -45,11 +45,12 @@ import 'package:wp_json_api/models/wp_meta_meta.dart';
 import 'package:wp_json_api/wp_json_api.dart';
 import 'package:wp_json_api/enums/wp_route_type.dart';
 import 'package:wp_json_api/models/responses/wp_user_info_response.dart';
-import 'package:http/http.dart' as http;
 
 /// A networking class to manage all the APIs from "wp_json_api"
 class WPAppNetworkManager {
   WPAppNetworkManager._privateConstructor();
+
+  Dio dio = Dio();
 
   /// An instance of [WPAppNetworkManager] class
   static final WPAppNetworkManager instance =
@@ -443,12 +444,9 @@ class WPAppNetworkManager {
       required String url,
       Map<String, dynamic>? body,
       String? userToken}) async {
-    late var response;
-    Uri uri = Uri.parse(url);
+    Response? response;
     if (method == "GET") {
-      response = await http.get(
-        uri,
-      );
+      response = await dio.get(url);
     } else if (method == "POST") {
       Map<String, String> headers = {
         HttpHeaders.contentTypeHeader: "application/json",
@@ -459,23 +457,19 @@ class WPAppNetworkManager {
       if (userToken != null) {
         body.addAll({"token": userToken});
       }
-      response = await http.post(
-        uri,
-        body: jsonEncode(body),
-        headers: headers,
-      );
+      response =
+          await dio.post(url, data: body, options: Options(headers: headers));
     }
 
     // log output
-    _devLogger(
-        url: response.request.url.toString(),
-        payload: method == "GET"
-            ? response.request.url.queryParametersAll.toString()
-            : body.toString(),
-        result: response.body.toString());
+    if (response != null) {
+      _devLogger(
+          url: response.requestOptions.uri.toString(),
+          payload: response.requestOptions.data.toString(),
+          result: response.data.toString());
+    }
 
-    // return response
-    return jsonDecode(response.body);
+    return response?.data;
   }
 
   /// Logs the output of a app request.

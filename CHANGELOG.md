@@ -1,3 +1,8 @@
+## [3.3.3] - 2023-10-05
+
+* Use Dio instead of the **http** library
+* Dependency updates
+
 ## [3.3.2] - 2022-02-20
 
 * Add logo to package.
