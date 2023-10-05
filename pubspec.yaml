@@ -7,7 +7,7 @@ issue_tracker: https://github.com/woosignal/wp-json-api-flutter/issues
 documentation: https://woosignal.com/docs/flutter/wp-json-api
 
 environment:
-  sdk: '>=2.19.0 <3.0.0'
+  sdk: '>=2.19.0 <4.0.0'
   flutter: ">=1.17.0"
 
 dependencies:
