@@ -1,3 +1,9 @@
+## [3.3.4] - 2024-01-01
+
+* Update license date
+* Dependency updates
+* Add GitHub actions
+
 ## [3.3.3] - 2023-10-05
 
 * Use Dio instead of the **http** library
