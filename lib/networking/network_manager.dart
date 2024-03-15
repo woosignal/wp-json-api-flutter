@@ -32,6 +32,8 @@ import 'package:wp_json_api/exceptions/username_taken_exception.dart';
 import 'package:wp_json_api/exceptions/woocommerce_not_found_exception.dart';
 import 'package:wp_json_api/models/responses/wc_customer_info_response.dart';
 import 'package:wp_json_api/models/responses/wc_customer_updated_response.dart';
+import 'package:wp_json_api/models/responses/wc_points_and_rewards_calculate_points.dart';
+import 'package:wp_json_api/models/responses/wc_points_and_rewards_user.dart';
 import 'package:wp_json_api/models/responses/wp_nonce_response.dart';
 import 'package:wp_json_api/models/responses/wp_nonce_verified_response.dart';
 import 'package:wp_json_api/models/responses/wp_user_add_role_response.dart';
@@ -344,6 +346,44 @@ class WPAppNetworkManager {
         : WCCustomerInfoResponse.fromJson(json);
   }
 
+  /// Get the users points and rewards information using the [userToken].
+  ///
+  /// Returns a [WcPointsAndRewardUser] future.
+  /// Throws an [Exception] if fails.
+  Future<WcPointsAndRewardUser> wcPointsAndRewardsUser(String userToken) async {
+    // send http request
+    final json = await _http(
+      method: "POST",
+      url: _urlForRouteType(WPRouteType.WCPointsAndRewardsUser),
+      userToken: userToken,
+    );
+
+    // return response
+    return _jsonHasBadStatus(json)
+        ? this._throwExceptionForStatusCode(json)
+        : WcPointsAndRewardUser.fromJson(json['data']);
+  }
+
+  /// Calculate the value of points using the [userToken] and [points].
+  ///
+  /// Returns a [WcPointsAndRewardCalculatePoints] future.
+  /// Throws an [Exception] if fails.
+  Future<WcPointsAndRewardCalculatePoints> wcPointsAndRewardsCalculatePoints(
+      String userToken,
+      {required double points}) async {
+    // send http request
+    final json = await _http(
+        method: "POST",
+        url: _urlForRouteType(WPRouteType.WCPointsAndRewardsCalculatePoints),
+        userToken: userToken,
+        body: {"points": points});
+
+    // return response
+    return _jsonHasBadStatus(json)
+        ? this._throwExceptionForStatusCode(json)
+        : WcPointsAndRewardCalculatePoints.fromJson(json['data']);
+  }
+
   /// Sends a request to update a users WooCommerce details using
   /// a valid [userToken], set optional parameters for updating user.
   ///
@@ -578,6 +618,14 @@ class WPAppNetworkManager {
       case WPRouteType.WCCustomerUpdateInfo:
         {
           return "/wpapp/wc/$apiVersion/update/user/info";
+        }
+      case WPRouteType.WCPointsAndRewardsUser:
+        {
+          return "/wpapp/wc-points-and-rewards/$apiVersion/user";
+        }
+      case WPRouteType.WCPointsAndRewardsCalculatePoints:
+        {
+          return "/wpapp/wc-points-and-rewards/$apiVersion/calculate_points";
         }
       default:
         {

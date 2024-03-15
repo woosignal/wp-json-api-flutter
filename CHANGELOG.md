@@ -1,3 +1,8 @@
+## [3.3.5] - 2024-03-15
+
+* Added new networking methods for WooCommerce Points and Rewards
+* Dependency updates
+
 ## [3.3.4] - 2024-01-01
 
 * Update license date

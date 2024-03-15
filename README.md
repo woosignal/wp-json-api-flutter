@@ -28,7 +28,7 @@ In your flutter project add the dependency:
 ``` dart 
 dependencies:
   ...
-  wp_json_api: ^3.3.4
+  wp_json_api: ^3.4.0
 ```
 
 ### Usage example #
@@ -238,6 +238,29 @@ WCCustomerUpdatedResponse wcCustomerUpdatedResponse = await WPJsonAPI.instance
             shippingEmail: shippingEmail,
             shippingPhone: shippingPhone
         ));
+```
+
+#### WooCommerce Points and Rewards - Get user's points 
+- This is used to get the user's current points in the [WooCommerce Points and Rewards](https://woo.com/products/woocommerce-points-and-rewards/) plugin
+- The first parameter is the **userToken** which is returned from the login/register response. You should have this saved somewhere e.g. shared_pref
+
+``` dart
+WcPointsAndRewardUser wcPointsAndRewardUser = await WPJsonAPI.instance
+          .api((request) => request.wcPointsAndRewardsUser(
+          userToken
+      ));
+```
+
+#### WooCommerce Points and Rewards - Calculate the value of points
+- This is used to calculate the value of points in the [WooCommerce Points and Rewards](https://woo.com/products/woocommerce-points-and-rewards/) plugin
+- The first parameter is the **userToken** which is returned from the login/register response. You should have this saved somewhere e.g. shared_pref
+
+``` dart
+WcPointsAndRewardCalculatePoints wcPointsAndRewardsCalculatePoints = await WPJsonAPI.instance
+          .api((request) => request.wcPointsAndRewardsCalculatePoints(
+          userToken,
+          points: 100
+      ));
 ```
 
 For help getting started with WooSignal, view our

@@ -61,4 +61,8 @@ enum WPRouteType {
   /// Route type [WPRouteType.WCCustomerUpdateInfo] is used to Update WooCommerce details for a customer.
   /// For WooCommerce
   WCCustomerUpdateInfo,
+
+  WCPointsAndRewardsUser,
+
+  WCPointsAndRewardsCalculatePoints,
 }
