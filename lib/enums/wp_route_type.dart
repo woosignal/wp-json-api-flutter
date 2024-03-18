@@ -62,7 +62,11 @@ enum WPRouteType {
   /// For WooCommerce
   WCCustomerUpdateInfo,
 
+  /// Route type [WPRouteType.WCPointsAndRewardsUser] is used to get a customers points.
+  /// For WooCommerce Points and Rewards
   WCPointsAndRewardsUser,
 
+  /// Route type [WPRouteType.WCPointsAndRewardsUser] is used to get the value of a customers points.
+  /// For WooCommerce Points and Rewards
   WCPointsAndRewardsCalculatePoints,
 }

@@ -29,8 +29,8 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  late TextEditingController _tfEmailController;
-  late TextEditingController _tfPasswordController;
+  TextEditingController _tfEmailController = TextEditingController();
+  TextEditingController _tfPasswordController = TextEditingController();
 
   @override
   void initState() {
@@ -40,10 +40,7 @@ class _MyHomePageState extends State<MyHomePage> {
     // FIRST ON YOUR WORDPRESS STORE
     // LINK https://woosignal.com/plugins/wordpress/wp-json-api
 
-    WPJsonAPI.instance.initWith(baseUrl: "http://mysite.com");
-
-    _tfEmailController = TextEditingController();
-    _tfPasswordController = TextEditingController();
+    WPJsonAPI.instance.init(baseUrl: "http://mysite.com");
   }
 
   _login() async {
@@ -60,24 +57,23 @@ class _MyHomePageState extends State<MyHomePage> {
       print(e);
     }
 
-    if (wpUserLoginResponse != null) {
-      print(wpUserLoginResponse.data?.userToken);
-      print(wpUserLoginResponse.data?.userId);
-
-      // GET USER INFO
-      WPUserInfoResponse? wpUserInfoResponse =
-          await WPJsonAPI.instance.api((request) {
-        return request.wpGetUserInfo(wpUserLoginResponse!.data!.userToken!);
-      });
-
-      if (wpUserInfoResponse != null) {
-        print(wpUserInfoResponse.data?.firstName);
-        print(wpUserInfoResponse.data?.lastName);
-      } else {
-        print("something went wrong");
-      }
-    } else {
+    if (wpUserLoginResponse == null) {
       print("invalid login details");
+      return;
+    }
+
+    print(wpUserLoginResponse.data?.userToken);
+    print(wpUserLoginResponse.data?.userId);
+
+    // GET USER INFO
+    WPUserInfoResponse? wpUserInfoResponse =
+        await WPJsonAPI.instance.api((request) => request.wpGetUserInfo());
+
+    if (wpUserInfoResponse != null) {
+      print(wpUserInfoResponse.data?.firstName);
+      print(wpUserInfoResponse.data?.lastName);
+    } else {
+      print("something went wrong");
     }
   }
 

@@ -13,7 +13,7 @@
 // IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
 // WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 
-import 'package:wp_json_api/networking/network_manager.dart';
+import '/networking/network_manager.dart';
 
 /// The [RequestCallback] is used for calling a method in [WPAppNetworkManager]
 /// This is used on the api method in wp_json_api

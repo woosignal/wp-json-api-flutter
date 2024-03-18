@@ -28,7 +28,7 @@ In your flutter project add the dependency:
 ``` dart 
 dependencies:
   ...
-  wp_json_api: ^3.4.0
+  wp_json_api: ^3.5.0
 ```
 
 ### Usage example #
@@ -45,7 +45,7 @@ import 'package:wp_json_api/wp_json_api.dart';
 
 void main() {
 
-WPJsonAPI.instance.initWith(baseUrl: "https://mysite.com");
+WPJsonAPI.instance.init(baseUrl: "https://mysite.com");
 
 ...
 ```
@@ -115,29 +115,26 @@ WPUserRegisterResponse wpUserRegisterResponse = await WPJsonAPI.instance
       .api((request) => request.wpRegister(
           email: email,
           password: password,
-          username: username
+          // username: username // optional - the library will automatically generate a username if not provided
       ));
 ```
 
 #### WordPress - Get Users Info
 - Used to get a WordPress users info
-- The first parameter is the **userToken** which is returned from the login/register response. You should have this saved somewhere e.g. shared_pref
+- After you login/register, you can all this method to get the users info
 
 ``` dart
 WPUserInfoResponse wpUserInfoResponse = await WPJsonAPI.instance
-        .api((request) => request.wpGetUserInfo(
-            userToken
-          ));
+        .api((request) => request.wpGetUserInfo());
 ```
 
 #### WordPress - Update Users Info
 - Used to update a WordPress users info
-- The first parameter is the **userToken** which is returned from the login/register response. You should have this saved somewhere e.g. shared_pref
+- After you login/register, you can all this method to update the users info
 
 ``` dart
 WPUserInfoUpdatedResponse wpUserInfoUpdatedResponse = await WPJsonAPI.instance
         .api((request) => request.wpUpdateUserInfo(
-          userToken,
           firstName: firstName,
           lastName: lastName,
           displayName: displayName
@@ -146,55 +143,61 @@ WPUserInfoUpdatedResponse wpUserInfoUpdatedResponse = await WPJsonAPI.instance
 
 #### WordPress - Update users password
 - Used to update a users password
-- The first parameter is the **userToken** which is returned from the login/register response. You should have this saved somewhere e.g. shared_pref
+- After you login/register, you can all this method to update the users password
 
 ``` dart
 WPUserResetPasswordResponse wpUserResetPasswordResponse = await WPJsonAPI.instance
         .api((request) => request.wpResetPassword(
-            userToken,
             password: password
         ));
 ```
 
 #### WordPress - Add a role to a user
 - Used to add a role to a user in WordPress
-- The first parameter is the **userToken** which is returned from the login/register response. You should have this saved somewhere e.g. shared_pref
+- After you login/register, you can all this method to add a role to the user
 
 ``` dart
 WPUserAddRoleResponse wpUserAddRoleResponse = await WPJsonAPI.instance
         .api((request) => request.wpUserAddRole(
-            userToken,
             role: "customer" // e.g. customer, subscriber
         ));
 ```
 
 #### WordPress - Remove a role from a user
 - Used to remove a role from a user in WordPress
-- The first parameter is the **userToken** which is returned from the login/register response. You should have this saved somewhere e.g. shared_pref
+- After you login/register, you can all this method to remove a role from the user
 
 ``` dart
 WPUserRemoveRoleResponse wpUserRemoveRoleResponse = await WPJsonAPI.instance
         .api((request) => request.wpUserRemoveRole(
-            userToken,
             role: "customer" // e.g. customer, subscriber
         ));
 ```
 
 #### WordPress - Delete a user
 - Used to delete a user in WordPress
-- The first parameter is the **userToken** which is returned from the login/register response. You should have this saved somewhere e.g. shared_pref
+- After you login/register, you can all this method to delete the user
 - You can pass an optional argument 'reassign' to reassign posts and links to new User ID.
 
 ``` dart
 WPUserDeleteResponse wpUserDeleteResponse = await WPJsonAPI.instance
-        .api((request) => request.wpUserDelete(
-            userToken
-        ));
+        .api((request) => request.wpUserDelete());
+```
+
+#### WooCommerce - Register
+- Used to register a user
+
+``` dart
+WPUserRegisterResponse wpUserRegisterResponse = await WPJsonAPI.instance
+      .api((request) => request.wpRegister(
+          email: email,
+          password: password
+      ));
 ```
 
 #### WooCommerce - Get users info in WooCommerce
 - Used to get WooCommerce info for a given user
-- The first parameter is the **userToken** which is returned from the login/register response. You should have this saved somewhere e.g. shared_pref
+- After you login/register, you can all this method to get the users WooCommerce info
 
 ``` dart
 WCCustomerInfoResponse wcCustomerInfoResponse = await WPJsonAPI.instance
@@ -206,12 +209,11 @@ WCCustomerInfoResponse wcCustomerInfoResponse = await WPJsonAPI.instance
 #### WooCommerce - Update users info in WooCommerce
 - Used to update a users WooCommerce details
 - All the parameter are optional so if you wanted to just update the name, you could just add first_name and last_name
-- The first parameter is the **userToken** which is returned from the login/register response. You should have this saved somewhere e.g. shared_pref
+- After you login/register, you can all this method to update the users WooCommerce info
 
 ``` dart
 WCCustomerUpdatedResponse wcCustomerUpdatedResponse = await WPJsonAPI.instance
         .api((request) => request.wcUpdateCustomerInfo(
-            userToken,
             firstName: firstName,
             lastName: lastName,
             displayName: displayName,
@@ -242,23 +244,20 @@ WCCustomerUpdatedResponse wcCustomerUpdatedResponse = await WPJsonAPI.instance
 
 #### WooCommerce Points and Rewards - Get user's points 
 - This is used to get the user's current points in the [WooCommerce Points and Rewards](https://woo.com/products/woocommerce-points-and-rewards/) plugin
-- The first parameter is the **userToken** which is returned from the login/register response. You should have this saved somewhere e.g. shared_pref
+- After you login/register, you can all this method to get the users points
 
 ``` dart
 WcPointsAndRewardUser wcPointsAndRewardUser = await WPJsonAPI.instance
-          .api((request) => request.wcPointsAndRewardsUser(
-          userToken
-      ));
+          .api((request) => request.wcPointsAndRewardsUser());
 ```
 
 #### WooCommerce Points and Rewards - Calculate the value of points
 - This is used to calculate the value of points in the [WooCommerce Points and Rewards](https://woo.com/products/woocommerce-points-and-rewards/) plugin
-- The first parameter is the **userToken** which is returned from the login/register response. You should have this saved somewhere e.g. shared_pref
+- After you login/register, you can all this method to calculate the value of points
 
 ``` dart
 WcPointsAndRewardCalculatePoints wcPointsAndRewardsCalculatePoints = await WPJsonAPI.instance
           .api((request) => request.wcPointsAndRewardsCalculatePoints(
-          userToken,
           points: 100
       ));
 ```
@@ -270,6 +269,6 @@ For help getting started with WooSignal, view our
 To use this plugin, add `wp_json_api` as a [dependency in your pubspec.yaml file](https://flutter.io/platform-plugins/).
 
 ## Note
-Install our WordPress plugin "[WP JSON API](https://woosignal.com/plugins/wordpress/wp-json-api)" v3.3.2 to use this flutter plugin.
+Install our WordPress plugin "[WP JSON API](https://woosignal.com/plugins/wordpress/wp-json-api)" v3.4.0 to use this flutter plugin.
 
 Disclaimer: This plugin is not affiliated with or supported by Automattic, Inc. All logos and trademarks are the property of their respective owners.

@@ -13,7 +13,7 @@
 // IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
 // WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 
-import 'package:wp_json_api/enums/wp_meta_data_action_type.dart';
+import '/enums/wp_meta_data_action_type.dart';
 
 class WpMetaData {
   String? key;

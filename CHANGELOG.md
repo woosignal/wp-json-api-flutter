@@ -1,3 +1,23 @@
+## [3.5.0] - 2024-03-18
+
+* Breaking change `WPJsonAPI.initWith` is now `WPJsonAPI.init`
+* Refactor project
+* Ability to save user token for future requests
+* New WpUser model for user data
+* New wcRegister method for networking class
+* Add more data to `WpUserLoginResponse` and `WpUserInfoResponse`
+* Added `version` to `WpJsonAPI` class
+* New `WPJsonAPI.wpLogin` method to login a user
+* New `WPJsonAPI.wpLogout` method to logout a user
+* New `WPJsonAPI.wpUserLoggedIn` method to check if a user is logged in
+* New `WPJsonAPI.wpUser` method to get the current user
+* New `WPJsonAPI.wpUserId` method to get the current user's ID
+* New `WPJsonAPI.wpUserToken` method to get the current user's token
+* New `WPJsonAPI.wpAuth` method to authenticate the previously logged in user 
+* Added Storage key to `WPJsonAPI` class
+* New docs added to Readme
+* Dependency updates
+
 ## [3.4.0] - 2024-03-15
 
 * Added new networking methods for WooCommerce Points and Rewards

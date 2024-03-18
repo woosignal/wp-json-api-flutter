@@ -41,13 +41,46 @@ class Data {
   int? userId;
   String? userToken;
   int? expiry;
+  String? email;
+  String? username;
+  String? firstName;
+  String? lastName;
+  String? avatar;
+  String? createdAt;
 
-  Data({this.userId, this.userToken, this.expiry});
+  Data(
+      {this.userId,
+      this.userToken,
+      this.expiry,
+      this.email,
+      this.username,
+      this.firstName,
+      this.lastName,
+      this.avatar,
+      this.createdAt});
 
   Data.fromJson(Map<String, dynamic> json) {
     userId = json['user_id'];
     userToken = json['user_token'];
     expiry = json['expiry'];
+    if (json.containsKey('email')) {
+      email = json['email'];
+    }
+    if (json.containsKey('username')) {
+      username = json['username'];
+    }
+    if (json.containsKey('first_name')) {
+      firstName = json['first_name'];
+    }
+    if (json.containsKey('last_name')) {
+      lastName = json['last_name'];
+    }
+    if (json.containsKey('avatar')) {
+      avatar = json['avatar'];
+    }
+    if (json.containsKey('created_at')) {
+      createdAt = json['created_at'];
+    }
   }
 
   Map<String, dynamic> toJson() {
@@ -55,6 +88,12 @@ class Data {
     data['user_id'] = this.userId;
     data['user_token'] = this.userToken;
     data['expiry'] = this.expiry;
+    data['email'] = this.email;
+    data['username'] = this.username;
+    data['first_name'] = this.firstName;
+    data['last_name'] = this.lastName;
+    data['avatar'] = this.avatar;
+    data['created_at'] = this.createdAt;
     return data;
   }
 }
