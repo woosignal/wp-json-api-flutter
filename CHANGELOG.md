@@ -1,3 +1,7 @@
+## [3.5.1] - 2024-03-21
+
+* Dependency updates
+
 ## [3.5.0] - 2024-03-18
 
 * Breaking change `WPJsonAPI.initWith` is now `WPJsonAPI.init`
