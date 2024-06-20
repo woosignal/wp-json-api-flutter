@@ -1,3 +1,8 @@
+## [3.5.11] - 2024-06-21
+
+* Readme update
+* Dependency updates
+
 ## [3.5.10] - 2024-06-15
 
 * Dependency updates

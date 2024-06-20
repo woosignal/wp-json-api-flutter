@@ -1,6 +1,8 @@
 # WordPress and WooCommerce JSON API Dart package for Flutter
 
-[Official WooSignal package](https://woosignal.com)
+You can download the WordPress plugin here [WP JSON API](https://woosignal.gumroad.com/l/wp-json-api).
+
+Install the WordPress plugin to use this Flutter package.
 
 ## API features:
 
@@ -28,7 +30,7 @@ In your flutter project add the dependency:
 ``` dart 
 dependencies:
   ...
-  wp_json_api: ^3.5.10
+  wp_json_api: ^3.5.11
 ```
 
 ### Usage example #

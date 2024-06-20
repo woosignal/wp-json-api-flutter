@@ -69,10 +69,10 @@ packages:
     dependency: transitive
     description:
       name: error_stack
-      sha256: cb189baf478bb896f204485fe6633728eacde26aa944ba9744e501f8a84901a4
+      sha256: "4a42065d1b3e82e60754ce2e4c462a558d376d6c584c45a7f56c5ab88c896ec9"
       url: "https://pub.dev"
     source: hosted
-    version: "1.7.1"
+    version: "1.7.3"
   fake_async:
     dependency: transitive
     description:
@@ -273,10 +273,10 @@ packages:
     dependency: transitive
     description:
       name: nylo_support
-      sha256: "1d7202461d501031491b1a614bce288ab8becf72d52c8ab9a47e8096dbfc12ba"
+      sha256: "56d7f9f598715320a2ff95050b0d138b9bd0b108d3eb549160869ec64ac609ed"
       url: "https://pub.dev"
     source: hosted
-    version: "5.75.3"
+    version: "5.76.0"
   page_transition:
     dependency: transitive
     description:
@@ -632,7 +632,7 @@ packages:
       path: ".."
       relative: true
     source: path
-    version: "3.5.10"
+    version: "3.5.11"
   xdg_directories:
     dependency: transitive
     description:
