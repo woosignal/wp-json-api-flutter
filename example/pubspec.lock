@@ -17,6 +17,22 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.11.0"
+  base58check:
+    dependency: transitive
+    description:
+      name: base58check
+      sha256: "6c300dfc33e598d2fe26319e13f6243fea81eaf8204cb4c6b69ef20a625319a5"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.0"
+  bech32:
+    dependency: transitive
+    description:
+      name: bech32
+      sha256: "156cbace936f7720c79a79d16a03efad343b1ef17106716e04b8b8e39f99f7f7"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.2.2"
   boolean_selector:
     dependency: transitive
     description:
@@ -49,6 +65,30 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.18.0"
+  convert:
+    dependency: transitive
+    description:
+      name: convert
+      sha256: "0f08b14755d163f6e2134cb58222dd25ea2a2ee8a195e53983d57c075324d592"
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.1.1"
+  crypto:
+    dependency: transitive
+    description:
+      name: crypto
+      sha256: ff625774173754681d66daaf4a448684fb04b78f902da9cb3d308c19cc5e8bab
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.0.3"
+  date_field:
+    dependency: transitive
+    description:
+      name: date_field
+      sha256: "8643c8e5f2ee55b4b389fc567ee27186c5a63570f545b291d61f02ab6ca7981d"
+      url: "https://pub.dev"
+    source: hosted
+    version: "5.2.1"
   dio:
     dependency: transitive
     description:
@@ -69,10 +109,10 @@ packages:
     dependency: transitive
     description:
       name: error_stack
-      sha256: "4a42065d1b3e82e60754ce2e4c462a558d376d6c584c45a7f56c5ab88c896ec9"
+      sha256: "608c9165184a7ffc10b6b41a72392f6c4e51dd300f3b8746944430b1094c6e37"
       url: "https://pub.dev"
     source: hosted
-    version: "1.7.3"
+    version: "1.8.0"
   fake_async:
     dependency: transitive
     description:
@@ -115,6 +155,14 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_multi_formatter:
+    dependency: transitive
+    description:
+      name: flutter_multi_formatter
+      sha256: "3495dc0056c96e467039a05bd184a5285c271a0efb2024a7030c7e84ba828994"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.12.8"
   flutter_secure_storage:
     dependency: transitive
     description:
@@ -273,10 +321,10 @@ packages:
     dependency: transitive
     description:
       name: nylo_support
-      sha256: "56d7f9f598715320a2ff95050b0d138b9bd0b108d3eb549160869ec64ac609ed"
+      sha256: a5f17989b13577f10111dd9ea6d2bacb31bc0c7be4e8786acf93be248e0c01fe
       url: "https://pub.dev"
     source: hosted
-    version: "5.76.0"
+    version: "5.79.1"
   page_transition:
     dependency: transitive
     description:
@@ -385,10 +433,10 @@ packages:
     dependency: transitive
     description:
       name: rxdart
-      sha256: "0c7c0cedd93788d996e33041ffecda924cc54389199cde4e6a34b440f50044cb"
+      sha256: "5c3004a4a8dbb94bd4bf5412a4def4acdaa12e12f269737a5751369e12d1a962"
       url: "https://pub.dev"
     source: hosted
-    version: "0.27.7"
+    version: "0.28.0"
   shared_preferences:
     dependency: transitive
     description:
@@ -632,7 +680,7 @@ packages:
       path: ".."
       relative: true
     source: path
-    version: "3.5.11"
+    version: "3.5.12"
   xdg_directories:
     dependency: transitive
     description:
