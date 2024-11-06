@@ -16,13 +16,13 @@
 library wp_json_api;
 
 import 'package:nylo_support/helpers/auth.dart';
-import 'package:nylo_support/helpers/helper.dart';
+import 'package:nylo_support/local_storage/local_storage.dart';
 import '/helpers/typedefs.dart';
 import '/models/wp_user.dart';
 import '/networking/network_manager.dart';
 
 /// The version of the wp_json_api
-String _wpJsonAPIVersion = "3.5.13";
+String _wpJsonAPIVersion = "4.0.0";
 
 /// The base class to initialize and use WPJsonAPI
 class WPJsonAPI {
@@ -59,18 +59,21 @@ class WPJsonAPI {
 
   /// Login a user with the [WpUser]
   static wpLogin(WpUser wpUser) async {
-    await Auth.set(wpUser, key: storageKey());
+    await Auth.authenticate(data: wpUser);
   }
 
   /// Logout a user
   static wpLogout() async {
-    await Auth.remove(key: storageKey());
+    await Auth.logout();
   }
 
   /// Authenticate a user if they are logged in
   static wpAuth() async {
-    await Auth.loginModel(
-        WPJsonAPI.storageKey(), (data) => WpUser.fromJson(data));
+    final data = await storageRead(WPJsonAPI.storageKey());
+    if (data != null) {
+      return WpUser.fromJson(data);
+    }
+    return null;
   }
 
   /// Check if a user is logged in

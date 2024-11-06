@@ -18,7 +18,7 @@ import 'dart:io';
 import 'dart:math' as math;
 
 import 'package:dio/dio.dart';
-import 'package:nylo_support/helpers/helper.dart';
+import 'package:nylo_support/local_storage/local_storage.dart';
 import '/enums/wp_auth_type.dart';
 import '/exceptions/empty_username_exception.dart';
 import '/exceptions/existing_user_email_exception.dart';

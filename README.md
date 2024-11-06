@@ -30,7 +30,7 @@ In your flutter project add the dependency:
 ``` dart 
 dependencies:
   ...
-  wp_json_api: ^3.5.13
+  wp_json_api: ^4.0.0
 ```
 
 ### Usage example #

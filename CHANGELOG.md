@@ -1,3 +1,8 @@
+## [4.0.0] - 2024-11-06
+
+* Update package to use nylo_support v6
+* Dependency updates
+
 ## [3.5.13] - 2024-07-14
 
 * Dependency updates
