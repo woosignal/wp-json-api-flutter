@@ -401,10 +401,10 @@ packages:
     dependency: transitive
     description:
       name: nylo_support
-      sha256: "576feb801809c241ea2da1bcf129d7474df280d109d0a68818f88a0cf1c2b3e1"
+      sha256: c09660e5c163a4cf14f2e7978d721a0e9ba8bb8bf82c5b1351198ea03836a312
       url: "https://pub.dev"
     source: hosted
-    version: "6.1.0"
+    version: "6.1.1"
   path:
     dependency: transitive
     description:
@@ -784,7 +784,7 @@ packages:
       path: ".."
       relative: true
     source: path
-    version: "4.0.0"
+    version: "4.0.1"
   xdg_directories:
     dependency: transitive
     description:
