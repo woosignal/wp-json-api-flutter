@@ -1,3 +1,7 @@
+## [4.0.3] - 2024-11-25
+
+* Dependency updates
+
 ## [4.0.2] - 2024-11-23
 
 * Dependency updates
