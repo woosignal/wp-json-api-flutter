@@ -1,3 +1,7 @@
+## [4.0.5] - 2024-11-27
+
+* Fix `wpAuth` method
+
 ## [4.0.4] - 2024-11-27
 
 * Fix auth issue

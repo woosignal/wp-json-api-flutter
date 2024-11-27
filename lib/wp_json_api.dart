@@ -23,7 +23,7 @@ import '/models/wp_user.dart';
 import '/networking/network_manager.dart';
 
 /// The version of the wp_json_api
-String _wpJsonAPIVersion = "4.0.4";
+String _wpJsonAPIVersion = "4.0.5";
 
 /// The base class to initialize and use WPJsonAPI
 class WPJsonAPI {
@@ -76,9 +76,9 @@ class WPJsonAPI {
   }
 
   /// Authenticate a user if they are logged in
-  static wpAuth() async {
+  static Future<WpUser?> wpAuth() async {
     final data = await storageRead(WPJsonAPI.storageKey());
-    if (data != null) return null;
+    if (data == null) return null;
     return WpUser.fromJson(data);
   }
 
