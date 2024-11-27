@@ -17,12 +17,13 @@ library wp_json_api;
 
 import 'package:nylo_support/helpers/auth.dart';
 import 'package:nylo_support/local_storage/local_storage.dart';
+import 'package:nylo_support/nylo.dart';
 import '/helpers/typedefs.dart';
 import '/models/wp_user.dart';
 import '/networking/network_manager.dart';
 
 /// The version of the wp_json_api
-String _wpJsonAPIVersion = "4.0.3";
+String _wpJsonAPIVersion = "4.0.4";
 
 /// The base class to initialize and use WPJsonAPI
 class WPJsonAPI {
@@ -51,10 +52,17 @@ class WPJsonAPI {
   init(
       {required String baseUrl,
       String wpJsonPath = '/wp-json',
-      bool shouldDebug = true}) {
+      bool shouldDebug = true,
+      bool nylo = false}) {
     _setBaseApi(baseUrl: baseUrl);
     _setApiPath(path: wpJsonPath);
     _setShouldDebug(value: shouldDebug);
+
+    // nylo setup
+    if (!nylo) {
+      Nylo.package();
+      Nylo.instance.addAuthKey(storageKey());
+    }
   }
 
   /// Login a user with the [WpUser]
@@ -70,21 +78,14 @@ class WPJsonAPI {
   /// Authenticate a user if they are logged in
   static wpAuth() async {
     final data = await storageRead(WPJsonAPI.storageKey());
-    if (data != null) {
-      return WpUser.fromJson(data);
-    }
-    return null;
+    if (data != null) return null;
+    return WpUser.fromJson(data);
   }
 
   /// Check if a user is logged in
   static Future<bool> wpUserLoggedIn() async {
     WpUser? _wpUser = await wpUser();
-    if (_wpUser == null) {
-      return false;
-    }
-    if (_wpUser.token == null) {
-      return false;
-    }
+    if (_wpUser?.token == null) return false;
     return true;
   }
 

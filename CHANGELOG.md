@@ -1,3 +1,8 @@
+## [4.0.4] - 2024-11-27
+
+* Fix auth issue
+* Dependency updates
+
 ## [4.0.3] - 2024-11-25
 
 * Dependency updates

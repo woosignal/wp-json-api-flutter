@@ -400,10 +400,9 @@ packages:
   nylo_support:
     dependency: transitive
     description:
-      name: nylo_support
-      sha256: "7707ecaba8cee2defec4e0609d0e73e6b08a52b3432f6c5a373de6581fe973a9"
-      url: "https://pub.dev"
-    source: hosted
+      path: "/Users/anthony/StudioProjects/support"
+      relative: false
+    source: path
     version: "6.6.0"
   path:
     dependency: transitive
@@ -784,7 +783,7 @@ packages:
       path: ".."
       relative: true
     source: path
-    version: "4.0.3"
+    version: "4.0.4"
   xdg_directories:
     dependency: transitive
     description:
