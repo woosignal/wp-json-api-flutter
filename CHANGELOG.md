@@ -1,3 +1,8 @@
+## [4.1.0] - 2024-12-16
+
+* Update `init` for package
+* Dependency updates
+
 ## [4.0.5] - 2024-11-27
 
 * Fix `wpAuth` method

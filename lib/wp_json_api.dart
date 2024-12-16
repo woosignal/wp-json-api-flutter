@@ -23,7 +23,7 @@ import '/models/wp_user.dart';
 import '/networking/network_manager.dart';
 
 /// The version of the wp_json_api
-String _wpJsonAPIVersion = "4.0.5";
+String _wpJsonAPIVersion = "4.1.0";
 
 /// The base class to initialize and use WPJsonAPI
 class WPJsonAPI {
@@ -53,15 +53,14 @@ class WPJsonAPI {
       {required String baseUrl,
       String wpJsonPath = '/wp-json',
       bool shouldDebug = true,
-      bool nylo = false}) {
+      Nylo? nylo}) {
     _setBaseApi(baseUrl: baseUrl);
     _setApiPath(path: wpJsonPath);
     _setShouldDebug(value: shouldDebug);
 
     // nylo setup
-    if (!nylo) {
-      Nylo.package();
-      Nylo.instance.addAuthKey(storageKey());
+    if (nylo != null) {
+      nylo.addAuthKey(storageKey());
     }
   }
 
