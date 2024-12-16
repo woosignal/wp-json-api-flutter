@@ -1,6 +1,7 @@
 ## [4.1.0] - 2024-12-16
 
 * Update `init` for package
+* Support Nylo v6
 * Dependency updates
 
 ## [4.0.5] - 2024-11-27
