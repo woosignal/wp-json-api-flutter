@@ -1,3 +1,8 @@
+## [4.2.0] - 2024-12-31
+
+* Update copyright year
+* Dependency updates
+
 ## [4.1.0] - 2024-12-16
 
 * Update `init` for package
