@@ -1,3 +1,7 @@
+## [4.2.1] - 2025-01-05
+
+* Dependency updates
+
 ## [4.2.0] - 2024-12-31
 
 * Update copyright year
