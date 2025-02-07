@@ -5,10 +5,10 @@ packages:
     dependency: transitive
     description:
       name: animate_do
-      sha256: "7a3162729f0ea042f9dd84da217c5bde5472ad9cef644079929d4304a5dc4ca0"
+      sha256: f517dec9c98c1ea2c6e82e172ac138f6b102394a8e843b74bd18f665858e8c1c
       url: "https://pub.dev"
     source: hosted
-    version: "3.3.4"
+    version: "3.3.7"
   app_badge_plus:
     dependency: transitive
     description:
@@ -101,10 +101,10 @@ packages:
     dependency: transitive
     description:
       name: date_field
-      sha256: "921246e5e8fb8e22c82e234de48dde27f9c739071a38dac666258909fd2f7b14"
+      sha256: "5714b1ac0ba1c860877b3040601a6fd20cb846042c9ae6d8216ffede422d43d1"
       url: "https://pub.dev"
     source: hosted
-    version: "6.0.0"
+    version: "6.0.3+1"
   dbus:
     dependency: transitive
     description:
@@ -117,10 +117,10 @@ packages:
     dependency: transitive
     description:
       name: dio
-      sha256: "5598aa796bbf4699afd5c67c0f5f6e2ed542afc956884b9cd58c306966efc260"
+      sha256: "253a18bbd4851fecba42f7343a1df3a9a4c1d31a2c1b37e221086b4fa8c8dbc9"
       url: "https://pub.dev"
     source: hosted
-    version: "5.7.0"
+    version: "5.8.0+1"
   dio_web_adapter:
     dependency: transitive
     description:
@@ -141,10 +141,10 @@ packages:
     dependency: transitive
     description:
       name: error_stack
-      sha256: "9b4b685fbee04cc4a72f0791663caac5838585d32f83e15ab64f9c8957ec506b"
+      sha256: ffa61cf73940d61d501c97d14421a2ad7d3a2809fa38bb5c81ef3acee6f131a0
       url: "https://pub.dev"
     source: hosted
-    version: "1.10.1"
+    version: "1.10.2"
   fake_async:
     dependency: transitive
     description:
@@ -231,10 +231,10 @@ packages:
     dependency: transitive
     description:
       name: flutter_secure_storage
-      sha256: "1913841ac4c7bf57cd2e05b717e1fbff7841b542962feff827b16525a781b3e4"
+      sha256: "9cad52d75ebc511adfae3d447d5d13da15a55a92c9410e50f67335b6d21d16ea"
       url: "https://pub.dev"
     source: hosted
-    version: "9.2.3"
+    version: "9.2.4"
   flutter_secure_storage_linux:
     dependency: transitive
     description:
@@ -300,10 +300,10 @@ packages:
     dependency: transitive
     description:
       name: flutter_timezone
-      sha256: "6e6a0a9d0dfc049b209e01e1dee3efd5ff2ddf2375e9de86589761b244eb5a5f"
+      sha256: bc286cecb0366d88e6c4644e3962ebd1ce1d233abc658eb1e0cd803389f84b64
       url: "https://pub.dev"
     source: hosted
-    version: "4.0.0"
+    version: "4.1.0"
   flutter_web_plugins:
     dependency: transitive
     description: flutter
@@ -313,10 +313,10 @@ packages:
     dependency: transitive
     description:
       name: get_time_ago
-      sha256: "0f50a87080a720f5491266a3f7c79109f95943decd10b66c84b5aef802f1d959"
+      sha256: "1bf7bebe32e070e2a5aa9a84ee401c88895de337e9e168e70416ec3373771243"
       url: "https://pub.dev"
     source: hosted
-    version: "2.1.1"
+    version: "2.2.0"
   http:
     dependency: transitive
     description:
@@ -409,10 +409,10 @@ packages:
     dependency: transitive
     description:
       name: nylo_support
-      sha256: "147b6c332042f3fde89a1eca43e1fa5f78269c2b3fda8a0af40843b9eefe5ea2"
+      sha256: fcec6528167d8ca4d0c8b3f989b1202f4ea5fdc8487826ba1517adb95574a94c
       url: "https://pub.dev"
     source: hosted
-    version: "6.14.3"
+    version: "6.19.1"
   path:
     dependency: transitive
     description:
@@ -585,10 +585,10 @@ packages:
     dependency: transitive
     description:
       name: skeletonizer
-      sha256: "3b202e4fa9c49b017d368fb0e570d4952bcd19972b67b2face071bdd68abbfae"
+      sha256: "0dcacc51c144af4edaf37672072156f49e47036becbc394d7c51850c5c1e884b"
       url: "https://pub.dev"
     source: hosted
-    version: "1.4.2"
+    version: "1.4.3"
   sky_engine:
     dependency: transitive
     description: flutter
@@ -792,7 +792,7 @@ packages:
       path: ".."
       relative: true
     source: path
-    version: "4.2.1"
+    version: "4.2.2"
   xdg_directories:
     dependency: transitive
     description:
