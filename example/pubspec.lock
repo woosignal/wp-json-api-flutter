@@ -194,10 +194,10 @@ packages:
     dependency: transitive
     description:
       name: flutter_local_notifications
-      sha256: d59eeafd6df92174b1d5f68fc9d66634c97ce2e7cfe2293476236547bb19bbbd
+      sha256: ebc86e2ff6a9ca5bc1943e675fef02b5ddaa1a99b4ef980cac576fcfc65959aa
       url: "https://pub.dev"
     source: hosted
-    version: "19.0.0"
+    version: "19.2.0"
   flutter_local_notifications_linux:
     dependency: transitive
     description:
@@ -236,7 +236,7 @@ packages:
     source: hosted
     version: "2.13.7"
   flutter_secure_storage:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: flutter_secure_storage
       sha256: "9cad52d75ebc511adfae3d447d5d13da15a55a92c9410e50f67335b6d21d16ea"
@@ -417,10 +417,10 @@ packages:
     dependency: transitive
     description:
       name: nylo_support
-      sha256: b7f3ca15e933dcec3d43ea1ae7d4bf332531e66f21291cce1ddad9da58835e8b
+      sha256: "18f7ed3ce72ebece1b3739f2c78dc263055dce04d3e5b395bd8debd8412444fc"
       url: "https://pub.dev"
     source: hosted
-    version: "6.25.1"
+    version: "6.28.3"
   path:
     dependency: transitive
     description:
@@ -670,10 +670,10 @@ packages:
     dependency: transitive
     description:
       name: timezone
-      sha256: ffc9d5f4d1193534ef051f9254063fa53d588609418c84299956c3db9383587d
+      sha256: dd14a3b83cfd7cb19e7888f1cbc20f258b8d71b54c06f79ac585f14093a287d1
       url: "https://pub.dev"
     source: hosted
-    version: "0.10.0"
+    version: "0.10.1"
   typed_data:
     dependency: transitive
     description:
@@ -800,7 +800,7 @@ packages:
       path: ".."
       relative: true
     source: path
-    version: "4.3.1"
+    version: "4.3.2"
   xdg_directories:
     dependency: transitive
     description:

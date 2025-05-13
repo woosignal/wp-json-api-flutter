@@ -15,6 +15,9 @@
 
 library wp_json_api;
 
+import 'dart:convert';
+
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:nylo_support/helpers/auth.dart';
 import 'package:nylo_support/local_storage/local_storage.dart';
 import 'package:nylo_support/nylo.dart';
@@ -23,7 +26,7 @@ import '/models/wp_user.dart';
 import '/networking/network_manager.dart';
 
 /// The version of the wp_json_api
-String _wpJsonAPIVersion = "4.3.1";
+String _wpJsonAPIVersion = "4.3.2";
 
 /// The base class to initialize and use WPJsonAPI
 class WPJsonAPI {
@@ -45,6 +48,9 @@ class WPJsonAPI {
   /// The version
   static String get version => _wpJsonAPIVersion;
 
+  /// Check if Nylo is enabled
+  bool _isNyloEnabled = false;
+
   /// Initialize and configure class interface.
   /// You can optional set [shouldDebug] == false to stop debugging
   /// [wpJsonPath] is the root path for accessing you sites WordPress APIs
@@ -53,7 +59,7 @@ class WPJsonAPI {
       {required String baseUrl,
       String wpJsonPath = '/wp-json',
       bool shouldDebug = true,
-      Nylo? nylo}) {
+      Nylo? nylo}) async {
     _setBaseApi(baseUrl: baseUrl);
     _setApiPath(path: wpJsonPath);
     _setShouldDebug(value: shouldDebug);
@@ -62,20 +68,43 @@ class WPJsonAPI {
     if (nylo != null) {
       nylo.addAuthKey(storageKey());
     }
+
+    _isNyloEnabled = nylo != null;
   }
+
+  /// Returns the secure storage instance
+  static FlutterSecureStorage storage = const FlutterSecureStorage();
 
   /// Login a user with the [WpUser]
   static wpLogin(WpUser wpUser) async {
+    if (!WPJsonAPI.instance._isNyloEnabled) {
+      await storage.write(
+        key: WPJsonAPI.storageKey(),
+        value: jsonEncode(wpUser.toJson()),
+      );
+      return;
+    }
     await Auth.authenticate(data: wpUser);
   }
 
   /// Logout a user
   static wpLogout() async {
+    if (!WPJsonAPI.instance._isNyloEnabled) {
+      await storage.delete(key: WPJsonAPI.storageKey());
+      return;
+    }
     await Auth.logout();
   }
 
   /// Authenticate a user if they are logged in
   static Future<WpUser?> wpAuth() async {
+    if (!WPJsonAPI.instance._isNyloEnabled) {
+      String? data = await storage.read(key: WPJsonAPI.storageKey());
+      if (data == null) return null;
+      Map<String, dynamic> json = jsonDecode(data);
+      if (json.isEmpty) return null;
+      return WpUser.fromJson(json);
+    }
     final data = await storageRead(WPJsonAPI.storageKey());
     if (data == null) return null;
     return WpUser.fromJson(data);
@@ -83,6 +112,15 @@ class WPJsonAPI {
 
   /// Check if a user is logged in
   static Future<bool> wpUserLoggedIn() async {
+    if (!WPJsonAPI.instance._isNyloEnabled) {
+      String? data = await storage.read(key: WPJsonAPI.storageKey());
+      if (data == null) return false;
+      Map<String, dynamic> json = jsonDecode(data);
+      if (json.isEmpty) return false;
+      WpUser wpUser = WpUser.fromJson(json);
+      if (wpUser.token == null) return false;
+      return true;
+    }
     WpUser? _wpUser = await wpUser();
     if (_wpUser?.token == null) return false;
     return true;
@@ -90,6 +128,13 @@ class WPJsonAPI {
 
   /// Returns the logged in user
   static Future<WpUser?> wpUser() async {
+    if (!WPJsonAPI.instance._isNyloEnabled) {
+      String? data = await storage.read(key: WPJsonAPI.storageKey());
+      if (data == null) return null;
+      Map<String, dynamic> json = jsonDecode(data);
+      if (json.isEmpty) return null;
+      return WpUser.fromJson(json);
+    }
     return await NyStorage.read<WpUser>(storageKey(), modelDecoders: {
       WpUser: (json) => WpUser.fromJson(json),
     });
@@ -97,12 +142,28 @@ class WPJsonAPI {
 
   /// Returns the user ID of the logged in user
   static Future<String?> wpUserId() async {
+    if (!WPJsonAPI.instance._isNyloEnabled) {
+      String? data = await storage.read(key: WPJsonAPI.storageKey());
+      if (data == null) return null;
+      Map<String, dynamic> json = jsonDecode(data);
+      if (json.isEmpty) return null;
+      WpUser wpUser = WpUser.fromJson(json);
+      return wpUser.id.toString();
+    }
     WpUser? _wpUser = await wpUser();
     return _wpUser?.id.toString();
   }
 
   /// Get the token for the user
   static Future<String?> wpUserToken() async {
+    if (!WPJsonAPI.instance._isNyloEnabled) {
+      String? data = await storage.read(key: WPJsonAPI.storageKey());
+      if (data == null) return null;
+      Map<String, dynamic> json = jsonDecode(data);
+      if (json.isEmpty) return null;
+      WpUser wpUser = WpUser.fromJson(json);
+      return wpUser.token;
+    }
     WpUser? _wpUser = await wpUser();
     if (_wpUser == null) return null;
     return _wpUser.token;
