@@ -1,3 +1,7 @@
+## [4.3.4] - 2025-07-17
+
+* Dependency updates
+
 ## [4.3.3] - 2025-05-23
 
 * Dependency updates
