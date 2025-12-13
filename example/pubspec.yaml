@@ -9,7 +9,6 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  flutter_secure_storage: ^9.2.4
 
 dev_dependencies:
   flutter_test:
@@ -19,5 +18,4 @@ dev_dependencies:
     path: ../
 
 flutter:
-
   uses-material-design: true
