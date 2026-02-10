@@ -1,4 +1,4 @@
-// Copyright (c) 2025, WooSignal Ltd.
+// Copyright (c) 2026, WooSignal
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms are permitted
@@ -21,19 +21,19 @@ class WPNonceVerifiedResponse {
   WPNonceVerifiedResponse({this.data, this.message, this.status});
 
   WPNonceVerifiedResponse.fromJson(Map<String, dynamic> json) {
-    data = json['data'] != null ? new Data.fromJson(json['data']) : null;
+    data = json['data'] != null ? Data.fromJson(json['data']) : null;
     message = json['message'];
     status = json['status'];
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    if (this.data != null) {
-      data['data'] = this.data!.toJson();
+    final Map<String, dynamic> result = <String, dynamic>{};
+    if (data != null) {
+      result['data'] = data!.toJson();
     }
-    data['message'] = this.message;
-    data['status'] = this.status;
-    return data;
+    result['message'] = message;
+    result['status'] = status;
+    return result;
   }
 }
 
@@ -47,8 +47,8 @@ class Data {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['is_valid'] = this.isValid;
-    return data;
+    final Map<String, dynamic> result = <String, dynamic>{};
+    result['is_valid'] = isValid;
+    return result;
   }
 }

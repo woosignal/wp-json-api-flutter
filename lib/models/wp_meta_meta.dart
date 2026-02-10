@@ -1,4 +1,4 @@
-// Copyright (c) 2025, WooSignal Ltd.
+// Copyright (c) 2026, WooSignal
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms are permitted
@@ -28,34 +28,24 @@ class WpMetaData {
       this.unique});
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['key'] = this.key;
-    data['value'] = this.value;
-    data['action'] = _getActionFromType();
-    if (this.unique != null) {
-      data['unique'] = this.unique;
+    final Map<String, dynamic> result = <String, dynamic>{};
+    result['key'] = key;
+    result['value'] = value;
+    result['action'] = _getActionFromType();
+    if (unique != null) {
+      result['unique'] = unique;
     }
-    return data;
+    return result;
   }
 
   String _getActionFromType() {
-    switch (this.action) {
+    switch (action) {
       case WPMetaDataActionType.Create:
-        {
-          return "create";
-        }
+        return "create";
       case WPMetaDataActionType.Update:
-        {
-          return "update";
-        }
+        return "update";
       case WPMetaDataActionType.Delete:
-        {
-          return "delete";
-        }
-      default:
-        {
-          return "";
-        }
+        return "delete";
     }
   }
 }

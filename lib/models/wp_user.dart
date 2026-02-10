@@ -1,4 +1,4 @@
-// Copyright (c) 2025, WooSignal Ltd.
+// Copyright (c) 2026, WooSignal
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms are permitted
@@ -13,7 +13,8 @@
 // IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
 // WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 
-import 'package:nylo_support/helpers/model.dart';
+import 'package:nylo_support/helpers/src/model.dart';
+
 import '/models/responses/wp_user_login_response.dart';
 import '/models/responses/wp_user_register_response.dart';
 
@@ -75,7 +76,8 @@ class WpUser extends Model {
   }
 
   /// Converts the [WpUser] to a JSON object
-  toJson() => {
+  @override
+  Map<String, dynamic> toJson() => {
         'id': id,
         'token': token,
         'email': email,

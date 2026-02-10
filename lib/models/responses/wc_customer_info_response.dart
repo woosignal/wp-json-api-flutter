@@ -1,4 +1,4 @@
-// Copyright (c) 2025, WooSignal Ltd.
+// Copyright (c) 2026, WooSignal
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms are permitted
@@ -23,19 +23,19 @@ class WCCustomerInfoResponse {
   WCCustomerInfoResponse({this.data, this.message, this.status});
 
   WCCustomerInfoResponse.fromJson(Map<String, dynamic> json) {
-    data = json['data'] != null ? new Data.fromJson(json['data']) : null;
+    data = json['data'] != null ? Data.fromJson(json['data']) : null;
     message = json['message'];
     status = json['status'];
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    if (this.data != null) {
-      data['data'] = this.data!.toJson();
+    final Map<String, dynamic> result = <String, dynamic>{};
+    if (data != null) {
+      result['data'] = data!.toJson();
     }
-    data['message'] = this.message;
-    data['status'] = this.status;
-    return data;
+    result['message'] = message;
+    result['status'] = status;
+    return result;
   }
 }
 
@@ -62,60 +62,59 @@ class Data {
     lastName = json['last_name'];
     displayName = json['display_name'];
     avatar = json['avatar'];
-    shipping = json['shipping'] != null
-        ? new Shipping.fromJson(json['shipping'])
-        : null;
+    shipping =
+        json['shipping'] != null ? Shipping.fromJson(json['shipping']) : null;
     billing =
-        json['billing'] != null ? new Billing.fromJson(json['billing']) : null;
+        json['billing'] != null ? Billing.fromJson(json['billing']) : null;
 
     if (json['meta_data'] != null && Map.of(json['meta_data']).isNotEmpty) {
-      this.metaData = [];
+      metaData = [];
       Map.from(json['meta_data']).forEach((key, value) {
-        this.metaData!.add(MetaData.fromJson(key, value));
+        metaData!.add(MetaData.fromJson(key, value));
       });
     }
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['first_name'] = this.firstName;
-    data['last_name'] = this.lastName;
-    data['display_name'] = this.displayName;
-    data['avatar'] = this.avatar;
-    if (this.shipping != null) {
-      data['shipping'] = this.shipping!.toJson();
+    final Map<String, dynamic> result = <String, dynamic>{};
+    result['first_name'] = firstName;
+    result['last_name'] = lastName;
+    result['display_name'] = displayName;
+    result['avatar'] = avatar;
+    if (shipping != null) {
+      result['shipping'] = shipping!.toJson();
     }
-    if (this.billing != null) {
-      data['billing'] = this.billing!.toJson();
+    if (billing != null) {
+      result['billing'] = billing!.toJson();
     }
-    if (this.metaData != null) {
-      data['meta_data'] = this.metaData!.map((e) => e.toJson()).toList();
+    if (metaData != null) {
+      result['meta_data'] = metaData!.map((e) => e.toJson()).toList();
     }
-    return data;
+    return result;
   }
 
   /// Returns an array of meta data from a WP MetaData [key]
   ///
   /// Returns List<dynamic>
   List<dynamic>? getMetaDataArrayWhere(String key) {
-    MetaData? metaData = this.metaData!.firstWhereOrNull((e) => e.key == key);
-    if (metaData == null || metaData.value == null) {
+    if (metaData == null) return null;
+    MetaData? meta = metaData!.firstWhereOrNull((e) => e.key == key);
+    if (meta == null || meta.value == null) {
       return null;
     }
-    return metaData.value;
+    return meta.value;
   }
 
   /// Returns a single meta data value from a WP MetaData [key]
   ///
   /// Returns dynamic
   dynamic getMetaDataFirstWhere(String key) {
-    MetaData? metaData = this.metaData!.firstWhereOrNull((e) => e.key == key);
-    if (metaData == null ||
-        metaData.value == null ||
-        metaData.value!.length < 1) {
+    if (metaData == null) return null;
+    MetaData? meta = metaData!.firstWhereOrNull((e) => e.key == key);
+    if (meta == null || meta.value == null || meta.value!.isEmpty) {
       return null;
     }
-    return metaData.value!.first;
+    return meta.value!.first;
   }
 }
 
@@ -154,17 +153,17 @@ class Shipping {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['first_name'] = this.firstName;
-    data['last_name'] = this.lastName;
-    data['company'] = this.company;
-    data['address_1'] = this.address1;
-    data['address_2'] = this.address2;
-    data['city'] = this.city;
-    data['state'] = this.state;
-    data['postcode'] = this.postcode;
-    data['country'] = this.country;
-    return data;
+    final Map<String, dynamic> result = <String, dynamic>{};
+    result['first_name'] = firstName;
+    result['last_name'] = lastName;
+    result['company'] = company;
+    result['address_1'] = address1;
+    result['address_2'] = address2;
+    result['city'] = city;
+    result['state'] = state;
+    result['postcode'] = postcode;
+    result['country'] = country;
+    return result;
   }
 }
 
@@ -209,19 +208,19 @@ class Billing {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['first_name'] = this.firstName;
-    data['last_name'] = this.lastName;
-    data['company'] = this.company;
-    data['address_1'] = this.address1;
-    data['address_2'] = this.address2;
-    data['city'] = this.city;
-    data['state'] = this.state;
-    data['postcode'] = this.postcode;
-    data['country'] = this.country;
-    data['email'] = this.email;
-    data['phone'] = this.phone;
-    return data;
+    final Map<String, dynamic> result = <String, dynamic>{};
+    result['first_name'] = firstName;
+    result['last_name'] = lastName;
+    result['company'] = company;
+    result['address_1'] = address1;
+    result['address_2'] = address2;
+    result['city'] = city;
+    result['state'] = state;
+    result['postcode'] = postcode;
+    result['country'] = country;
+    result['email'] = email;
+    result['phone'] = phone;
+    return result;
   }
 }
 
@@ -231,17 +230,15 @@ class MetaData {
 
   MetaData({this.key, this.value});
 
-  MetaData.fromJson(String key, List<dynamic> value) {
-    this.key = key;
-    this.value = value;
-  }
+  MetaData.fromJson(String key, List<dynamic> value)
+      : key = key,
+        value = value;
 
   Map<String?, dynamic> toJson() {
-    final Map<String?, List<dynamic>?> data =
-        new Map<String?, List<dynamic>?>();
+    final Map<String?, List<dynamic>?> result = <String?, List<dynamic>?>{};
     if (key != null) {
-      data[key] = this.value;
+      result[key] = value;
     }
-    return data;
+    return result;
   }
 }

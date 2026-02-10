@@ -1,4 +1,4 @@
-// Copyright (c) 2025, WooSignal Ltd.
+// Copyright (c) 2026, WooSignal
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms are permitted
@@ -18,15 +18,16 @@ library wp_json_api;
 import 'dart:convert';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:nylo_support/helpers/auth.dart';
-import 'package:nylo_support/local_storage/local_storage.dart';
+import 'package:nylo_support/helpers/src/auth.dart';
+import 'package:nylo_support/local_storage/src/ny_storage.dart';
+import 'package:nylo_support/local_storage/src/storage_helpers.dart';
 import 'package:nylo_support/nylo.dart';
 import '/helpers/typedefs.dart';
 import '/models/wp_user.dart';
 import '/networking/network_manager.dart';
 
 /// The version of the wp_json_api
-String _wpJsonAPIVersion = "4.3.6";
+String _wpJsonAPIVersion = "4.3.7";
 
 /// The base class to initialize and use WPJsonAPI
 class WPJsonAPI {
@@ -55,7 +56,7 @@ class WPJsonAPI {
   /// You can optional set [shouldDebug] == false to stop debugging
   /// [wpJsonPath] is the root path for accessing you sites WordPress APIs
   /// by default this should be "/wp-json".
-  init(
+  Future<void> init(
       {required String baseUrl,
       String wpJsonPath = '/wp-json',
       bool shouldDebug = true,
@@ -76,7 +77,7 @@ class WPJsonAPI {
   static FlutterSecureStorage storage = const FlutterSecureStorage();
 
   /// Login a user with the [WpUser]
-  static wpLogin(WpUser wpUser) async {
+  static Future<void> wpLogin(WpUser wpUser) async {
     if (!WPJsonAPI.instance._isNyloEnabled) {
       await storage.write(
         key: WPJsonAPI.storageKey(),
@@ -88,7 +89,7 @@ class WPJsonAPI {
   }
 
   /// Logout a user
-  static wpLogout() async {
+  static Future<void> wpLogout() async {
     if (!WPJsonAPI.instance._isNyloEnabled) {
       await storage.delete(key: WPJsonAPI.storageKey());
       return;
@@ -170,33 +171,33 @@ class WPJsonAPI {
   }
 
   /// Sets the base API in the class
-  _setBaseApi({required baseUrl}) {
-    this._baseUrl = baseUrl;
+  void _setBaseApi({required String baseUrl}) {
+    _baseUrl = baseUrl;
   }
 
   /// Sets the API path in the class
-  _setApiPath({required path}) {
-    this._apiPath = path;
+  void _setApiPath({required String path}) {
+    _apiPath = path;
   }
 
   /// Sets the debug value in the class
-  _setShouldDebug({bool? value}) {
-    this._shouldDebug = value;
+  void _setShouldDebug({bool? value}) {
+    _shouldDebug = value;
   }
 
   /// Returns the debug value
   bool? shouldDebug() {
-    return this._shouldDebug;
+    return _shouldDebug;
   }
 
   /// Returns the base API
   String getBaseApi() {
-    return this._baseUrl + this._apiPath;
+    return '$_baseUrl$_apiPath';
   }
 
   /// Returns an instance of [WPAppNetworkManager] which you can use to call
   /// your requests from.
-  api(RequestCallback request) async {
+  Future<dynamic> api(RequestCallback request) async {
     return await request(WPAppNetworkManager.instance);
   }
 

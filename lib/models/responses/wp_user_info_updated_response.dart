@@ -1,4 +1,4 @@
-// Copyright (c) 2025, WooSignal Ltd.
+// Copyright (c) 2026, WooSignal
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms are permitted
@@ -25,9 +25,9 @@ class WPUserInfoUpdatedResponse {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['message'] = this.message;
-    data['status'] = this.status;
-    return data;
+    final Map<String, dynamic> result = <String, dynamic>{};
+    result['message'] = message;
+    result['status'] = status;
+    return result;
   }
 }

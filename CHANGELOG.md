@@ -1,3 +1,25 @@
+## [4.3.7] - 2026-02-10
+
+### Fixed
+* Fixed `WCCustomerUpdatedResponse.fromJson()` incorrectly resetting data field
+* Fixed potential null pointer exceptions in metadata helper methods
+* Corrected return type documentation for `wpUserAddRole`, `wpUserRemoveRole`, and `wpResetPassword` methods
+
+### Changed
+* Modernized Dart syntax throughout codebase (removed deprecated `new` keyword)
+* Added explicit return types to methods for better type safety
+* Refactored `toJson()` methods to avoid variable shadowing
+* Replaced string concatenation with interpolation
+* Used `for-in` loops instead of `forEach` for better readability
+* Improved null safety in metadata retrieval methods
+
+### Removed
+* Removed unused `UserExistsException` class (duplicate of `UserAlreadyExistException`)
+
+### Added
+* Comprehensive unit test suite (177 tests)
+* Added `mockito` and `build_runner` dev dependencies for testing
+
 ## [4.3.6] - 2025-12-13
 
 * Dependency updates

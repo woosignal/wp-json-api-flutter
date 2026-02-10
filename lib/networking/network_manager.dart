@@ -1,4 +1,4 @@
-// Copyright (c) 2025, WooSignal Ltd.
+// Copyright (c) 2026, WooSignal
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms are permitted
@@ -18,7 +18,7 @@ import 'dart:io';
 import 'dart:math' as math;
 
 import 'package:dio/dio.dart';
-import 'package:nylo_support/local_storage/local_storage.dart';
+import 'package:nylo_support/local_storage/src/ny_storage.dart';
 import '/enums/wp_auth_type.dart';
 import '/exceptions/empty_username_exception.dart';
 import '/exceptions/existing_user_email_exception.dart';
@@ -242,7 +242,7 @@ class WPAppNetworkManager {
 
     // return response
     return _jsonHasBadStatus(json)
-        ? this._throwExceptionForStatusCode(json)
+        ? _throwExceptionForStatusCode(json)
         : WPNonceResponse.fromJson(json);
   }
 
@@ -262,7 +262,7 @@ class WPAppNetworkManager {
 
     // return response
     return _jsonHasBadStatus(json)
-        ? this._throwExceptionForStatusCode(json)
+        ? _throwExceptionForStatusCode(json)
         : WPNonceVerifiedResponse.fromJson(json);
   }
 
@@ -281,7 +281,7 @@ class WPAppNetworkManager {
 
     // return response
     return _jsonHasBadStatus(json)
-        ? this._throwExceptionForStatusCode(json)
+        ? _throwExceptionForStatusCode(json)
         : WPUserInfoResponse.fromJson(json);
   }
 
@@ -318,14 +318,14 @@ class WPAppNetworkManager {
 
     // return response
     return _jsonHasBadStatus(json)
-        ? this._throwExceptionForStatusCode(json)
+        ? _throwExceptionForStatusCode(json)
         : WPUserInfoUpdatedResponse.fromJson(json);
   }
 
   /// Sends a request to add a role to a WordPress user. Include a valid
   /// [userToken] and [role] to send a successful request.
   ///
-  /// Returns a [WPUserInfoUpdatedResponse] future.
+  /// Returns a [WPUserAddRoleResponse] future.
   /// Throws an [Exception] if fails.
   Future<WPUserAddRoleResponse> wpUserAddRole(
       {required String role, String? userToken}) async {
@@ -343,7 +343,7 @@ class WPAppNetworkManager {
 
     // return response
     return _jsonHasBadStatus(json)
-        ? this._throwExceptionForStatusCode(json)
+        ? _throwExceptionForStatusCode(json)
         : WPUserAddRoleResponse.fromJson(json);
   }
 
@@ -375,14 +375,14 @@ class WPAppNetworkManager {
 
     // return response
     return _jsonHasBadStatus(json)
-        ? this._throwExceptionForStatusCode(json)
+        ? _throwExceptionForStatusCode(json)
         : WPUserDeleteResponse.fromJson(json);
   }
 
   /// Sends a request to remove a role from a WordPress user. Include a valid
   /// [userToken] and [role] to send a successful request.
   ///
-  /// Returns a [WPUserInfoUpdatedResponse] future.
+  /// Returns a [WPUserRemoveRoleResponse] future.
   /// Throws an [Exception] if fails.
   Future<WPUserRemoveRoleResponse> wpUserRemoveRole(
       {required String role, String? userToken}) async {
@@ -400,13 +400,13 @@ class WPAppNetworkManager {
 
     // return response
     return _jsonHasBadStatus(json)
-        ? this._throwExceptionForStatusCode(json)
+        ? _throwExceptionForStatusCode(json)
         : WPUserRemoveRoleResponse.fromJson(json);
   }
 
   /// Reset a user password using the [userToken] and new [password] created.
   ///
-  /// Returns a [WCCustomerInfoResponse] future.
+  /// Returns a [WPUserResetPasswordResponse] future.
   /// Throws an [Exception] if fails.
   Future<WPUserResetPasswordResponse> wpResetPassword({
     required String password,
@@ -424,7 +424,7 @@ class WPAppNetworkManager {
 
     // return response
     return _jsonHasBadStatus(json)
-        ? this._throwExceptionForStatusCode(json)
+        ? _throwExceptionForStatusCode(json)
         : WPUserResetPasswordResponse.fromJson(json);
   }
 
@@ -442,7 +442,7 @@ class WPAppNetworkManager {
 
     // return response
     return _jsonHasBadStatus(json)
-        ? this._throwExceptionForStatusCode(json)
+        ? _throwExceptionForStatusCode(json)
         : WCCustomerInfoResponse.fromJson(json);
   }
 
@@ -462,7 +462,7 @@ class WPAppNetworkManager {
 
     // return response
     return _jsonHasBadStatus(json)
-        ? this._throwExceptionForStatusCode(json)
+        ? _throwExceptionForStatusCode(json)
         : WcPointsAndRewardUser.fromJson(json['data']);
   }
 
@@ -483,7 +483,7 @@ class WPAppNetworkManager {
 
     // return response
     return _jsonHasBadStatus(json)
-        ? this._throwExceptionForStatusCode(json)
+        ? _throwExceptionForStatusCode(json)
         : WcPointsAndRewardCalculatePoints.fromJson(json['data']);
   }
 
@@ -574,7 +574,7 @@ class WPAppNetworkManager {
 
     // return response
     return _jsonHasBadStatus(json)
-        ? this._throwExceptionForStatusCode(json)
+        ? _throwExceptionForStatusCode(json)
         : WCCustomerUpdatedResponse.fromJson(json);
   }
 
@@ -627,10 +627,10 @@ class WPAppNetworkManager {
   /// log output if set. This will only log if shouldDebug is enabled.
   ///
   /// Returns void.
-  _devLogger({required String url, String? payload, String? result}) {
-    String strOutput = "\nREQUEST: " + url;
-    if (payload != null) strOutput += "\nPayload: " + payload;
-    if (result != null) strOutput += "\nRESULT: " + result;
+  void _devLogger({required String url, String? payload, String? result}) {
+    String strOutput = "\nREQUEST: $url";
+    if (payload != null) strOutput += "\nPayload: $payload";
+    if (result != null) strOutput += "\nRESULT: $result";
 
     // logs response if shouldDebug is enabled
     if (WPJsonAPI.instance.shouldDebug()!) log(strOutput);
@@ -647,7 +647,7 @@ class WPAppNetworkManager {
   ///
   /// Returns [String] of the url route.
   String _urlForRouteType(WPRouteType wpRouteType) {
-    return WPJsonAPI.instance.getBaseApi() + _getRouteUrlForType(wpRouteType);
+    return '${WPJsonAPI.instance.getBaseApi()}${_getRouteUrlForType(wpRouteType)}';
   }
 
   /// Creates a query parameter which is used for the `wpLogin` method
@@ -762,34 +762,34 @@ class WPAppNetworkManager {
 
       switch (statusCode) {
         case 520:
-          throw new UsernameTakenException();
+          throw UsernameTakenException();
         case 500:
-          throw new Exception(message);
+          throw Exception(message);
         case 510:
-          throw new WooCommerceNotFoundException();
+          throw WooCommerceNotFoundException();
         case 540:
-          throw new InvalidUserTokenException();
+          throw InvalidUserTokenException();
         case 523:
-          throw new InvalidParamsException();
+          throw InvalidParamsException();
         case 567:
-          throw new Exception(message);
+          throw Exception(message);
         case 547:
-          throw new InvalidEmailException(message);
+          throw InvalidEmailException(message);
         case 546:
-          throw new IncorrectPasswordException(message);
+          throw IncorrectPasswordException(message);
         case 545:
-          throw new InvalidUsernameException(message);
+          throw InvalidUsernameException(message);
         case 531:
-          throw new ExistingUserLoginException(message);
+          throw ExistingUserLoginException(message);
         case 532:
-          throw new ExistingUserEmailException(message);
+          throw ExistingUserEmailException(message);
         case 527:
-          throw new UserAlreadyExistException();
+          throw UserAlreadyExistException();
         case 542:
-          throw new EmptyUsernameException();
+          throw EmptyUsernameException();
         default:
           {
-            throw new Exception(
+            throw Exception(
                 'Something went wrong, please check server response');
           }
       }

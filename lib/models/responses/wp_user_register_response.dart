@@ -1,4 +1,4 @@
-// Copyright (c) 2025, WooSignal Ltd.
+// Copyright (c) 2026, WooSignal
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms are permitted
@@ -21,19 +21,19 @@ class WPUserRegisterResponse {
   WPUserRegisterResponse({this.data, this.message, this.status});
 
   WPUserRegisterResponse.fromJson(Map<String, dynamic> json) {
-    data = json['data'] != null ? new Data.fromJson(json['data']) : null;
+    data = json['data'] != null ? Data.fromJson(json['data']) : null;
     message = json['message'];
     status = json['status'];
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    if (this.data != null) {
-      data['data'] = this.data!.toJson();
+    final Map<String, dynamic> result = <String, dynamic>{};
+    if (data != null) {
+      result['data'] = data!.toJson();
     }
-    data['message'] = this.message;
-    data['status'] = this.status;
-    return data;
+    result['message'] = message;
+    result['status'] = status;
+    return result;
   }
 }
 
@@ -84,16 +84,16 @@ class Data {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.userId;
-    data['user_token'] = this.userToken;
-    data['expiry'] = this.expiry;
-    data['email'] = this.email;
-    data['username'] = this.username;
-    data['first_name'] = this.firstName;
-    data['last_name'] = this.lastName;
-    data['avatar'] = this.avatar;
-    data['created_at'] = this.createdAt;
-    return data;
+    final Map<String, dynamic> result = <String, dynamic>{};
+    result['id'] = userId;
+    result['user_token'] = userToken;
+    result['expiry'] = expiry;
+    result['email'] = email;
+    result['username'] = username;
+    result['first_name'] = firstName;
+    result['last_name'] = lastName;
+    result['avatar'] = avatar;
+    result['created_at'] = createdAt;
+    return result;
   }
 }

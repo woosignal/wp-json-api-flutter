@@ -1,4 +1,4 @@
-// Copyright (c) 2025, WooSignal Ltd.
+// Copyright (c) 2026, WooSignal
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms are permitted
@@ -23,8 +23,8 @@ class WcPointsAndRewardCalculatePoints {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['value'] = this.value;
-    return data;
+    final Map<String, dynamic> result = <String, dynamic>{};
+    result['value'] = value;
+    return result;
   }
 }

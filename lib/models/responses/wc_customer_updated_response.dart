@@ -1,4 +1,4 @@
-// Copyright (c) 2025, WooSignal Ltd.
+// Copyright (c) 2026, WooSignal
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms are permitted
@@ -21,20 +21,16 @@ class WCCustomerUpdatedResponse {
   WCCustomerUpdatedResponse({this.data, this.message, this.status});
 
   WCCustomerUpdatedResponse.fromJson(Map<String, dynamic> json) {
-    if (json['data'] != null) {
-      json['data'] = [];
-    }
+    data = json['data'];
     message = json['message'];
     status = json['status'];
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    if (this.data != null) {
-      data['data'] = this.data!.map((v) => v.toJson()).toList();
-    }
-    data['message'] = this.message;
-    data['status'] = this.status;
-    return data;
+    final Map<String, dynamic> result = <String, dynamic>{};
+    result['data'] = data;
+    result['message'] = message;
+    result['status'] = status;
+    return result;
   }
 }

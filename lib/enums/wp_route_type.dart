@@ -1,4 +1,4 @@
-// Copyright (c) 2025, WooSignal Ltd.
+// Copyright (c) 2026, WooSignal
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms are permitted
@@ -66,7 +66,7 @@ enum WPRouteType {
   /// For WooCommerce Points and Rewards
   WCPointsAndRewardsUser,
 
-  /// Route type [WPRouteType.WCPointsAndRewardsUser] is used to get the value of a customers points.
+  /// Route type [WPRouteType.WCPointsAndRewardsCalculatePoints] is used to calculate the value of a customer's points.
   /// For WooCommerce Points and Rewards
   WCPointsAndRewardsCalculatePoints,
 }
