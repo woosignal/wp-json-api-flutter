@@ -113,7 +113,7 @@ class Data {
 
   /// Returns an array of meta data from a WP MetaData [key]
   ///
-  /// Returns List<dynamic>
+  /// Returns `List<dynamic>`
   List<dynamic>? getMetaDataArrayWhere(String key) {
     if (metaData == null) return null;
     MetaData? meta = metaData!.firstWhereOrNull((e) => e.key == key);
@@ -142,9 +142,7 @@ class MetaData {
 
   MetaData({this.key, this.value});
 
-  MetaData.fromJson(String key, List<dynamic> value)
-      : key = key,
-        value = value;
+  MetaData.fromJson(String this.key, List<dynamic> this.value);
 
   Map<String?, dynamic> toJson() {
     final Map<String?, List<dynamic>?> result = <String?, List<dynamic>?>{};

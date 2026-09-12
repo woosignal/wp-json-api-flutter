@@ -13,6 +13,8 @@
 // IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
 // WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 
+// ignore_for_file: constant_identifier_names
+
 enum WPAuthType {
   /// Auth type [WPAuthType.WpEmail] is used for specifying
   /// how you want to authenticate a user when using the Login method

@@ -5,7 +5,7 @@ void main() {
   group('WPUserInfoResponse', () {
     group('fromJson', () {
       test('should parse complete response with metadata', () {
-        final json = {
+        final Map<String, Object> json = {
           'data': {
             'id': 123,
             'first_name': 'John',
@@ -48,7 +48,7 @@ void main() {
       });
 
       test('should handle empty metadata', () {
-        final json = {
+        final Map<String, Object> json = {
           'data': {
             'id': 456,
             'email': 'test@example.com',
@@ -65,7 +65,7 @@ void main() {
       });
 
       test('should handle null metadata', () {
-        final json = {
+        final Map<String, Object> json = {
           'data': {
             'id': 789,
             'email': 'nullmeta@example.com',
@@ -81,7 +81,7 @@ void main() {
       });
 
       test('should parse roles correctly', () {
-        final json = {
+        final Map<String, Object> json = {
           'data': {
             'id': 100,
             'roles': ['administrator', 'editor', 'author'],
@@ -98,7 +98,7 @@ void main() {
       });
 
       test('should handle empty roles', () {
-        final json = {
+        final Map<String, Object> json = {
           'data': {
             'id': 100,
             'roles': null,
@@ -132,7 +132,7 @@ void main() {
           status: 200,
         );
 
-        final json = response.toJson();
+        final Map<String, dynamic> json = response.toJson();
 
         expect(json['status'], 200);
         expect(json['data']['id'], 123);
@@ -161,7 +161,8 @@ void main() {
 
       group('getMetaDataArrayWhere', () {
         test('should return array for existing key', () {
-          final result = dataWithMeta.getMetaDataArrayWhere('shipping_address');
+          final List<dynamic>? result =
+              dataWithMeta.getMetaDataArrayWhere('shipping_address');
 
           expect(result, isNotNull);
           expect(result, hasLength(2));
@@ -170,7 +171,8 @@ void main() {
         });
 
         test('should return null for non-existing key', () {
-          final result = dataWithMeta.getMetaDataArrayWhere('non_existing');
+          final List<dynamic>? result =
+              dataWithMeta.getMetaDataArrayWhere('non_existing');
 
           expect(result, isNull);
         });
@@ -178,13 +180,15 @@ void main() {
         test('should return null when metaData is null', () {
           final dataNoMeta = Data(id: 1);
 
-          final result = dataNoMeta.getMetaDataArrayWhere('any_key');
+          final List<dynamic>? result =
+              dataNoMeta.getMetaDataArrayWhere('any_key');
 
           expect(result, isNull);
         });
 
         test('should return single item array', () {
-          final result = dataWithMeta.getMetaDataArrayWhere('billing_phone');
+          final List<dynamic>? result =
+              dataWithMeta.getMetaDataArrayWhere('billing_phone');
 
           expect(result, isNotNull);
           expect(result, hasLength(1));
@@ -194,13 +198,15 @@ void main() {
 
       group('getMetaDataFirstWhere', () {
         test('should return first value for existing key', () {
-          final result = dataWithMeta.getMetaDataFirstWhere('shipping_address');
+          final dynamic result =
+              dataWithMeta.getMetaDataFirstWhere('shipping_address');
 
           expect(result, '123 Main St');
         });
 
         test('should return null for non-existing key', () {
-          final result = dataWithMeta.getMetaDataFirstWhere('non_existing');
+          final dynamic result =
+              dataWithMeta.getMetaDataFirstWhere('non_existing');
 
           expect(result, isNull);
         });
@@ -208,19 +214,21 @@ void main() {
         test('should return null when metaData is null', () {
           final dataNoMeta = Data(id: 1);
 
-          final result = dataNoMeta.getMetaDataFirstWhere('any_key');
+          final dynamic result = dataNoMeta.getMetaDataFirstWhere('any_key');
 
           expect(result, isNull);
         });
 
         test('should return null for empty array value', () {
-          final result = dataWithMeta.getMetaDataFirstWhere('empty_key');
+          final dynamic result =
+              dataWithMeta.getMetaDataFirstWhere('empty_key');
 
           expect(result, isNull);
         });
 
         test('should return single value', () {
-          final result = dataWithMeta.getMetaDataFirstWhere('billing_phone');
+          final dynamic result =
+              dataWithMeta.getMetaDataFirstWhere('billing_phone');
 
           expect(result, '555-1234');
         });
@@ -239,7 +247,7 @@ void main() {
     test('should serialize to json', () {
       final metaData = MetaData(key: 'my_key', value: ['a', 'b', 'c']);
 
-      final json = metaData.toJson();
+      final Map<String?, dynamic> json = metaData.toJson();
 
       expect(json['my_key'], ['a', 'b', 'c']);
     });
@@ -247,7 +255,7 @@ void main() {
     test('should handle null key in toJson', () {
       final metaData = MetaData(key: null, value: ['value']);
 
-      final json = metaData.toJson();
+      final Map<String?, dynamic> json = metaData.toJson();
 
       expect(json.isEmpty, true);
     });

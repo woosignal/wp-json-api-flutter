@@ -13,6 +13,8 @@
 // IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
 // WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 
+// ignore_for_file: constant_identifier_names
+
 enum WPMetaDataActionType {
   /// MetaData action type [WPMetaDataActionType.Create] is used for
   /// creating/adding additional meta data to a key.

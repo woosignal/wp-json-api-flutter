@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
+import 'package:wp_json_api/models/responses/wp_nonce_response.dart';
 import 'package:wp_json_api/wp_json_api.dart';
 import 'package:wp_json_api/networking/network_manager.dart';
 
@@ -28,8 +29,8 @@ void main() {
   group('WPAppNetworkManager', () {
     group('Singleton', () {
       test('should return same instance', () {
-        final instance1 = WPAppNetworkManager.instance;
-        final instance2 = WPAppNetworkManager.instance;
+        final WPAppNetworkManager instance1 = WPAppNetworkManager.instance;
+        final WPAppNetworkManager instance2 = WPAppNetworkManager.instance;
 
         expect(identical(instance1, instance2), true);
       });
@@ -51,7 +52,7 @@ void main() {
               statusCode: 200,
             ));
 
-        final response = await networkManager.wpNonce();
+        final WPNonceResponse response = await networkManager.wpNonce();
 
         expect(response.status, 200);
         expect(response.data?.nonce, 'test_nonce_123');
@@ -89,7 +90,7 @@ void main() {
               statusCode: 200,
             ));
 
-        final response = await networkManager.wpNonce();
+        final WPNonceResponse response = await networkManager.wpNonce();
 
         expect(response.status, 200);
         expect(response.data, isNull);
@@ -110,7 +111,7 @@ void main() {
               statusCode: 200,
             ));
 
-        final response = await networkManager.wpNonce();
+        final WPNonceResponse response = await networkManager.wpNonce();
 
         expect(response.data?.nonce, 'full_nonce_abc123');
         expect(response.data?.root, 'https://mysite.com/wp-json');
@@ -130,7 +131,7 @@ void main() {
               statusCode: 200,
             ));
 
-        final response = await networkManager.wpNonce();
+        final WPNonceResponse response = await networkManager.wpNonce();
 
         expect(response.data?.nonce, 'minimal_nonce');
         expect(response.data?.root, isNull);

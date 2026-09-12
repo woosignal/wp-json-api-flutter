@@ -1,3 +1,15 @@
+## [4.3.8] - 2026-09-12
+
+### Changed
+* Added `analysis_options.yaml` using the `vibe_check` Nylo lint preset
+* Resolved analyzer lints across the package and tests: explicit type annotations, null-aware assignments, braces in flow control, initializing formals and an unnamed `library` directive
+* `WPAppNetworkManager.wpLogout()` now declares a `Future<void>` return type
+* Dependency updates: `dio` ^5.9.2, `nylo_support` ^7.17.0
+* Dev dependency updates: `mockito` ^5.6.4, `build_runner` ^2.13.1
+
+### Fixed
+* Fixed `getMetaDataArrayWhere` doc comments rendering `List<dynamic>` as HTML
+
 ## [4.3.7] - 2026-02-10
 
 ### Fixed

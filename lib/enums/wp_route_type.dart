@@ -13,6 +13,8 @@
 // IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
 // WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 
+// ignore_for_file: constant_identifier_names
+
 enum WPRouteType {
   /// Route type [WPRouteType.UserUpdatePassword] is used to update a WordPress user's password.
   /// For WordPress

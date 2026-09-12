@@ -5,7 +5,7 @@ void main() {
   group('WPUserLoginResponse', () {
     group('fromJson', () {
       test('should parse complete response', () {
-        final json = {
+        final Map<String, Object> json = {
           'data': {
             'user_id': 123,
             'user_token': 'abc123token',
@@ -38,7 +38,7 @@ void main() {
       });
 
       test('should handle null data', () {
-        final json = {
+        final Map<String, Object?> json = {
           'data': null,
           'message': 'Invalid credentials',
           'status': 401,
@@ -52,7 +52,7 @@ void main() {
       });
 
       test('should handle missing optional fields in data', () {
-        final json = {
+        final Map<String, Object> json = {
           'data': {
             'user_id': 456,
             'user_token': 'token456',
@@ -90,7 +90,7 @@ void main() {
           status: 200,
         );
 
-        final json = response.toJson();
+        final Map<String, dynamic> json = response.toJson();
 
         expect(json['status'], 200);
         expect(json['message'], 'Serialized');
@@ -107,7 +107,7 @@ void main() {
           status: 400,
         );
 
-        final json = response.toJson();
+        final Map<String, dynamic> json = response.toJson();
 
         expect(json.containsKey('data'), false);
         expect(json['message'], 'No data');
@@ -117,7 +117,7 @@ void main() {
 
     group('Data fromJson/toJson roundtrip', () {
       test('should preserve all fields through serialization', () {
-        final originalJson = {
+        final Map<String, Object> originalJson = {
           'user_id': 111,
           'user_token': 'roundtrip_token',
           'expiry': 1704240000,
@@ -130,7 +130,7 @@ void main() {
         };
 
         final data = Data.fromJson(originalJson);
-        final serialized = data.toJson();
+        final Map<String, dynamic> serialized = data.toJson();
 
         expect(serialized['user_id'], originalJson['user_id']);
         expect(serialized['user_token'], originalJson['user_token']);

@@ -13,7 +13,7 @@
 // IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
 // WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 
-library wp_json_api;
+library;
 
 import 'dart:convert';
 
@@ -27,7 +27,7 @@ import '/models/wp_user.dart';
 import '/networking/network_manager.dart';
 
 /// The version of the wp_json_api
-String _wpJsonAPIVersion = "4.3.7";
+String _wpJsonAPIVersion = "4.3.8";
 
 /// The base class to initialize and use WPJsonAPI
 class WPJsonAPI {
@@ -106,7 +106,7 @@ class WPJsonAPI {
       if (json.isEmpty) return null;
       return WpUser.fromJson(json);
     }
-    final data = await storageRead(WPJsonAPI.storageKey());
+    final dynamic data = await storageRead(WPJsonAPI.storageKey());
     if (data == null) return null;
     return WpUser.fromJson(data);
   }
@@ -122,8 +122,8 @@ class WPJsonAPI {
       if (wpUser.token == null) return false;
       return true;
     }
-    WpUser? _wpUser = await wpUser();
-    if (_wpUser?.token == null) return false;
+    WpUser? user = await wpUser();
+    if (user?.token == null) return false;
     return true;
   }
 
@@ -151,8 +151,8 @@ class WPJsonAPI {
       WpUser wpUser = WpUser.fromJson(json);
       return wpUser.id.toString();
     }
-    WpUser? _wpUser = await wpUser();
-    return _wpUser?.id.toString();
+    WpUser? user = await wpUser();
+    return user?.id.toString();
   }
 
   /// Get the token for the user
@@ -165,9 +165,9 @@ class WPJsonAPI {
       WpUser wpUser = WpUser.fromJson(json);
       return wpUser.token;
     }
-    WpUser? _wpUser = await wpUser();
-    if (_wpUser == null) return null;
-    return _wpUser.token;
+    WpUser? user = await wpUser();
+    if (user == null) return null;
+    return user.token;
   }
 
   /// Sets the base API in the class

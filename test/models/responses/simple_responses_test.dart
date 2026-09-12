@@ -14,7 +14,7 @@ import 'package:wp_json_api/models/responses/wc_points_and_rewards_calculate_poi
 void main() {
   group('WPNonceResponse', () {
     test('should parse complete response', () {
-      final json = {
+      final Map<String, Object> json = {
         'data': {
           'nonce': 'abc123nonce',
           'root': 'https://example.com/wp-json',
@@ -34,7 +34,7 @@ void main() {
     });
 
     test('should handle null data', () {
-      final json = {
+      final Map<String, Object?> json = {
         'data': null,
         'message': 'Error',
         'status': 500,
@@ -59,7 +59,7 @@ void main() {
         status: 200,
       );
 
-      final json = response.toJson();
+      final Map<String, dynamic> json = response.toJson();
 
       expect(json['data']['nonce'], 'test_nonce');
       expect(json['status'], 200);
@@ -68,7 +68,7 @@ void main() {
 
   group('WPNonceVerifiedResponse', () {
     test('should parse valid nonce response', () {
-      final json = {
+      final Map<String, Object> json = {
         'data': {'is_valid': true},
         'message': 'Nonce is valid',
         'status': 200,
@@ -81,7 +81,7 @@ void main() {
     });
 
     test('should parse invalid nonce response', () {
-      final json = {
+      final Map<String, Object> json = {
         'data': {'is_valid': false},
         'message': 'Nonce expired',
         'status': 200,
@@ -101,7 +101,7 @@ void main() {
         status: 200,
       );
 
-      final json = response.toJson();
+      final Map<String, dynamic> json = response.toJson();
 
       expect(json['data']['is_valid'], true);
     });
@@ -109,7 +109,7 @@ void main() {
 
   group('WPUserRegisterResponse', () {
     test('should parse complete response', () {
-      final json = {
+      final Map<String, Object> json = {
         'data': {
           'user_id': 456,
           'user_token': 'register_token',
@@ -135,7 +135,7 @@ void main() {
     });
 
     test('should handle minimal data', () {
-      final json = {
+      final Map<String, Object> json = {
         'data': {
           'user_id': 789,
           'user_token': 'minimal_token',
@@ -153,7 +153,7 @@ void main() {
 
   group('WPUserAddRoleResponse', () {
     test('should parse response with data array', () {
-      final json = {
+      final Map<String, Object> json = {
         'data': ['subscriber', 'customer'],
         'message': 'Role added',
         'status': 200,
@@ -167,7 +167,7 @@ void main() {
     });
 
     test('should handle null data', () {
-      final json = {
+      final Map<String, Object?> json = {
         'data': null,
         'message': 'Error',
         'status': 400,
@@ -186,7 +186,7 @@ void main() {
         status: 200,
       );
 
-      final json = response.toJson();
+      final Map<String, dynamic> json = response.toJson();
 
       expect(json['data'], ['admin', 'editor']);
     });
@@ -194,7 +194,7 @@ void main() {
 
   group('WPUserRemoveRoleResponse', () {
     test('should parse response with remaining roles', () {
-      final json = {
+      final Map<String, Object> json = {
         'data': ['subscriber'],
         'message': 'Role removed',
         'status': 200,
@@ -209,7 +209,7 @@ void main() {
 
   group('WPUserDeleteResponse', () {
     test('should parse successful delete response', () {
-      final json = {
+      final Map<String, Object> json = {
         'data': [],
         'message': 'User deleted successfully',
         'status': 200,
@@ -222,7 +222,7 @@ void main() {
     });
 
     test('should handle error response', () {
-      final json = {
+      final Map<String, Object?> json = {
         'data': null,
         'message': 'Cannot delete user',
         'status': 403,
@@ -237,7 +237,7 @@ void main() {
 
   group('WPUserResetPasswordResponse', () {
     test('should parse successful password reset', () {
-      final json = {
+      final Map<String, Object> json = {
         'data': [],
         'message': 'Password updated',
         'status': 200,
@@ -256,7 +256,7 @@ void main() {
         status: 200,
       );
 
-      final json = response.toJson();
+      final Map<String, dynamic> json = response.toJson();
 
       expect(json['message'], 'Reset complete');
       expect(json['status'], 200);
@@ -265,7 +265,7 @@ void main() {
 
   group('WPUserInfoUpdatedResponse', () {
     test('should parse update response', () {
-      final json = {
+      final Map<String, Object> json = {
         'message': 'User info updated',
         'status': 200,
       };
@@ -282,7 +282,7 @@ void main() {
         status: 200,
       );
 
-      final json = response.toJson();
+      final Map<String, dynamic> json = response.toJson();
 
       expect(json['message'], 'Updated');
       expect(json['status'], 200);
@@ -292,7 +292,7 @@ void main() {
 
   group('WCCustomerUpdatedResponse', () {
     test('should parse update response', () {
-      final json = {
+      final Map<String, Object> json = {
         'data': ['first_name', 'last_name', 'billing'],
         'message': 'Customer updated',
         'status': 200,
@@ -306,7 +306,7 @@ void main() {
     });
 
     test('should handle empty data', () {
-      final json = {
+      final Map<String, Object> json = {
         'data': [],
         'message': 'No changes',
         'status': 200,
@@ -320,7 +320,7 @@ void main() {
 
   group('WcPointsAndRewardUser', () {
     test('should parse points response', () {
-      final json = {
+      final Map<String, Object> json = {
         'id': 123,
         'points': 5000,
         'value': '\$50.00',
@@ -334,7 +334,7 @@ void main() {
     });
 
     test('should handle zero points', () {
-      final json = {
+      final Map<String, Object> json = {
         'id': 456,
         'points': 0,
         'value': '\$0.00',
@@ -353,7 +353,7 @@ void main() {
         value: '\$100.00',
       );
 
-      final json = response.toJson();
+      final Map<String, dynamic> json = response.toJson();
 
       expect(json['id'], 789);
       expect(json['points'], 10000);
@@ -383,7 +383,7 @@ void main() {
     test('should serialize correctly', () {
       final response = WcPointsAndRewardCalculatePoints(value: '\$75.00');
 
-      final json = response.toJson();
+      final Map<String, dynamic> json = response.toJson();
 
       expect(json['value'], '\$75.00');
     });

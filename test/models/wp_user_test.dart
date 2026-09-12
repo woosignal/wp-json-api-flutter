@@ -7,7 +7,7 @@ void main() {
   group('WpUser', () {
     group('fromJson', () {
       test('should parse all fields correctly', () {
-        final json = {
+        final Map<String, Object> json = {
           'id': 123,
           'token': 'test_token_abc123',
           'email': 'test@example.com',
@@ -46,7 +46,7 @@ void main() {
       });
 
       test('should handle partial data', () {
-        final json = {
+        final Map<String, Object> json = {
           'id': 456,
           'email': 'partial@example.com',
         };
@@ -73,7 +73,7 @@ void main() {
           createdAt: '2024-01-01 12:00:00',
         );
 
-        final json = wpUser.toJson();
+        final Map<String, dynamic> json = wpUser.toJson();
 
         expect(json['id'], 123);
         expect(json['token'], 'test_token_abc123');
@@ -88,7 +88,7 @@ void main() {
       test('should include null values', () {
         final wpUser = WpUser();
 
-        final json = wpUser.toJson();
+        final Map<String, dynamic> json = wpUser.toJson();
 
         expect(json.containsKey('id'), true);
         expect(json.containsKey('token'), true);
@@ -99,7 +99,7 @@ void main() {
 
     group('fromJson/toJson roundtrip', () {
       test('should preserve data through serialization cycle', () {
-        final originalJson = {
+        final Map<String, Object> originalJson = {
           'id': 789,
           'token': 'roundtrip_token',
           'email': 'roundtrip@example.com',
@@ -111,7 +111,7 @@ void main() {
         };
 
         final wpUser = WpUser.fromJson(originalJson);
-        final serializedJson = wpUser.toJson();
+        final Map<String, dynamic> serializedJson = wpUser.toJson();
 
         expect(serializedJson['id'], originalJson['id']);
         expect(serializedJson['token'], originalJson['token']);

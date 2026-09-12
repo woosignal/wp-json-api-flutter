@@ -5,7 +5,7 @@ void main() {
   group('WCCustomerInfoResponse', () {
     group('fromJson', () {
       test('should parse complete response with shipping and billing', () {
-        final json = {
+        final Map<String, Object> json = {
           'data': {
             'first_name': 'John',
             'last_name': 'Doe',
@@ -80,7 +80,7 @@ void main() {
       });
 
       test('should handle null shipping and billing', () {
-        final json = {
+        final Map<String, Object> json = {
           'data': {
             'first_name': 'Jane',
             'last_name': 'Smith',
@@ -96,7 +96,7 @@ void main() {
       });
 
       test('should handle null data', () {
-        final json = {
+        final Map<String, Object?> json = {
           'data': null,
           'message': 'No customer found',
           'status': 404,
@@ -139,7 +139,7 @@ void main() {
           status: 200,
         );
 
-        final json = response.toJson();
+        final Map<String, dynamic> json = response.toJson();
 
         expect(json['status'], 200);
         expect(json['data']['first_name'], 'Test');
@@ -164,7 +164,8 @@ void main() {
 
       group('getMetaDataArrayWhere', () {
         test('should return array for existing key', () {
-          final result = dataWithMeta.getMetaDataArrayWhere('custom_field');
+          final List<dynamic>? result =
+              dataWithMeta.getMetaDataArrayWhere('custom_field');
 
           expect(result, isNotNull);
           expect(result, hasLength(2));
@@ -172,7 +173,8 @@ void main() {
         });
 
         test('should return null for non-existing key', () {
-          final result = dataWithMeta.getMetaDataArrayWhere('non_existing');
+          final List<dynamic>? result =
+              dataWithMeta.getMetaDataArrayWhere('non_existing');
 
           expect(result, isNull);
         });
@@ -180,7 +182,8 @@ void main() {
         test('should return null when metaData is null', () {
           final dataNoMeta = Data(firstName: 'No Meta');
 
-          final result = dataNoMeta.getMetaDataArrayWhere('any_key');
+          final List<dynamic>? result =
+              dataNoMeta.getMetaDataArrayWhere('any_key');
 
           expect(result, isNull);
         });
@@ -188,25 +191,29 @@ void main() {
 
       group('getMetaDataFirstWhere', () {
         test('should return first value', () {
-          final result = dataWithMeta.getMetaDataFirstWhere('custom_field');
+          final dynamic result =
+              dataWithMeta.getMetaDataFirstWhere('custom_field');
 
           expect(result, 'value1');
         });
 
         test('should return single value', () {
-          final result = dataWithMeta.getMetaDataFirstWhere('single_value');
+          final dynamic result =
+              dataWithMeta.getMetaDataFirstWhere('single_value');
 
           expect(result, 'only_one');
         });
 
         test('should return null for empty array', () {
-          final result = dataWithMeta.getMetaDataFirstWhere('empty_field');
+          final dynamic result =
+              dataWithMeta.getMetaDataFirstWhere('empty_field');
 
           expect(result, isNull);
         });
 
         test('should return null for non-existing key', () {
-          final result = dataWithMeta.getMetaDataFirstWhere('non_existing');
+          final dynamic result =
+              dataWithMeta.getMetaDataFirstWhere('non_existing');
 
           expect(result, isNull);
         });
@@ -249,7 +256,7 @@ void main() {
         country: 'UK',
       );
 
-      final json = shipping.toJson();
+      final Map<String, dynamic> json = shipping.toJson();
 
       expect(json['first_name'], 'Test');
       expect(json['last_name'], 'Ship');
@@ -297,7 +304,7 @@ void main() {
         phone: '123-456-7890',
       );
 
-      final json = billing.toJson();
+      final Map<String, dynamic> json = billing.toJson();
 
       expect(json['first_name'], 'Serialize');
       expect(json['email'], 'serial@example.com');
@@ -316,7 +323,7 @@ void main() {
     test('should serialize to json with key as property name', () {
       final metaData = MetaData(key: 'my_meta', value: ['x', 'y', 'z']);
 
-      final json = metaData.toJson();
+      final Map<String?, dynamic> json = metaData.toJson();
 
       expect(json['my_meta'], ['x', 'y', 'z']);
     });

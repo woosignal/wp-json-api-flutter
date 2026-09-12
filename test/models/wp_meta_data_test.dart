@@ -67,7 +67,7 @@ void main() {
           action: WPMetaDataActionType.Update,
         );
 
-        final json = metaData.toJson();
+        final Map<String, dynamic> json = metaData.toJson();
 
         expect(json['key'], 'update_key');
         expect(json['value'], 'update_value');
@@ -82,7 +82,7 @@ void main() {
           action: WPMetaDataActionType.Create,
         );
 
-        final json = metaData.toJson();
+        final Map<String, dynamic> json = metaData.toJson();
 
         expect(json['action'], 'create');
       });
@@ -94,7 +94,7 @@ void main() {
           action: WPMetaDataActionType.Delete,
         );
 
-        final json = metaData.toJson();
+        final Map<String, dynamic> json = metaData.toJson();
 
         expect(json['action'], 'delete');
       });
@@ -106,7 +106,7 @@ void main() {
           unique: 1,
         );
 
-        final json = metaData.toJson();
+        final Map<String, dynamic> json = metaData.toJson();
 
         expect(json['unique'], 1);
       });
@@ -117,7 +117,7 @@ void main() {
           value: 'value',
         );
 
-        final json = metaData.toJson();
+        final Map<String, dynamic> json = metaData.toJson();
 
         expect(json.containsKey('unique'), false);
       });
@@ -125,7 +125,7 @@ void main() {
       test('should handle null key', () {
         final metaData = WpMetaData(key: null, value: 'value');
 
-        final json = metaData.toJson();
+        final Map<String, dynamic> json = metaData.toJson();
 
         expect(json['key'], isNull);
       });
@@ -133,7 +133,7 @@ void main() {
       test('should handle null value', () {
         final metaData = WpMetaData(key: 'key', value: null);
 
-        final json = metaData.toJson();
+        final Map<String, dynamic> json = metaData.toJson();
 
         expect(json['value'], isNull);
       });
@@ -147,7 +147,7 @@ void main() {
           },
         );
 
-        final json = metaData.toJson();
+        final Map<String, dynamic> json = metaData.toJson();
 
         expect(json['value'], isA<Map>());
         expect(json['value']['items'], [1, 2, 3]);

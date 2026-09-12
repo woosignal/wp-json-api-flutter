@@ -156,7 +156,7 @@ void main() {
     });
 
     test('should categorize WordPress vs WooCommerce routes', () {
-      final wpRoutes = [
+      final List<WPRouteType> wpRoutes = [
         WPRouteType.UserLogin,
         WPRouteType.UserRegister,
         WPRouteType.UserInfo,
@@ -169,7 +169,7 @@ void main() {
         WPRouteType.AuthVerify,
       ];
 
-      final wcRoutes = [
+      final List<WPRouteType> wcRoutes = [
         WPRouteType.WCCustomerInfo,
         WPRouteType.WCCustomerUpdateInfo,
         WPRouteType.WCPointsAndRewardsUser,

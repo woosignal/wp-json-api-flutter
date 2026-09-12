@@ -7,8 +7,8 @@ void main() {
   group('WPJsonAPI', () {
     group('Singleton', () {
       test('should return same instance', () {
-        final instance1 = WPJsonAPI.instance;
-        final instance2 = WPJsonAPI.instance;
+        final WPJsonAPI instance1 = WPJsonAPI.instance;
+        final WPJsonAPI instance2 = WPJsonAPI.instance;
 
         expect(identical(instance1, instance2), true);
       });
@@ -27,8 +27,8 @@ void main() {
       });
 
       test('should return same key on multiple calls', () {
-        final key1 = WPJsonAPI.storageKey();
-        final key2 = WPJsonAPI.storageKey();
+        final String key1 = WPJsonAPI.storageKey();
+        final String key2 = WPJsonAPI.storageKey();
 
         expect(key1, key2);
       });
@@ -124,7 +124,7 @@ void main() {
       });
 
       test('should return result from callback', () async {
-        final result = await WPJsonAPI.instance.api((request) async {
+        final dynamic result = await WPJsonAPI.instance.api((request) async {
           return 'test_result';
         });
 
@@ -189,7 +189,7 @@ void main() {
         lastName: 'Test',
       );
 
-      final json = wpUser.toJson();
+      final Map<String, dynamic> json = wpUser.toJson();
 
       expect(json['id'], 123);
       expect(json['token'], 'integration_token');
@@ -197,7 +197,7 @@ void main() {
     });
 
     test('should restore WpUser from storage data', () {
-      final storedJson = {
+      final Map<String, Object> storedJson = {
         'id': 456,
         'token': 'restored_token',
         'email': 'restored@example.com',

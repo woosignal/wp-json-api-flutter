@@ -89,7 +89,7 @@ class WPAppNetworkManager {
     if (tokenExpiryAt != null) payload["expiry"] = tokenExpiryAt;
 
     // send http request
-    final json = await _http(
+    final dynamic json = await _http(
       method: "POST",
       url: _urlForRouteType(WPRouteType.UserLogin) +
           _getAuthQueryForType(authType),
@@ -133,9 +133,7 @@ class WPAppNetworkManager {
     // Get nonce from WordPress
     WPNonceResponse wpNonceResponse = await wpNonce();
 
-    if (username == null) {
-      username = (email.replaceAll(RegExp(r'([@.])'), "")) + _randomString(4);
-    }
+    username ??= (email.replaceAll(RegExp(r'([@.])'), "")) + _randomString(4);
 
     // Creates payload for register
     Map<String, dynamic> payload = {
@@ -149,7 +147,7 @@ class WPAppNetworkManager {
     if (expiry != null) payload["expiry"] = expiry;
 
     // send http request
-    final json = await _http(
+    final dynamic json = await _http(
       method: "POST",
       url: _urlForRouteType(WPRouteType.UserRegister),
       body: payload,
@@ -192,9 +190,7 @@ class WPAppNetworkManager {
     // Get nonce from WordPress
     WPNonceResponse wpNonceResponse = await wpNonce();
 
-    if (username == null) {
-      username = (email.replaceAll(RegExp(r'([@.])'), "")) + _randomString(4);
-    }
+    username ??= (email.replaceAll(RegExp(r'([@.])'), "")) + _randomString(4);
 
     // Creates payload for register
     Map<String, dynamic> payload = {
@@ -208,7 +204,7 @@ class WPAppNetworkManager {
     if (expiry != null) payload["expiry"] = expiry;
 
     // send http request
-    final json = await _http(
+    final dynamic json = await _http(
       method: "POST",
       url: _urlForRouteType(WPRouteType.UserRegister),
       body: payload,
@@ -235,7 +231,7 @@ class WPAppNetworkManager {
   /// Throws an [Exception] if fails.
   Future<WPNonceResponse> wpNonce() async {
     // send http request
-    final json = await _http(
+    final dynamic json = await _http(
       method: "GET",
       url: _urlForRouteType(WPRouteType.AuthNonce),
     );
@@ -254,7 +250,7 @@ class WPAppNetworkManager {
     Map<String, dynamic> payload = {"nonce": nonce};
 
     // send http request
-    final json = await _http(
+    final dynamic json = await _http(
       method: "POST",
       url: _urlForRouteType(WPRouteType.AuthVerify),
       body: payload,
@@ -273,7 +269,7 @@ class WPAppNetworkManager {
   /// Throws an [Exception] if fails
   Future<WPUserInfoResponse> wpGetUserInfo({String? userToken}) async {
     // send http request
-    final json = await _http(
+    final dynamic json = await _http(
         method: "POST",
         url: _urlForRouteType(WPRouteType.UserInfo),
         userToken: userToken,
@@ -308,7 +304,7 @@ class WPAppNetworkManager {
     }
 
     // send http request
-    final json = await _http(
+    final dynamic json = await _http(
       method: "POST",
       url: _urlForRouteType(WPRouteType.UserUpdateInfo),
       userToken: userToken,
@@ -333,7 +329,7 @@ class WPAppNetworkManager {
     payload["role"] = role;
 
     // send http request
-    final json = await _http(
+    final dynamic json = await _http(
       method: "POST",
       url: _urlForRouteType(WPRouteType.UserAddRole),
       userToken: userToken,
@@ -348,7 +344,7 @@ class WPAppNetworkManager {
   }
 
   /// Logs out the user by deleting the user token from the local storage
-  wpLogout() async {
+  Future<void> wpLogout() async {
     await NyStorage.delete(WPJsonAPI.storageKey());
   }
 
@@ -365,7 +361,7 @@ class WPAppNetworkManager {
     }
 
     // send http request
-    final json = await _http(
+    final dynamic json = await _http(
       method: "POST",
       url: _urlForRouteType(WPRouteType.UserDelete),
       userToken: userToken,
@@ -390,7 +386,7 @@ class WPAppNetworkManager {
     payload["role"] = role;
 
     // send http request
-    final json = await _http(
+    final dynamic json = await _http(
       method: "POST",
       url: _urlForRouteType(WPRouteType.UserRemoveRole),
       userToken: userToken,
@@ -415,7 +411,7 @@ class WPAppNetworkManager {
     Map<String, dynamic> payload = {"password": password};
 
     // send http request
-    final json = await _http(
+    final dynamic json = await _http(
         method: "POST",
         url: _urlForRouteType(WPRouteType.UserUpdatePassword),
         body: payload,
@@ -434,7 +430,7 @@ class WPAppNetworkManager {
   /// Throws an [Exception] if fails.
   Future<WCCustomerInfoResponse> wcCustomerInfo({String? userToken}) async {
     // send http request
-    final json = await _http(
+    final dynamic json = await _http(
         method: "POST",
         url: _urlForRouteType(WPRouteType.WCCustomerInfo),
         userToken: userToken,
@@ -453,7 +449,7 @@ class WPAppNetworkManager {
   Future<WcPointsAndRewardUser> wcPointsAndRewardsUser(
       {String? userToken}) async {
     // send http request
-    final json = await _http(
+    final dynamic json = await _http(
       method: "POST",
       url: _urlForRouteType(WPRouteType.WCPointsAndRewardsUser),
       userToken: userToken,
@@ -473,7 +469,7 @@ class WPAppNetworkManager {
   Future<WcPointsAndRewardCalculatePoints> wcPointsAndRewardsCalculatePoints(
       {required double points, String? userToken}) async {
     // send http request
-    final json = await _http(
+    final dynamic json = await _http(
       method: "POST",
       url: _urlForRouteType(WPRouteType.WCPointsAndRewardsCalculatePoints),
       userToken: userToken,
@@ -525,26 +521,32 @@ class WPAppNetworkManager {
     if (displayName != null) payload["display_name"] = displayName;
 
     Map<String, dynamic> shippingPayload = {};
-    if (shippingFirstName != null)
+    if (shippingFirstName != null) {
       shippingPayload["first_name"] = shippingFirstName;
-    if (shippingLastName != null)
+    }
+    if (shippingLastName != null) {
       shippingPayload["last_name"] = shippingLastName;
+    }
     if (shippingCompany != null) shippingPayload["company"] = shippingCompany;
-    if (shippingAddress1 != null)
+    if (shippingAddress1 != null) {
       shippingPayload["address_1"] = shippingAddress1;
-    if (shippingAddress2 != null)
+    }
+    if (shippingAddress2 != null) {
       shippingPayload["address_2"] = shippingAddress2;
+    }
     if (shippingCity != null) shippingPayload["city"] = shippingCity;
     if (shippingState != null) shippingPayload["state"] = shippingState;
-    if (shippingPostcode != null)
+    if (shippingPostcode != null) {
       shippingPayload["postcode"] = shippingPostcode;
+    }
     if (shippingCountry != null) shippingPayload["country"] = shippingCountry;
     if (shippingEmail != null) shippingPayload["email"] = shippingEmail;
     if (shippingPhone != null) shippingPayload["phone"] = shippingPhone;
 
     Map<String, dynamic> billingPayload = {};
-    if (billingFirstName != null)
+    if (billingFirstName != null) {
       billingPayload["first_name"] = billingFirstName;
+    }
     if (billingLastName != null) billingPayload["last_name"] = billingLastName;
     if (billingCompany != null) billingPayload["company"] = billingCompany;
     if (billingAddress1 != null) billingPayload["address_1"] = billingAddress1;
@@ -565,7 +567,7 @@ class WPAppNetworkManager {
     }
 
     // send http request
-    final json = await _http(
+    final dynamic json = await _http(
         method: "POST",
         url: _urlForRouteType(WPRouteType.WCCustomerUpdateInfo),
         body: payload,
@@ -596,9 +598,7 @@ class WPAppNetworkManager {
       Map<String, String> headers = {
         HttpHeaders.contentTypeHeader: "application/json",
       };
-      if (body == null) {
-        body = {};
-      }
+      body ??= {};
       String? userTokenFromStorage = await WPJsonAPI.wpUserToken();
       if (shouldAuthRequest && userTokenFromStorage != null) {
         body.addAll({"token": userTokenFromStorage});
@@ -639,7 +639,7 @@ class WPAppNetworkManager {
   /// Checks if a response payload has a bad status (=> 500).
   ///
   /// Returns [bool] true if status is => 500.
-  _jsonHasBadStatus(json) {
+  bool _jsonHasBadStatus(dynamic json) {
     return (json["status"] == null || json["status"] >= 500);
   }
 
@@ -755,7 +755,7 @@ class WPAppNetworkManager {
   }
 
   /// Throws an exception from the [json] status returned from payload.
-  _throwExceptionForStatusCode(json) {
+  dynamic _throwExceptionForStatusCode(dynamic json) {
     if (json != null && json['status'] != null) {
       int? statusCode = json["status"];
       String message = json["message"] ?? 'Something went wrong';
