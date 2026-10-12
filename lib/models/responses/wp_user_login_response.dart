@@ -13,6 +13,10 @@
 // IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
 // WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 
+import '/models/responses/wp_user_info_response.dart' as user_info;
+
+/// The response from `POST /auth/login`. [data] holds the new token, when it expires and
+/// the user.
 class WPUserLoginResponse {
   Data? data;
   String? message;
@@ -21,7 +25,9 @@ class WPUserLoginResponse {
   WPUserLoginResponse({this.data, this.message, this.status});
 
   WPUserLoginResponse.fromJson(Map<String, dynamic> json) {
-    data = json['data'] != null ? Data.fromJson(json['data']) : null;
+    data = json['data'] is Map
+        ? Data.fromJson(Map<String, dynamic>.from(json['data']))
+        : null;
     message = json['message'];
     status = json['status'];
   }
@@ -37,63 +43,39 @@ class WPUserLoginResponse {
   }
 }
 
+/// The WP JSON API v4 **Auth** object.
 class Data {
-  int? userId;
-  String? userToken;
-  int? expiry;
-  String? email;
-  String? username;
-  String? firstName;
-  String? lastName;
-  String? avatar;
-  String? createdAt;
+  /// The token to send on authenticated requests.
+  String? token;
 
-  Data(
-      {this.userId,
-      this.userToken,
-      this.expiry,
-      this.email,
-      this.username,
-      this.firstName,
-      this.lastName,
-      this.avatar,
-      this.createdAt});
+  /// When the [token] expires, as a Unix timestamp in seconds.
+  int? expiresAt;
+
+  /// The user that the [token] belongs to.
+  user_info.Data? user;
+
+  Data({this.token, this.expiresAt, this.user});
 
   Data.fromJson(Map<String, dynamic> json) {
-    userId = json['user_id'];
-    userToken = json['user_token'];
-    expiry = json['expiry'];
-    if (json.containsKey('email')) {
-      email = json['email'];
-    }
-    if (json.containsKey('username')) {
-      username = json['username'];
-    }
-    if (json.containsKey('first_name')) {
-      firstName = json['first_name'];
-    }
-    if (json.containsKey('last_name')) {
-      lastName = json['last_name'];
-    }
-    if (json.containsKey('avatar')) {
-      avatar = json['avatar'];
-    }
-    if (json.containsKey('created_at')) {
-      createdAt = json['created_at'];
-    }
+    token = json['token'];
+    expiresAt = json['expires_at'] is num
+        ? (json['expires_at'] as num).toInt()
+        : int.tryParse(json['expires_at']?.toString() ?? '');
+    user = json['user'] is Map
+        ? user_info.Data.fromJson(Map<String, dynamic>.from(json['user']))
+        : null;
   }
+
+  /// Returns [expiresAt] as a [DateTime], or null if it is not set.
+  DateTime? get expiresAtDateTime => expiresAt == null
+      ? null
+      : DateTime.fromMillisecondsSinceEpoch(expiresAt! * 1000);
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> result = <String, dynamic>{};
-    result['user_id'] = userId;
-    result['user_token'] = userToken;
-    result['expiry'] = expiry;
-    result['email'] = email;
-    result['username'] = username;
-    result['first_name'] = firstName;
-    result['last_name'] = lastName;
-    result['avatar'] = avatar;
-    result['created_at'] = createdAt;
+    result['token'] = token;
+    result['expires_at'] = expiresAt;
+    result['user'] = user?.toJson();
     return result;
   }
 }

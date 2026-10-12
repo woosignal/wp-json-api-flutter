@@ -13,16 +13,20 @@
 // IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
 // WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 
-// ignore_for_file: constant_identifier_names
+/// Thrown for `wpapp_server_error` (HTTP 500) and for any error response
+/// that has no dedicated exception, such as an unknown error [code] or a
+/// response that is not a WordPress REST error.
+///
+/// [code] is the WordPress REST error code (null when the response had none),
+/// [status] is the HTTP status code and [data] is the error's `data` object.
+/// Show [message] to the user.
+class WPServerException implements Exception {
+  String message;
+  String? code;
+  int? status;
+  Map<String, dynamic>? data;
+  WPServerException(this.message, {this.code, this.status, this.data});
 
-enum WPAuthType {
-  /// Auth type [WPAuthType.WpEmail] is used for specifying
-  /// how you want to authenticate a user when using the Login method
-  /// This method will authenticate via Email and Password
-  WpEmail,
-
-  /// Auth type [WPAuthType.WpUsername] is used for specifying
-  /// how you want to authenticate a user when using the Login method
-  /// This method will authenticate via Username and Password
-  WpUsername,
+  @override
+  String toString() => 'WPServerException($code, $status): $message';
 }

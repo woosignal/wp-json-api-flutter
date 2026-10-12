@@ -13,7 +13,14 @@
 // IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
 // WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 
+/// Thrown when WooCommerce is not active on the WordPress site.
+///
+/// Server error code: `wpapp_woocommerce_missing` (HTTP 501).
 class WooCommerceNotFoundException implements Exception {
-  String message = 'WooCommerce is not found on WordPress';
-  WooCommerceNotFoundException();
+  String message;
+  WooCommerceNotFoundException([String? message])
+      : message = message ?? 'WooCommerce is not found on WordPress';
+
+  @override
+  String toString() => 'WooCommerceNotFoundException: $message';
 }

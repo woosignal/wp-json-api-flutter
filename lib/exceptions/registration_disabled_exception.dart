@@ -13,26 +13,14 @@
 // IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
 // WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 
-class WPUserAddRoleResponse {
-  List<dynamic>? data;
-  String? message;
-  int? status;
+/// Thrown when registration is turned off for the WordPress site.
+///
+/// Server error code: `wpapp_registration_disabled` (HTTP 403).
+class RegistrationDisabledException implements Exception {
+  String message;
+  RegistrationDisabledException([String? message])
+      : message = message ?? 'Registration is disabled for this site';
 
-  WPUserAddRoleResponse({this.data, this.message, this.status});
-
-  WPUserAddRoleResponse.fromJson(Map<String, dynamic> json) {
-    if (json['data'] != null) {
-      data = json['data'];
-    }
-    message = json['message'];
-    status = json['status'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> result = <String, dynamic>{};
-    result['data'] = data;
-    result['message'] = message;
-    result['status'] = status;
-    return result;
-  }
+  @override
+  String toString() => 'RegistrationDisabledException: $message';
 }

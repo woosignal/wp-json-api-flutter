@@ -38,10 +38,10 @@ void main() {
         final metaData = WpMetaData(
           key: 'unique_key',
           value: 'unique_value',
-          unique: 1,
+          unique: true,
         );
 
-        expect(metaData.unique, 1);
+        expect(metaData.unique, true);
       });
 
       test('should accept various value types', () {
@@ -103,12 +103,12 @@ void main() {
         final metaData = WpMetaData(
           key: 'unique_test',
           value: 'value',
-          unique: 1,
+          unique: true,
         );
 
         final Map<String, dynamic> json = metaData.toJson();
 
-        expect(json['unique'], 1);
+        expect(json['unique'], true);
       });
 
       test('should not include unique when null', () {

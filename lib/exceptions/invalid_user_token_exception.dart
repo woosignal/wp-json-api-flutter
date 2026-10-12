@@ -13,7 +13,14 @@
 // IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
 // WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 
+/// Thrown when the user token is missing, invalid, expired or revoked.
+///
+/// Server error code: `wpapp_unauthorized` (HTTP 401).
 class InvalidUserTokenException implements Exception {
-  String message = 'Invalid user API token';
-  InvalidUserTokenException();
+  String message;
+  InvalidUserTokenException([String? message])
+      : message = message ?? 'Invalid user API token';
+
+  @override
+  String toString() => 'InvalidUserTokenException: $message';
 }

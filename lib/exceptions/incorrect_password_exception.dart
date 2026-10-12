@@ -13,7 +13,14 @@
 // IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
 // WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 
+/// Thrown when the `currentPassword` (change password) or `password`
+/// (delete account) confirmation is wrong.
+///
+/// Server error code: `wpapp_incorrect_password` (HTTP 403).
 class IncorrectPasswordException implements Exception {
   String message;
   IncorrectPasswordException(this.message);
+
+  @override
+  String toString() => 'IncorrectPasswordException: $message';
 }

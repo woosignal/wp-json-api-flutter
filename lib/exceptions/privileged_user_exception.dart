@@ -13,26 +13,15 @@
 // IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
 // WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 
-class WPUserRemoveRoleResponse {
-  List<dynamic>? data;
-  String? message;
-  int? status;
+/// Thrown when the account is not allowed to use the API, e.g. an
+/// administrator or shop manager.
+///
+/// Server error code: `wpapp_privileged_user` (HTTP 403).
+class PrivilegedUserException implements Exception {
+  String message;
+  PrivilegedUserException([String? message])
+      : message = message ?? 'This account is not allowed to use the API';
 
-  WPUserRemoveRoleResponse({this.data, this.message, this.status});
-
-  WPUserRemoveRoleResponse.fromJson(Map<String, dynamic> json) {
-    if (json['data'] != null) {
-      data = json['data'];
-    }
-    message = json['message'];
-    status = json['status'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> result = <String, dynamic>{};
-    result['data'] = data;
-    result['message'] = message;
-    result['status'] = status;
-    return result;
-  }
+  @override
+  String toString() => 'PrivilegedUserException: $message';
 }

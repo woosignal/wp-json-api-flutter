@@ -1,3 +1,4 @@
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:wp_json_api/wp_json_api.dart';
 import 'package:wp_json_api/models/wp_user.dart';
@@ -18,6 +19,64 @@ void main() {
       test('should return current version', () {
         expect(WPJsonAPI.version, isNotEmpty);
         expect(WPJsonAPI.version, matches(RegExp(r'^\d+\.\d+\.\d+$')));
+      });
+
+      test('should be 5.0.0', () {
+        expect(WPJsonAPI.version, '5.0.0');
+      });
+    });
+
+    group('login state', () {
+      int nowInSeconds() => DateTime.now().millisecondsSinceEpoch ~/ 1000;
+
+      setUp(() async {
+        TestWidgetsFlutterBinding.ensureInitialized();
+        FlutterSecureStorage.setMockInitialValues({});
+        await WPJsonAPI.instance.init(
+          baseUrl: 'https://example.com',
+          shouldDebug: false,
+        );
+      });
+
+      test('should be logged out with no stored user', () async {
+        expect(await WPJsonAPI.wpUserLoggedIn(), false);
+        expect(await WPJsonAPI.wpUserTokenExpiresAt(), isNull);
+      });
+
+      test('should be logged in with an unexpired token', () async {
+        final int expiresAt = nowInSeconds() + 3600;
+        await WPJsonAPI.wpLogin(
+            WpUser(id: 1, token: 'token', expiresAt: expiresAt));
+
+        expect(await WPJsonAPI.wpUserLoggedIn(), true);
+        expect(await WPJsonAPI.wpUserId(), '1');
+        expect(await WPJsonAPI.wpUserToken(), 'token');
+        expect(await WPJsonAPI.wpUserTokenExpiresAt(),
+            DateTime.fromMillisecondsSinceEpoch(expiresAt * 1000));
+      });
+
+      test('should be logged out when the token has expired', () async {
+        await WPJsonAPI.wpLogin(
+            WpUser(id: 1, token: 'token', expiresAt: nowInSeconds() - 60));
+
+        expect(await WPJsonAPI.wpUserLoggedIn(), false);
+      });
+
+      test('should be logged out with a 4.x session that has no expiry',
+          () async {
+        await WPJsonAPI.wpLogin(WpUser(id: 1, token: 'v3_token'));
+
+        expect(await WPJsonAPI.wpUserLoggedIn(), false);
+      });
+
+      test('should be logged out after wpLogout', () async {
+        await WPJsonAPI.wpLogin(
+            WpUser(id: 1, token: 'token', expiresAt: nowInSeconds() + 3600));
+
+        await WPJsonAPI.wpLogout();
+
+        expect(await WPJsonAPI.wpUserLoggedIn(), false);
+        expect(await WPJsonAPI.wpUser(), isNull);
       });
     });
 

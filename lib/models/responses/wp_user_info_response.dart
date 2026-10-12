@@ -23,7 +23,9 @@ class WPUserInfoResponse {
   WPUserInfoResponse({this.data, this.message, this.status});
 
   WPUserInfoResponse.fromJson(Map<String, dynamic> json) {
-    data = json['data'] != null ? Data.fromJson(json['data']) : null;
+    data = json['data'] is Map
+        ? Data.fromJson(Map<String, dynamic>.from(json['data']))
+        : null;
     message = json['message'];
     status = json['status'];
   }
@@ -39,73 +41,63 @@ class WPUserInfoResponse {
   }
 }
 
+/// A WordPress user, as returned by the WP JSON API v4 **User** object.
 class Data {
   int? id;
+  String? username;
+  String? email;
   String? firstName;
   String? lastName;
-  String? username;
-  String? userNicename;
   String? displayName;
-  String? userStatus;
-  String? email;
   String? avatar;
-  List<MetaData>? metaData;
   List<String>? roles;
+
+  /// Allow-listed user meta. Each key can have several values.
+  List<MetaData>? metaData;
   String? createdAt;
 
   Data(
       {this.id,
+      this.username,
+      this.email,
       this.firstName,
       this.lastName,
-      this.username,
-      this.userNicename,
       this.displayName,
-      this.roles,
-      this.userStatus,
-      this.email,
       this.avatar,
+      this.roles,
       this.metaData,
       this.createdAt});
 
   Data.fromJson(Map<String, dynamic> json) {
     id = json['id'];
+    username = json['username'];
+    email = json['email'];
     firstName = json['first_name'];
     lastName = json['last_name'];
-    username = json['username'];
-    userNicename = json['user_nicename'];
     displayName = json['display_name'];
-    userStatus = json['user_status'];
-    email = json['email'];
+    avatar = json['avatar'];
     roles = [];
-    if (json['roles'] != null) {
+    if (json['roles'] is List) {
       for (final role in json['roles'] as List) {
-        roles!.add(role);
+        roles!.add(role.toString());
       }
     }
-    avatar = json['avatar'];
-    if (json['meta_data'] != null && Map.of(json['meta_data']).isNotEmpty) {
-      metaData = [];
-      Map.from(json['meta_data']).forEach((key, value) {
-        metaData!.add(MetaData.fromJson(key, value));
-      });
-    }
+    metaData = MetaData.listFromJson(json['meta_data']);
     createdAt = json['created_at'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> result = <String, dynamic>{};
     result['id'] = id;
+    result['username'] = username;
+    result['email'] = email;
     result['first_name'] = firstName;
     result['last_name'] = lastName;
-    result['username'] = username;
-    result['user_nicename'] = userNicename;
     result['display_name'] = displayName;
-    result['user_status'] = userStatus;
-    result['email'] = email;
-    result['roles'] = (roles ?? []).map((e) => e).toList();
     result['avatar'] = avatar;
+    result['roles'] = (roles ?? []).map((e) => e).toList();
     if (metaData != null) {
-      result['meta_data'] = metaData!.map((e) => e.toJson()).toList();
+      result['meta_data'] = MetaData.listToJson(metaData!);
     }
     result['created_at'] = createdAt;
     return result;
@@ -136,13 +128,38 @@ class Data {
   }
 }
 
+/// A user meta key and its values.
 class MetaData {
   String? key;
   List<dynamic>? value;
 
   MetaData({this.key, this.value});
 
-  MetaData.fromJson(String this.key, List<dynamic> this.value);
+  /// Creates a [MetaData] from a [key] and its [value]. A single value is
+  /// wrapped in a list.
+  MetaData.fromJson(String this.key, dynamic value)
+      : value = value is List ? value : [value];
+
+  /// Parses a `meta_data` map of key -> list of values.
+  ///
+  /// Returns null when [json] is not a non-empty map.
+  static List<MetaData>? listFromJson(dynamic json) {
+    if (json is! Map || json.isEmpty) return null;
+    return json.entries
+        .map((entry) => MetaData.fromJson(entry.key.toString(), entry.value))
+        .toList();
+  }
+
+  /// Converts a list of [MetaData] back to a `meta_data` map.
+  static Map<String, dynamic> listToJson(List<MetaData> metaData) {
+    final Map<String, dynamic> result = <String, dynamic>{};
+    for (final MetaData meta in metaData) {
+      if (meta.key != null) {
+        result[meta.key!] = meta.value;
+      }
+    }
+    return result;
+  }
 
   Map<String?, dynamic> toJson() {
     final Map<String?, List<dynamic>?> result = <String?, List<dynamic>?>{};

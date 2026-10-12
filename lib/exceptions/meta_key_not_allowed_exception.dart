@@ -13,7 +13,16 @@
 // IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
 // WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 
-class InvalidNonceException implements Exception {
-  String message = 'Invalid nonce token';
-  InvalidNonceException();
+/// Thrown when a `meta_data` key is not on the site's allow-list.
+/// [key] is the refused key.
+///
+/// Server error code: `wpapp_meta_key_not_allowed` (HTTP 403).
+class MetaKeyNotAllowedException implements Exception {
+  String message;
+  String? key;
+  MetaKeyNotAllowedException([String? message, this.key])
+      : message = message ?? 'This meta data key is not allowed';
+
+  @override
+  String toString() => 'MetaKeyNotAllowedException: $message';
 }

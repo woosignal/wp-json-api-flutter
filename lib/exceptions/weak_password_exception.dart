@@ -13,7 +13,15 @@
 // IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
 // WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 
-class EmptyUsernameException implements Exception {
-  String message = 'The email field is empty';
-  EmptyUsernameException();
+/// Thrown when a password is shorter than the minimum length set on the
+/// WordPress site.
+///
+/// Server error code: `wpapp_weak_password` (HTTP 400).
+class WeakPasswordException implements Exception {
+  String message;
+  WeakPasswordException([String? message])
+      : message = message ?? 'The password is too weak';
+
+  @override
+  String toString() => 'WeakPasswordException: $message';
 }

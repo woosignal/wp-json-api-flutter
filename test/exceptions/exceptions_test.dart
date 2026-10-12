@@ -1,89 +1,24 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:wp_json_api/exceptions/empty_username_exception.dart';
-import 'package:wp_json_api/exceptions/existing_user_email_exception.dart';
-import 'package:wp_json_api/exceptions/existing_user_login_exception.dart';
 import 'package:wp_json_api/exceptions/incorrect_password_exception.dart';
 import 'package:wp_json_api/exceptions/invalid_email_exception.dart';
 import 'package:wp_json_api/exceptions/invalid_params_exception.dart';
 import 'package:wp_json_api/exceptions/invalid_user_token_exception.dart';
-import 'package:wp_json_api/exceptions/invalid_username_exception.dart';
 import 'package:wp_json_api/exceptions/user_already_exist_exception.dart';
 import 'package:wp_json_api/exceptions/username_taken_exception.dart';
 import 'package:wp_json_api/exceptions/woocommerce_not_found_exception.dart';
+import 'package:wp_json_api/exceptions/invalid_credentials_exception.dart';
+import 'package:wp_json_api/exceptions/login_blocked_exception.dart';
+import 'package:wp_json_api/exceptions/meta_key_not_allowed_exception.dart';
+import 'package:wp_json_api/exceptions/points_and_rewards_not_found_exception.dart';
+import 'package:wp_json_api/exceptions/privileged_user_exception.dart';
+import 'package:wp_json_api/exceptions/registration_disabled_exception.dart';
+import 'package:wp_json_api/exceptions/too_many_attempts_exception.dart';
+import 'package:wp_json_api/exceptions/weak_password_exception.dart';
+import 'package:wp_json_api/exceptions/wp_network_exception.dart';
+import 'package:wp_json_api/exceptions/wp_server_exception.dart';
 
 void main() {
   group('Exceptions', () {
-    group('EmptyUsernameException', () {
-      test('should implement Exception', () {
-        final exception = EmptyUsernameException();
-
-        expect(exception, isA<Exception>());
-      });
-
-      test('should have default message', () {
-        final exception = EmptyUsernameException();
-
-        expect(exception.message, 'The email field is empty');
-      });
-
-      test('should be throwable', () {
-        expect(
-          () => throw EmptyUsernameException(),
-          throwsA(isA<EmptyUsernameException>()),
-        );
-      });
-    });
-
-    group('ExistingUserEmailException', () {
-      test('should implement Exception', () {
-        final exception = ExistingUserEmailException('Email exists');
-
-        expect(exception, isA<Exception>());
-      });
-
-      test('should store custom message', () {
-        final exception =
-            ExistingUserEmailException('This email is already registered');
-
-        expect(exception.message, 'This email is already registered');
-      });
-
-      test('should be throwable with message', () {
-        expect(
-          () => throw ExistingUserEmailException('Custom message'),
-          throwsA(
-            isA<ExistingUserEmailException>().having(
-              (e) => e.message,
-              'message',
-              'Custom message',
-            ),
-          ),
-        );
-      });
-    });
-
-    group('ExistingUserLoginException', () {
-      test('should implement Exception', () {
-        final exception = ExistingUserLoginException('Login exists');
-
-        expect(exception, isA<Exception>());
-      });
-
-      test('should store custom message', () {
-        final exception =
-            ExistingUserLoginException('User login already taken');
-
-        expect(exception.message, 'User login already taken');
-      });
-
-      test('should be throwable', () {
-        expect(
-          () => throw ExistingUserLoginException('Login in use'),
-          throwsA(isA<ExistingUserLoginException>()),
-        );
-      });
-    });
-
     group('IncorrectPasswordException', () {
       test('should implement Exception', () {
         final exception = IncorrectPasswordException('Wrong password');
@@ -171,34 +106,6 @@ void main() {
         expect(
           () => throw InvalidUserTokenException(),
           throwsA(isA<InvalidUserTokenException>()),
-        );
-      });
-    });
-
-    group('InvalidUsernameException', () {
-      test('should implement Exception', () {
-        final exception = InvalidUsernameException('Invalid username');
-
-        expect(exception, isA<Exception>());
-      });
-
-      test('should store custom message', () {
-        final exception =
-            InvalidUsernameException('Username contains invalid characters');
-
-        expect(exception.message, 'Username contains invalid characters');
-      });
-
-      test('should be throwable with message', () {
-        expect(
-          () => throw InvalidUsernameException('Bad username'),
-          throwsA(
-            isA<InvalidUsernameException>().having(
-              (e) => e.message,
-              'message',
-              'Bad username',
-            ),
-          ),
         );
       });
     });
@@ -316,6 +223,108 @@ void main() {
 
       handleException(IncorrectPasswordException('wrong'));
       expect(exceptionType, 'incorrect_password');
+    });
+  });
+
+  group('Exceptions with a default message', () {
+    final Map<String, Exception Function([String?])> factories = {
+      'InvalidUserTokenException': InvalidUserTokenException.new,
+      'UsernameTakenException': UsernameTakenException.new,
+      'UserAlreadyExistException': UserAlreadyExistException.new,
+      'InvalidParamsException': InvalidParamsException.new,
+      'WooCommerceNotFoundException': WooCommerceNotFoundException.new,
+      'PrivilegedUserException': PrivilegedUserException.new,
+      'InvalidCredentialsException': InvalidCredentialsException.new,
+      'RegistrationDisabledException': RegistrationDisabledException.new,
+      'WeakPasswordException': WeakPasswordException.new,
+      'PointsAndRewardsNotFoundException':
+          PointsAndRewardsNotFoundException.new,
+    };
+
+    factories.forEach((name, create) {
+      group(name, () {
+        test('should implement Exception', () {
+          expect(create(), isA<Exception>());
+        });
+
+        test('should have a default message', () {
+          expect((create() as dynamic).message, isNotEmpty);
+        });
+
+        test('should use the server message when given', () {
+          expect((create('From server') as dynamic).message, 'From server');
+        });
+
+        test('should include the message in toString', () {
+          expect(create('From server').toString(), '$name: From server');
+        });
+      });
+    });
+  });
+
+  group('LoginBlockedException', () {
+    test('should store the server message', () {
+      final exception = LoginBlockedException('Enter your 2FA code');
+
+      expect(exception, isA<Exception>());
+      expect(exception.message, 'Enter your 2FA code');
+    });
+  });
+
+  group('TooManyAttemptsException', () {
+    test('should store retryAfter', () {
+      final exception = TooManyAttemptsException('Slow down', 30);
+
+      expect(exception, isA<Exception>());
+      expect(exception.message, 'Slow down');
+      expect(exception.retryAfter, 30);
+    });
+
+    test('should have a default message and null retryAfter', () {
+      final exception = TooManyAttemptsException();
+
+      expect(exception.message, isNotEmpty);
+      expect(exception.retryAfter, isNull);
+    });
+  });
+
+  group('MetaKeyNotAllowedException', () {
+    test('should store the refused key', () {
+      final exception =
+          MetaKeyNotAllowedException('Not allowed', 'wp_capabilities');
+
+      expect(exception, isA<Exception>());
+      expect(exception.message, 'Not allowed');
+      expect(exception.key, 'wp_capabilities');
+    });
+  });
+
+  group('WPServerException', () {
+    test('should store code, message, status and data', () {
+      final exception = WPServerException(
+        'Unexpected failure',
+        code: 'wpapp_server_error',
+        status: 500,
+        data: {'status': 500},
+      );
+
+      expect(exception, isA<Exception>());
+      expect(exception.message, 'Unexpected failure');
+      expect(exception.code, 'wpapp_server_error');
+      expect(exception.status, 500);
+      expect(exception.data, {'status': 500});
+      expect(exception.toString(), contains('wpapp_server_error'));
+    });
+  });
+
+  group('WPNetworkException', () {
+    test('should store the message and underlying error', () {
+      final Object error = Object();
+      final exception = WPNetworkException('No connection', error: error);
+
+      expect(exception, isA<Exception>());
+      expect(exception.message, 'No connection');
+      expect(exception.error, same(error));
     });
   });
 }

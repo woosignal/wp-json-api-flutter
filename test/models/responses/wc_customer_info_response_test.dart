@@ -7,6 +7,7 @@ void main() {
       test('should parse complete response with shipping and billing', () {
         final Map<String, Object> json = {
           'data': {
+            'id': 12,
             'first_name': 'John',
             'last_name': 'Doe',
             'display_name': 'John Doe',
@@ -21,6 +22,7 @@ void main() {
               'state': 'NY',
               'postcode': '10001',
               'country': 'US',
+              'phone': '555-9876',
             },
             'billing': {
               'first_name': 'John',
@@ -39,6 +41,7 @@ void main() {
               'customer_type': ['premium'],
               'loyalty_points': ['1000'],
             },
+            'created_at': '2026-10-12 15:00:00',
           },
           'message': 'Customer info retrieved',
           'status': 200,
@@ -49,6 +52,9 @@ void main() {
         expect(response.status, 200);
         expect(response.message, 'Customer info retrieved');
         expect(response.data, isNotNull);
+        expect(response.data!.id, 12);
+        expect(response.data!.createdAt, '2026-10-12 15:00:00');
+        expect(response.data!.shipping!.phone, '555-9876');
         expect(response.data!.firstName, 'John');
         expect(response.data!.lastName, 'Doe');
         expect(response.data!.displayName, 'John Doe');

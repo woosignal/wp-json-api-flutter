@@ -13,22 +13,29 @@
 // IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
 // WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 
+import '/models/responses/wc_customer_info_response.dart';
+
+/// The response from `POST /wc/customer`. [data] is the updated record.
 class WCCustomerUpdatedResponse {
-  List<dynamic>? data;
+  Data? data;
   String? message;
   int? status;
 
   WCCustomerUpdatedResponse({this.data, this.message, this.status});
 
   WCCustomerUpdatedResponse.fromJson(Map<String, dynamic> json) {
-    data = json['data'];
+    data = json['data'] is Map
+        ? Data.fromJson(Map<String, dynamic>.from(json['data']))
+        : null;
     message = json['message'];
     status = json['status'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> result = <String, dynamic>{};
-    result['data'] = data;
+    if (data != null) {
+      result['data'] = data!.toJson();
+    }
     result['message'] = message;
     result['status'] = status;
     return result;

@@ -15,11 +15,18 @@
 
 import '/enums/wp_meta_data_action_type.dart';
 
+/// A meta data change sent with `wpUpdateUserInfo`.
+///
+/// Only keys on the site's allow-list are accepted; any other key fails the
+/// whole request with a `MetaKeyNotAllowedException`.
 class WpMetaData {
   String? key;
   dynamic value;
   WPMetaDataActionType action;
-  int? unique;
+
+  /// Only used with [WPMetaDataActionType.Create]. When `true` the value is
+  /// only added if the key does not already exist.
+  bool? unique;
 
   WpMetaData(
       {this.key,

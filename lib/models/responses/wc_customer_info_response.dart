@@ -23,7 +23,9 @@ class WCCustomerInfoResponse {
   WCCustomerInfoResponse({this.data, this.message, this.status});
 
   WCCustomerInfoResponse.fromJson(Map<String, dynamic> json) {
-    data = json['data'] != null ? Data.fromJson(json['data']) : null;
+    data = json['data'] is Map
+        ? Data.fromJson(Map<String, dynamic>.from(json['data']))
+        : null;
     message = json['message'];
     status = json['status'];
   }
@@ -39,44 +41,51 @@ class WCCustomerInfoResponse {
   }
 }
 
+/// A WooCommerce customer, as returned by the WP JSON API v4 **Customer**
+/// object.
 class Data {
+  int? id;
   String? firstName;
   String? lastName;
   String? displayName;
   String? avatar;
   Shipping? shipping;
   Billing? billing;
+
+  /// Allow-listed user meta. Each key can have several values.
   List<MetaData>? metaData;
+  String? createdAt;
 
   Data(
-      {this.firstName,
+      {this.id,
+      this.firstName,
       this.lastName,
       this.displayName,
       this.avatar,
       this.shipping,
       this.billing,
-      this.metaData});
+      this.metaData,
+      this.createdAt});
 
   Data.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
     firstName = json['first_name'];
     lastName = json['last_name'];
     displayName = json['display_name'];
     avatar = json['avatar'];
-    shipping =
-        json['shipping'] != null ? Shipping.fromJson(json['shipping']) : null;
-    billing =
-        json['billing'] != null ? Billing.fromJson(json['billing']) : null;
-
-    if (json['meta_data'] != null && Map.of(json['meta_data']).isNotEmpty) {
-      metaData = [];
-      Map.from(json['meta_data']).forEach((key, value) {
-        metaData!.add(MetaData.fromJson(key, value));
-      });
-    }
+    shipping = json['shipping'] is Map
+        ? Shipping.fromJson(Map<String, dynamic>.from(json['shipping']))
+        : null;
+    billing = json['billing'] is Map
+        ? Billing.fromJson(Map<String, dynamic>.from(json['billing']))
+        : null;
+    metaData = MetaData.listFromJson(json['meta_data']);
+    createdAt = json['created_at'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> result = <String, dynamic>{};
+    result['id'] = id;
     result['first_name'] = firstName;
     result['last_name'] = lastName;
     result['display_name'] = displayName;
@@ -88,8 +97,9 @@ class Data {
       result['billing'] = billing!.toJson();
     }
     if (metaData != null) {
-      result['meta_data'] = metaData!.map((e) => e.toJson()).toList();
+      result['meta_data'] = MetaData.listToJson(metaData!);
     }
+    result['created_at'] = createdAt;
     return result;
   }
 
@@ -128,6 +138,7 @@ class Shipping {
   String? state;
   String? postcode;
   String? country;
+  String? phone;
 
   Shipping(
       {this.firstName,
@@ -138,7 +149,8 @@ class Shipping {
       this.city,
       this.state,
       this.postcode,
-      this.country});
+      this.country,
+      this.phone});
 
   Shipping.fromJson(Map<String, dynamic> json) {
     firstName = json['first_name'];
@@ -150,6 +162,7 @@ class Shipping {
     state = json['state'];
     postcode = json['postcode'];
     country = json['country'];
+    phone = json['phone'];
   }
 
   Map<String, dynamic> toJson() {
@@ -163,6 +176,7 @@ class Shipping {
     result['state'] = state;
     result['postcode'] = postcode;
     result['country'] = country;
+    result['phone'] = phone;
     return result;
   }
 }
@@ -224,13 +238,38 @@ class Billing {
   }
 }
 
+/// A user meta key and its values.
 class MetaData {
   String? key;
   List<dynamic>? value;
 
   MetaData({this.key, this.value});
 
-  MetaData.fromJson(String this.key, List<dynamic> this.value);
+  /// Creates a [MetaData] from a [key] and its [value]. A single value is
+  /// wrapped in a list.
+  MetaData.fromJson(String this.key, dynamic value)
+      : value = value is List ? value : [value];
+
+  /// Parses a `meta_data` map of key -> list of values.
+  ///
+  /// Returns null when [json] is not a non-empty map.
+  static List<MetaData>? listFromJson(dynamic json) {
+    if (json is! Map || json.isEmpty) return null;
+    return json.entries
+        .map((entry) => MetaData.fromJson(entry.key.toString(), entry.value))
+        .toList();
+  }
+
+  /// Converts a list of [MetaData] back to a `meta_data` map.
+  static Map<String, dynamic> listToJson(List<MetaData> metaData) {
+    final Map<String, dynamic> result = <String, dynamic>{};
+    for (final MetaData meta in metaData) {
+      if (meta.key != null) {
+        result[meta.key!] = meta.value;
+      }
+    }
+    return result;
+  }
 
   Map<String?, dynamic> toJson() {
     final Map<String?, List<dynamic>?> result = <String?, List<dynamic>?>{};

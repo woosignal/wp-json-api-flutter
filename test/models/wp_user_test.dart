@@ -126,31 +126,35 @@ void main() {
 
     group('fromWPUserLoginResponse', () {
       test('should construct from login response', () {
-        final loginResponse = WPUserLoginResponse(
-          data: WPUserLoginResponse.fromJson({
-            'data': {
-              'user_id': 100,
-              'user_token': 'login_token_123',
+        final loginResponse = WPUserLoginResponse.fromJson({
+          'data': {
+            'token': 'login_token_123',
+            'expires_at': 1767225600,
+            'user': {
+              'id': 100,
               'email': 'login@example.com',
               'username': 'loginuser',
               'first_name': 'Login',
               'last_name': 'User',
               'avatar': 'https://example.com/login.png',
               'created_at': '2024-02-20 08:00:00',
-            }
-          }).data,
-          message: 'Success',
-          status: 200,
-        );
+            },
+          },
+          'message': '',
+          'status': 200,
+        });
 
         final wpUser = WpUser.fromWPUserLoginResponse(loginResponse);
 
         expect(wpUser.id, 100);
         expect(wpUser.token, 'login_token_123');
+        expect(wpUser.expiresAt, 1767225600);
         expect(wpUser.email, 'login@example.com');
         expect(wpUser.username, 'loginuser');
         expect(wpUser.firstName, 'Login');
         expect(wpUser.lastName, 'User');
+        expect(wpUser.avatar, 'https://example.com/login.png');
+        expect(wpUser.createdAt, '2024-02-20 08:00:00');
       });
 
       test('should handle null data in login response', () {
@@ -164,37 +168,75 @@ void main() {
 
         expect(wpUser.id, isNull);
         expect(wpUser.token, isNull);
+        expect(wpUser.expiresAt, isNull);
         expect(wpUser.email, isNull);
       });
     });
 
     group('fromWPUserRegisterResponse', () {
       test('should construct from register response', () {
-        final registerResponse = WPUserRegisterResponse(
-          data: WPUserRegisterResponse.fromJson({
-            'data': {
-              'user_id': 200,
-              'user_token': 'register_token_456',
+        final registerResponse = WPUserRegisterResponse.fromJson({
+          'data': {
+            'token': 'register_token_456',
+            'expires_at': 1767225600,
+            'user': {
+              'id': 200,
               'email': 'register@example.com',
               'username': 'registeruser',
               'first_name': 'Register',
               'last_name': 'User',
-              'avatar': 'https://example.com/register.png',
-              'created_at': '2024-03-10 14:00:00',
-            }
-          }).data,
-          message: 'Registered successfully',
-          status: 200,
-        );
+            },
+          },
+          'message': '',
+          'status': 201,
+        });
 
         final wpUser = WpUser.fromWPUserRegisterResponse(registerResponse);
 
         expect(wpUser.id, 200);
         expect(wpUser.token, 'register_token_456');
+        expect(wpUser.expiresAt, 1767225600);
         expect(wpUser.email, 'register@example.com');
         expect(wpUser.username, 'registeruser');
         expect(wpUser.firstName, 'Register');
         expect(wpUser.lastName, 'User');
+      });
+    });
+
+    group('token expiry', () {
+      int nowInSeconds() => DateTime.now().millisecondsSinceEpoch ~/ 1000;
+
+      test('should not be expired before expires_at', () {
+        final wpUser = WpUser(token: 'abc', expiresAt: nowInSeconds() + 3600);
+
+        expect(wpUser.isTokenExpired, false);
+      });
+
+      test('should be expired after expires_at', () {
+        final wpUser = WpUser(token: 'abc', expiresAt: nowInSeconds() - 1);
+
+        expect(wpUser.isTokenExpired, true);
+      });
+
+      test('should treat a missing expires_at (4.x session) as expired', () {
+        final wpUser = WpUser(token: 'abc');
+
+        expect(wpUser.isTokenExpired, true);
+      });
+
+      test('should expose expires_at as a DateTime', () {
+        final wpUser = WpUser(expiresAt: 1767225600);
+
+        expect(wpUser.expiresAtDateTime,
+            DateTime.fromMillisecondsSinceEpoch(1767225600 * 1000));
+        expect(WpUser().expiresAtDateTime, isNull);
+      });
+
+      test('should store expires_at through toJson/fromJson', () {
+        final wpUser = WpUser.fromJson(
+            WpUser(token: 'abc', expiresAt: 1767225600).toJson());
+
+        expect(wpUser.expiresAt, 1767225600);
       });
     });
 

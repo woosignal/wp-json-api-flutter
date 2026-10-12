@@ -27,9 +27,11 @@ import '/models/wp_user.dart';
 import '/networking/network_manager.dart';
 
 /// The version of the wp_json_api
-String _wpJsonAPIVersion = "4.3.8";
+String _wpJsonAPIVersion = "5.0.0";
 
-/// The base class to initialize and use WPJsonAPI
+/// The base class to initialize and use WPJsonAPI.
+///
+/// Requires the WP JSON API WordPress plugin 5.0 or later (`wpapp/v4`).
 class WPJsonAPI {
   /// Private constructor for WPJsonAPI
   WPJsonAPI._privateConstructor();
@@ -111,20 +113,15 @@ class WPJsonAPI {
     return WpUser.fromJson(data);
   }
 
-  /// Check if a user is logged in
+  /// Check if a user is logged in.
+  ///
+  /// Returns false if there is no stored user, the stored user has no token,
+  /// or the token has expired on this device (see [WpUser.isTokenExpired]).
   static Future<bool> wpUserLoggedIn() async {
-    if (!WPJsonAPI.instance._isNyloEnabled) {
-      String? data = await storage.read(key: WPJsonAPI.storageKey());
-      if (data == null) return false;
-      Map<String, dynamic> json = jsonDecode(data);
-      if (json.isEmpty) return false;
-      WpUser wpUser = WpUser.fromJson(json);
-      if (wpUser.token == null) return false;
-      return true;
-    }
     WpUser? user = await wpUser();
-    if (user?.token == null) return false;
-    return true;
+    if (user == null) return false;
+    if (user.token == null || user.token!.isEmpty) return false;
+    return !user.isTokenExpired;
   }
 
   /// Returns the logged in user
@@ -168,6 +165,14 @@ class WPJsonAPI {
     WpUser? user = await wpUser();
     if (user == null) return null;
     return user.token;
+  }
+
+  /// Get when the user's token expires.
+  ///
+  /// Returns null if there is no stored user or the expiry is unknown.
+  static Future<DateTime?> wpUserTokenExpiresAt() async {
+    WpUser? user = await wpUser();
+    return user?.expiresAtDateTime;
   }
 
   /// Sets the base API in the class

@@ -15,43 +15,50 @@
 
 import 'dart:developer';
 import 'dart:io';
-import 'dart:math' as math;
 
 import 'package:dio/dio.dart';
-import 'package:nylo_support/local_storage/src/ny_storage.dart';
-import '/enums/wp_auth_type.dart';
-import '/exceptions/empty_username_exception.dart';
-import '/exceptions/existing_user_email_exception.dart';
-import '/exceptions/existing_user_login_exception.dart';
+import '/enums/wp_route_type.dart';
 import '/exceptions/incorrect_password_exception.dart';
+import '/exceptions/invalid_credentials_exception.dart';
 import '/exceptions/invalid_email_exception.dart';
-import '/exceptions/invalid_nonce_exception.dart';
 import '/exceptions/invalid_params_exception.dart';
 import '/exceptions/invalid_user_token_exception.dart';
-import '/exceptions/invalid_username_exception.dart';
+import '/exceptions/login_blocked_exception.dart';
+import '/exceptions/meta_key_not_allowed_exception.dart';
+import '/exceptions/points_and_rewards_not_found_exception.dart';
+import '/exceptions/privileged_user_exception.dart';
+import '/exceptions/registration_disabled_exception.dart';
+import '/exceptions/too_many_attempts_exception.dart';
 import '/exceptions/user_already_exist_exception.dart';
 import '/exceptions/username_taken_exception.dart';
+import '/exceptions/weak_password_exception.dart';
 import '/exceptions/woocommerce_not_found_exception.dart';
+import '/exceptions/wp_network_exception.dart';
+import '/exceptions/wp_server_exception.dart';
 import '/models/responses/wc_customer_info_response.dart';
 import '/models/responses/wc_customer_updated_response.dart';
 import '/models/responses/wc_points_and_rewards_calculate_points.dart';
 import '/models/responses/wc_points_and_rewards_user.dart';
-import '/models/responses/wp_nonce_response.dart';
-import '/models/responses/wp_nonce_verified_response.dart';
-import '/models/responses/wp_user_add_role_response.dart';
 import '/models/responses/wp_user_delete_response.dart';
+import '/models/responses/wp_user_info_response.dart';
 import '/models/responses/wp_user_info_updated_response.dart';
 import '/models/responses/wp_user_login_response.dart';
 import '/models/responses/wp_user_register_response.dart';
-import '/models/responses/wp_user_remove_role_response.dart';
 import '/models/responses/wp_user_reset_password_response.dart';
 import '/models/wp_meta_meta.dart';
 import '/models/wp_user.dart';
 import '/wp_json_api.dart';
-import '/enums/wp_route_type.dart';
-import '/models/responses/wp_user_info_response.dart';
 
-/// A networking class to manage all the APIs from "wp_json_api"
+/// A networking class to manage all the APIs from "wp_json_api".
+///
+/// Requests are sent to the WP JSON API `wpapp/v4` namespace. Authenticated
+/// requests send the user's token in the `Authorization: Bearer` and
+/// `X-WPApp-Token` headers, never in the request body.
+///
+/// Every request throws a typed exception when the server returns an error,
+/// e.g. [InvalidUserTokenException] for `wpapp_unauthorized`. Errors without
+/// a dedicated exception throw a [WPServerException], and requests that fail
+/// without a response (no connection, timeout) throw a [WPNetworkException].
 class WPAppNetworkManager {
   WPAppNetworkManager._privateConstructor();
 
@@ -61,48 +68,56 @@ class WPAppNetworkManager {
   static final WPAppNetworkManager instance =
       WPAppNetworkManager._privateConstructor();
 
-  /// Sends a request to login a user with the [email] & [password]
-  /// or [username] and [password]. Set [authType] to auth with email/username.
+  /// The WP JSON API namespace used for all requests.
+  static const String apiNamespace = "/wpapp/v4";
+
+  /// The header that carries the token for hosts that strip `Authorization`.
+  static const String tokenHeader = "X-WPApp-Token";
+
+  /// Sends a request to login a user.
+  ///
+  /// Pass the user's username or email as [login]. For convenience you can
+  /// pass [email] or [username] instead; the server accepts either in the same
+  /// field. If more than one is set, [login] is used first, then [email], then
+  /// [username].
+  ///
+  /// [expiresIn] optionally asks for a shorter token lifetime in seconds (the
+  /// site maximum still applies). [deviceName] is shown to admins when they
+  /// list tokens. When [saveTokenToLocalStorage] is true the user and token are
+  /// stored on the device.
   ///
   /// Returns a [WPUserLoginResponse] future.
-  /// Throws an [InvalidNonceException] if nonce token is not valid
-  /// [InvalidEmailException] if the email is not valid
-  /// [IncorrectPasswordException] if the password is not valid
-  /// [InvalidUsernameException] if the username is not valid
-  /// [Exception] for any other reason.
+  /// Throws an [InvalidCredentialsException] if the login details are wrong,
+  /// [LoginBlockedException] if another plugin (e.g. two-factor) stopped the
+  /// login, [PrivilegedUserException] if the account may not use the API,
+  /// [TooManyAttemptsException] if rate limited,
+  /// [InvalidParamsException] if a parameter is missing or invalid.
   Future<WPUserLoginResponse> wpLogin(
-      {String? email,
+      {String? login,
+      String? email,
       String? username,
       required String password,
-      WPAuthType authType = WPAuthType.WpEmail,
-      String? tokenExpiryAt,
+      int? expiresIn,
+      String? deviceName,
       bool saveTokenToLocalStorage = true}) async {
-    // Get nonce from WordPress
-    WPNonceResponse wpNonceResponse = await wpNonce();
-
     // Creates payload for login
-    Map<String, dynamic> payload = {};
-    if (username != null) payload["username"] = username;
-    if (email != null) payload["email"] = email;
-    payload["password"] = password;
-    payload["nonce"] = wpNonceResponse.data?.nonce;
-    if (tokenExpiryAt != null) payload["expiry"] = tokenExpiryAt;
+    Map<String, dynamic> payload = {
+      "login": login ?? email ?? username,
+      "password": password,
+    };
+    if (expiresIn != null) payload["expires_in"] = expiresIn;
+    if (deviceName != null) payload["device_name"] = deviceName;
 
     // send http request
-    final dynamic json = await _http(
+    final Map<String, dynamic> json = await _http(
       method: "POST",
-      url: _urlForRouteType(WPRouteType.UserLogin) +
-          _getAuthQueryForType(authType),
+      url: _urlForRouteType(WPRouteType.UserLogin),
       body: payload,
     );
 
-    // return response
-    if (_jsonHasBadStatus(json)) {
-      return _throwExceptionForStatusCode(json);
-    }
     WPUserLoginResponse wpUserLoginResponse =
         WPUserLoginResponse.fromJson(json);
-    String? userToken = wpUserLoginResponse.data?.userToken;
+    String? userToken = wpUserLoginResponse.data?.token;
 
     if (userToken != null && saveTokenToLocalStorage) {
       WpUser wpUser = WpUser.fromWPUserLoginResponse(wpUserLoginResponse);
@@ -111,182 +126,179 @@ class WPAppNetworkManager {
     return wpUserLoginResponse;
   }
 
-  /// Sends a request to register a user in WordPress with the following
-  /// parameters [username], [email] and [password].
-  /// You can optionally set an [expiry] for the token expiry like "+1 day".
+  /// Sends a request to register a user in WordPress with an [email] and
+  /// [password].
+  ///
+  /// [username] is optional; the server generates one from the email when it
+  /// is empty. [firstName] and [lastName] are optional. [metaData] is an
+  /// optional map of user meta (`{"billing_phone": "..."}`); only keys on the
+  /// site's allow-list are accepted. [expiresIn] and [deviceName] work as in
+  /// [wpLogin].
   ///
   /// Returns a [WPUserRegisterResponse] future.
-  /// Throws an [UsernameTakenException] if username is taken
-  /// [InvalidNonceException] if nonce token is not valid
-  /// [ExistingUserLoginException] if user login exists
-  /// [ExistingUserEmailException] if that email is in use
-  /// [UserAlreadyExistException] if a user was found with the same email
-  /// [EmptyUsernameException] if the username field has empty
-  /// [Exception] if fails.
+  /// Throws an [UsernameTakenException] if the username is taken,
+  /// [UserAlreadyExistException] if the email is in use,
+  /// [InvalidEmailException] if the email is not valid,
+  /// [WeakPasswordException] if the password is too short,
+  /// [RegistrationDisabledException] if registration is turned off,
+  /// [MetaKeyNotAllowedException] if a [metaData] key is not allowed,
+  /// [TooManyAttemptsException] if rate limited.
   Future<WPUserRegisterResponse> wpRegister(
       {required String email,
       required String password,
       String? username,
-      String? expiry,
-      Map<String, dynamic>? args,
+      String? firstName,
+      String? lastName,
+      Map<String, dynamic>? metaData,
+      int? expiresIn,
+      String? deviceName,
       bool saveTokenToLocalStorage = true}) async {
-    // Get nonce from WordPress
-    WPNonceResponse wpNonceResponse = await wpNonce();
-
-    username ??= (email.replaceAll(RegExp(r'([@.])'), "")) + _randomString(4);
-
-    // Creates payload for register
-    Map<String, dynamic> payload = {
-      "email": email,
-      "password": password,
-      "username": username,
-      "wc_register": false,
-      "nonce": wpNonceResponse.data?.nonce,
-      "args": args
-    };
-    if (expiry != null) payload["expiry"] = expiry;
-
-    // send http request
-    final dynamic json = await _http(
-      method: "POST",
-      url: _urlForRouteType(WPRouteType.UserRegister),
-      body: payload,
+    return await _register(
+      wcRegister: false,
+      email: email,
+      password: password,
+      username: username,
+      firstName: firstName,
+      lastName: lastName,
+      metaData: metaData,
+      expiresIn: expiresIn,
+      deviceName: deviceName,
+      saveTokenToLocalStorage: saveTokenToLocalStorage,
     );
-
-    // return response
-    if (_jsonHasBadStatus(json)) {
-      return _throwExceptionForStatusCode(json);
-    }
-    WPUserRegisterResponse wPUserRegisterResponse =
-        WPUserRegisterResponse.fromJson(json);
-    String? userToken = wPUserRegisterResponse.data?.userToken;
-
-    if (userToken != null && saveTokenToLocalStorage) {
-      WpUser wpUser = WpUser.fromWPUserRegisterResponse(wPUserRegisterResponse);
-      await WPJsonAPI.wpLogin(wpUser);
-    }
-    return wPUserRegisterResponse;
   }
 
-  /// Sends a request to register a user in WooCommerce with the following
-  /// parameters [username], [email] and [password].
-  /// You can optionally set an [expiry] for the token expiry like "+1 day".
+  /// Sends a request to register a user as a WooCommerce customer. Takes the
+  /// same parameters as [wpRegister].
   ///
   /// Returns a [WPUserRegisterResponse] future.
-  /// Throws an [UsernameTakenException] if username is taken
-  /// [InvalidNonceException] if nonce token is not valid
-  /// [ExistingUserLoginException] if user login exists
-  /// [ExistingUserEmailException] if that email is in use
-  /// [UserAlreadyExistException] if a user was found with the same email
-  /// [EmptyUsernameException] if the username field has empty
-  /// [Exception] if fails.
+  /// Throws the same exceptions as [wpRegister], and
+  /// [WooCommerceNotFoundException] if WooCommerce is not active.
   Future<WPUserRegisterResponse> wcRegister(
       {required String email,
       required String password,
       String? username,
-      String? expiry,
-      Map<String, dynamic>? args,
+      String? firstName,
+      String? lastName,
+      Map<String, dynamic>? metaData,
+      int? expiresIn,
+      String? deviceName,
       bool saveTokenToLocalStorage = true}) async {
-    // Get nonce from WordPress
-    WPNonceResponse wpNonceResponse = await wpNonce();
+    return await _register(
+      wcRegister: true,
+      email: email,
+      password: password,
+      username: username,
+      firstName: firstName,
+      lastName: lastName,
+      metaData: metaData,
+      expiresIn: expiresIn,
+      deviceName: deviceName,
+      saveTokenToLocalStorage: saveTokenToLocalStorage,
+    );
+  }
 
-    username ??= (email.replaceAll(RegExp(r'([@.])'), "")) + _randomString(4);
-
+  /// Sends the register request for [wpRegister] and [wcRegister].
+  Future<WPUserRegisterResponse> _register(
+      {required bool wcRegister,
+      required String email,
+      required String password,
+      String? username,
+      String? firstName,
+      String? lastName,
+      Map<String, dynamic>? metaData,
+      int? expiresIn,
+      String? deviceName,
+      bool saveTokenToLocalStorage = true}) async {
     // Creates payload for register
     Map<String, dynamic> payload = {
       "email": email,
       "password": password,
-      "username": username,
-      "wc_register": true, // This is the key to register a user in WooCommerce
-      "nonce": wpNonceResponse.data?.nonce,
-      "args": args
+      "wc_register": wcRegister,
     };
-    if (expiry != null) payload["expiry"] = expiry;
+    if (username != null && username.isNotEmpty) {
+      payload["username"] = username;
+    }
+    if (firstName != null) payload["first_name"] = firstName;
+    if (lastName != null) payload["last_name"] = lastName;
+    if (metaData != null && metaData.isNotEmpty) {
+      payload["meta_data"] = metaData;
+    }
+    if (expiresIn != null) payload["expires_in"] = expiresIn;
+    if (deviceName != null) payload["device_name"] = deviceName;
 
     // send http request
-    final dynamic json = await _http(
+    final Map<String, dynamic> json = await _http(
       method: "POST",
       url: _urlForRouteType(WPRouteType.UserRegister),
       body: payload,
     );
 
-    // return response
-    if (_jsonHasBadStatus(json)) {
-      return _throwExceptionForStatusCode(json);
-    }
-    WPUserRegisterResponse wPUserRegisterResponse =
+    WPUserRegisterResponse wpUserRegisterResponse =
         WPUserRegisterResponse.fromJson(json);
-    String? userToken = wPUserRegisterResponse.data?.userToken;
+    String? userToken = wpUserRegisterResponse.data?.token;
 
     if (userToken != null && saveTokenToLocalStorage) {
-      WpUser wpUser = WpUser.fromWPUserRegisterResponse(wPUserRegisterResponse);
+      WpUser wpUser = WpUser.fromWPUserRegisterResponse(wpUserRegisterResponse);
       await WPJsonAPI.wpLogin(wpUser);
     }
-    return wPUserRegisterResponse;
+    return wpUserRegisterResponse;
   }
 
-  /// Makes a request to get a valid nonce code
+  /// Logs out the user. Sends a request to revoke the token on the server,
+  /// then removes the user and token from the device.
   ///
-  /// Returns a [WPNonceResponse] future.
-  /// Throws an [Exception] if fails.
-  Future<WPNonceResponse> wpNonce() async {
-    // send http request
-    final dynamic json = await _http(
-      method: "GET",
-      url: _urlForRouteType(WPRouteType.AuthNonce),
-    );
-
-    // return response
-    return _jsonHasBadStatus(json)
-        ? _throwExceptionForStatusCode(json)
-        : WPNonceResponse.fromJson(json);
+  /// The local session is always cleared, even if the request fails (e.g. the
+  /// token has already expired or there is no connection).
+  ///
+  /// Returns true if the server revoked the token, false otherwise.
+  Future<bool> wpLogout({String? userToken}) async {
+    bool revoked = false;
+    try {
+      String? token = userToken ?? await WPJsonAPI.wpUserToken();
+      if (token != null && token.isNotEmpty) {
+        await _http(
+          method: "POST",
+          url: _urlForRouteType(WPRouteType.UserLogout),
+          userToken: token,
+          shouldAuthRequest: true,
+        );
+        revoked = true;
+      }
+    } on Exception catch (e) {
+      _devLogger(
+          url: _urlForRouteType(WPRouteType.UserLogout),
+          result: "Logout request failed, clearing the local session: $e");
+    } finally {
+      await WPJsonAPI.wpLogout();
+    }
+    return revoked;
   }
 
-  /// Sends a request to check if a given [nonce] value is still valid.
-  ///
-  /// Returns a [WPNonceVerifiedResponse] future.
-  /// Throws an [Exception] if fails
-  Future<WPNonceVerifiedResponse> wpNonceVerify({required String nonce}) async {
-    Map<String, dynamic> payload = {"nonce": nonce};
-
-    // send http request
-    final dynamic json = await _http(
-      method: "POST",
-      url: _urlForRouteType(WPRouteType.AuthVerify),
-      body: payload,
-    );
-
-    // return response
-    return _jsonHasBadStatus(json)
-        ? _throwExceptionForStatusCode(json)
-        : WPNonceVerifiedResponse.fromJson(json);
-  }
-
-  /// Sends a request to get a users WordPress info using a valid [userToken].
-  ///
+  /// Sends a request to get the user's WordPress info.
   ///
   /// Returns a [WPUserInfoResponse] future.
-  /// Throws an [Exception] if fails
+  /// Throws an [InvalidUserTokenException] if the token is not valid.
   Future<WPUserInfoResponse> wpGetUserInfo({String? userToken}) async {
     // send http request
-    final dynamic json = await _http(
-        method: "POST",
+    final Map<String, dynamic> json = await _http(
+        method: "GET",
         url: _urlForRouteType(WPRouteType.UserInfo),
         userToken: userToken,
         shouldAuthRequest: true);
 
-    // return response
-    return _jsonHasBadStatus(json)
-        ? _throwExceptionForStatusCode(json)
-        : WPUserInfoResponse.fromJson(json);
+    return WPUserInfoResponse.fromJson(json);
   }
 
-  /// Sends a request to update details for a WordPress user. Include a valid
-  /// [userToken] to send a successful request. Optional parameters include
-  /// a [firstName], [lastName], [displayName] or [metaData] to update user's.
+  /// Sends a request to update details for a WordPress user. Optional
+  /// parameters include a [firstName], [lastName], [displayName] or
+  /// [metaData] to update.
   ///
-  /// Returns a [WPUserInfoUpdatedResponse] future.
-  /// Throws an [Exception] if fails.
+  /// Every [metaData] key is checked before anything is saved; one key that
+  /// is not on the site's allow-list fails the whole request.
+  ///
+  /// Returns a [WPUserInfoUpdatedResponse] future with the updated user.
+  /// Throws an [InvalidUserTokenException] if the token is not valid,
+  /// [MetaKeyNotAllowedException] if a [metaData] key is not allowed.
   Future<WPUserInfoUpdatedResponse> wpUpdateUserInfo(
       {String? userToken,
       String? firstName,
@@ -298,13 +310,11 @@ class WPAppNetworkManager {
     if (lastName != null) payload["last_name"] = lastName;
     if (displayName != null) payload["display_name"] = displayName;
     if (metaData != null) {
-      payload['meta_data'] = {
-        "items": metaData.map((e) => e.toJson()).toList()
-      };
+      payload['meta_data'] = metaData.map((e) => e.toJson()).toList();
     }
 
     // send http request
-    final dynamic json = await _http(
+    final Map<String, dynamic> json = await _http(
       method: "POST",
       url: _urlForRouteType(WPRouteType.UserUpdateInfo),
       userToken: userToken,
@@ -312,164 +322,114 @@ class WPAppNetworkManager {
       body: payload,
     );
 
-    // return response
-    return _jsonHasBadStatus(json)
-        ? _throwExceptionForStatusCode(json)
-        : WPUserInfoUpdatedResponse.fromJson(json);
+    return WPUserInfoUpdatedResponse.fromJson(json);
   }
 
-  /// Sends a request to add a role to a WordPress user. Include a valid
-  /// [userToken] and [role] to send a successful request.
+  /// Sends a request to delete the user's WordPress account. The user's
+  /// current [password] is required.
   ///
-  /// Returns a [WPUserAddRoleResponse] future.
-  /// Throws an [Exception] if fails.
-  Future<WPUserAddRoleResponse> wpUserAddRole(
-      {required String role, String? userToken}) async {
-    Map<String, dynamic> payload = {};
-    payload["role"] = role;
-
-    // send http request
-    final dynamic json = await _http(
-      method: "POST",
-      url: _urlForRouteType(WPRouteType.UserAddRole),
-      userToken: userToken,
-      shouldAuthRequest: true,
-      body: payload,
-    );
-
-    // return response
-    return _jsonHasBadStatus(json)
-        ? _throwExceptionForStatusCode(json)
-        : WPUserAddRoleResponse.fromJson(json);
-  }
-
-  /// Logs out the user by deleting the user token from the local storage
-  Future<void> wpLogout() async {
-    await NyStorage.delete(WPJsonAPI.storageKey());
-  }
-
-  /// Sends a request to delete a WordPress user. Include a valid
-  /// [userToken] and an optional [reassign] argument to send a successful request.
+  /// On success the account and all its tokens are deleted, and the stored
+  /// session is removed from the device (unless [userToken] belongs to a
+  /// different user than the stored one).
   ///
   /// Returns a [WPUserDeleteResponse] future.
-  /// Throws an [Exception] if fails.
+  /// Throws an [IncorrectPasswordException] if the [password] is wrong,
+  /// [InvalidUserTokenException] if the token is not valid.
   Future<WPUserDeleteResponse> wpUserDelete(
-      {String? userToken, int? reassign}) async {
-    Map<String, dynamic> payload = {};
-    if (reassign != null) {
-      payload["reassign"] = reassign;
-    }
-
+      {required String password, String? userToken}) async {
     // send http request
-    final dynamic json = await _http(
+    final Map<String, dynamic> json = await _http(
       method: "POST",
       url: _urlForRouteType(WPRouteType.UserDelete),
       userToken: userToken,
       shouldAuthRequest: true,
-      body: payload,
+      body: {"password": password},
     );
 
-    // return response
-    return _jsonHasBadStatus(json)
-        ? _throwExceptionForStatusCode(json)
-        : WPUserDeleteResponse.fromJson(json);
+    String? storedToken = await WPJsonAPI.wpUserToken();
+    if (userToken == null || userToken == storedToken) {
+      await WPJsonAPI.wpLogout();
+    }
+    return WPUserDeleteResponse.fromJson(json);
   }
 
-  /// Sends a request to remove a role from a WordPress user. Include a valid
-  /// [userToken] and [role] to send a successful request.
+  /// Changes the user's password. [currentPassword] is the user's current
+  /// password and [password] is the new one.
   ///
-  /// Returns a [WPUserRemoveRoleResponse] future.
-  /// Throws an [Exception] if fails.
-  Future<WPUserRemoveRoleResponse> wpUserRemoveRole(
-      {required String role, String? userToken}) async {
-    Map<String, dynamic> payload = {};
-    payload["role"] = role;
-
-    // send http request
-    final dynamic json = await _http(
-      method: "POST",
-      url: _urlForRouteType(WPRouteType.UserRemoveRole),
-      userToken: userToken,
-      shouldAuthRequest: true,
-      body: payload,
-    );
-
-    // return response
-    return _jsonHasBadStatus(json)
-        ? _throwExceptionForStatusCode(json)
-        : WPUserRemoveRoleResponse.fromJson(json);
-  }
-
-  /// Reset a user password using the [userToken] and new [password] created.
+  /// All of the user's other tokens are revoked; the token used for this
+  /// request stays valid.
   ///
   /// Returns a [WPUserResetPasswordResponse] future.
-  /// Throws an [Exception] if fails.
+  /// Throws an [IncorrectPasswordException] if [currentPassword] is wrong,
+  /// [WeakPasswordException] if the new [password] is too short,
+  /// [InvalidUserTokenException] if the token is not valid.
   Future<WPUserResetPasswordResponse> wpResetPassword({
+    required String currentPassword,
     required String password,
     String? userToken,
   }) async {
-    Map<String, dynamic> payload = {"password": password};
+    Map<String, dynamic> payload = {
+      "current_password": currentPassword,
+      "password": password,
+    };
 
     // send http request
-    final dynamic json = await _http(
+    final Map<String, dynamic> json = await _http(
         method: "POST",
         url: _urlForRouteType(WPRouteType.UserUpdatePassword),
         body: payload,
         userToken: userToken,
         shouldAuthRequest: true);
 
-    // return response
-    return _jsonHasBadStatus(json)
-        ? _throwExceptionForStatusCode(json)
-        : WPUserResetPasswordResponse.fromJson(json);
+    return WPUserResetPasswordResponse.fromJson(json);
   }
 
-  /// Get the users WooCommerce information using the [userToken].
+  /// Get the user's WooCommerce customer information.
   ///
   /// Returns a [WCCustomerInfoResponse] future.
-  /// Throws an [Exception] if fails.
+  /// Throws a [WooCommerceNotFoundException] if WooCommerce is not active,
+  /// [InvalidUserTokenException] if the token is not valid.
   Future<WCCustomerInfoResponse> wcCustomerInfo({String? userToken}) async {
     // send http request
-    final dynamic json = await _http(
-        method: "POST",
+    final Map<String, dynamic> json = await _http(
+        method: "GET",
         url: _urlForRouteType(WPRouteType.WCCustomerInfo),
         userToken: userToken,
         shouldAuthRequest: true);
 
-    // return response
-    return _jsonHasBadStatus(json)
-        ? _throwExceptionForStatusCode(json)
-        : WCCustomerInfoResponse.fromJson(json);
+    return WCCustomerInfoResponse.fromJson(json);
   }
 
-  /// Get the users points and rewards information using the [userToken].
+  /// Get the user's points from WooCommerce Points and Rewards.
   ///
   /// Returns a [WcPointsAndRewardUser] future.
-  /// Throws an [Exception] if fails.
+  /// Throws a [PointsAndRewardsNotFoundException] if WooCommerce Points and
+  /// Rewards is not active, [InvalidUserTokenException] if the token is not
+  /// valid.
   Future<WcPointsAndRewardUser> wcPointsAndRewardsUser(
       {String? userToken}) async {
     // send http request
-    final dynamic json = await _http(
-      method: "POST",
+    final Map<String, dynamic> json = await _http(
+      method: "GET",
       url: _urlForRouteType(WPRouteType.WCPointsAndRewardsUser),
       userToken: userToken,
       shouldAuthRequest: true,
     );
 
-    // return response
-    return _jsonHasBadStatus(json)
-        ? _throwExceptionForStatusCode(json)
-        : WcPointsAndRewardUser.fromJson(json['data']);
+    return WcPointsAndRewardUser.fromJson(_dataFromJson(json));
   }
 
-  /// Calculate the value of points using the [userToken] and [points].
+  /// Calculate the value of [points] (0 or more) with WooCommerce Points and
+  /// Rewards.
   ///
   /// Returns a [WcPointsAndRewardCalculatePoints] future.
-  /// Throws an [Exception] if fails.
+  /// Throws a [PointsAndRewardsNotFoundException] if WooCommerce Points and
+  /// Rewards is not active, [InvalidUserTokenException] if the token is not
+  /// valid.
   Future<WcPointsAndRewardCalculatePoints> wcPointsAndRewardsCalculatePoints(
       {required double points, String? userToken}) async {
     // send http request
-    final dynamic json = await _http(
+    final Map<String, dynamic> json = await _http(
       method: "POST",
       url: _urlForRouteType(WPRouteType.WCPointsAndRewardsCalculatePoints),
       userToken: userToken,
@@ -477,17 +437,15 @@ class WPAppNetworkManager {
       body: {"points": points},
     );
 
-    // return response
-    return _jsonHasBadStatus(json)
-        ? _throwExceptionForStatusCode(json)
-        : WcPointsAndRewardCalculatePoints.fromJson(json['data']);
+    return WcPointsAndRewardCalculatePoints.fromJson(_dataFromJson(json));
   }
 
-  /// Sends a request to update a users WooCommerce details using
-  /// a valid [userToken], set optional parameters for updating user.
+  /// Sends a request to update the user's WooCommerce customer details. All
+  /// parameters are optional; only the ones you set are sent.
   ///
-  /// Returns [WCCustomerUpdatedResponse] future.
-  /// Throws an [Exception] if fails.
+  /// Returns a [WCCustomerUpdatedResponse] future with the updated customer.
+  /// Throws a [WooCommerceNotFoundException] if WooCommerce is not active,
+  /// [InvalidUserTokenException] if the token is not valid.
   Future<WCCustomerUpdatedResponse> wcUpdateCustomerInfo(
       {String? userToken,
       String? firstName,
@@ -513,7 +471,6 @@ class WPAppNetworkManager {
       String? shippingState,
       String? shippingPostcode,
       String? shippingCountry,
-      String? shippingEmail,
       String? shippingPhone}) async {
     Map<String, dynamic> payload = {};
     if (firstName != null) payload["first_name"] = firstName;
@@ -540,7 +497,6 @@ class WPAppNetworkManager {
       shippingPayload["postcode"] = shippingPostcode;
     }
     if (shippingCountry != null) shippingPayload["country"] = shippingCountry;
-    if (shippingEmail != null) shippingPayload["email"] = shippingEmail;
     if (shippingPhone != null) shippingPayload["phone"] = shippingPhone;
 
     Map<String, dynamic> billingPayload = {};
@@ -567,58 +523,87 @@ class WPAppNetworkManager {
     }
 
     // send http request
-    final dynamic json = await _http(
+    final Map<String, dynamic> json = await _http(
         method: "POST",
         url: _urlForRouteType(WPRouteType.WCCustomerUpdateInfo),
         body: payload,
         userToken: userToken,
         shouldAuthRequest: true);
 
-    // return response
-    return _jsonHasBadStatus(json)
-        ? _throwExceptionForStatusCode(json)
-        : WCCustomerUpdatedResponse.fromJson(json);
+    return WCCustomerUpdatedResponse.fromJson(json);
   }
 
   /// Sends a Http request using a valid request [method] and [url] endpoint
-  /// from the WP_JSON_API plugin. The [body] and [userToken] is optional but
-  /// you can use these if the request requires them.
+  /// from the WP JSON API plugin. The [body] is optional and only sent for
+  /// POST requests.
   ///
-  /// Returns a [dynamic] response from the server.
-  Future<dynamic> _http(
+  /// When [shouldAuthRequest] is true, the [userToken] (or the stored user's
+  /// token) is sent in the `Authorization` and `X-WPApp-Token` headers.
+  ///
+  /// Returns the decoded JSON body of a 2xx response.
+  /// Throws a typed exception for an error response, see
+  /// [_exceptionForError], or a [WPNetworkException] if there is no response.
+  Future<Map<String, dynamic>> _http(
       {required String method,
       required String url,
       Map<String, dynamic>? body,
       String? userToken,
       bool shouldAuthRequest = false}) async {
+    Map<String, String> headers = {
+      HttpHeaders.acceptHeader: "application/json",
+    };
+    if (method == "POST") {
+      headers[HttpHeaders.contentTypeHeader] = "application/json";
+    }
+    if (shouldAuthRequest) {
+      String? token = userToken ?? await WPJsonAPI.wpUserToken();
+      if (token != null && token.isNotEmpty) {
+        headers[HttpHeaders.authorizationHeader] = "Bearer $token";
+        headers[tokenHeader] = token;
+      }
+    }
+
+    // Accept every status so error bodies are handled in one place below.
+    Options options = Options(headers: headers, validateStatus: (_) => true);
+
     Response? response;
-    if (method == "GET") {
-      response = await dio.get(url);
-    } else if (method == "POST") {
-      Map<String, String> headers = {
-        HttpHeaders.contentTypeHeader: "application/json",
-      };
-      body ??= {};
-      String? userTokenFromStorage = await WPJsonAPI.wpUserToken();
-      if (shouldAuthRequest && userTokenFromStorage != null) {
-        body.addAll({"token": userTokenFromStorage});
+    try {
+      if (method == "GET") {
+        response = await dio.get(url, options: options);
+      } else {
+        response = await dio.post(url,
+            data: body ?? <String, dynamic>{}, options: options);
       }
-      if (userToken != null) {
-        body.addAll({"token": userToken});
+    } on DioException catch (e) {
+      if (e.response == null) {
+        _devLogger(url: url, payload: _redact(body).toString(), result: "$e");
+        throw WPNetworkException(
+          e.message ?? 'Unable to connect to the server',
+          error: e,
+        );
       }
-      response =
-          await dio.post(url, data: body, options: Options(headers: headers));
+      response = e.response;
     }
 
     // log output
-    if (response != null) {
-      _devLogger(
-          url: response.requestOptions.uri.toString(),
-          payload: response.requestOptions.data.toString(),
-          result: response.data.toString());
+    _devLogger(
+        url: response!.requestOptions.uri.toString(),
+        payload: _redact(body).toString(),
+        result: "${response.statusCode} ${_redact(response.data)}");
+
+    int? statusCode = response.statusCode;
+    if (statusCode == null || statusCode < 200 || statusCode >= 300) {
+      throw _exceptionForResponse(response);
     }
 
-    return response?.data;
+    final dynamic data = response.data;
+    if (data is! Map) {
+      throw WPServerException(
+        'Unexpected response from the server',
+        status: statusCode,
+      );
+    }
+    return Map<String, dynamic>.from(data);
   }
 
   /// Logs the output of a app request.
@@ -633,166 +618,163 @@ class WPAppNetworkManager {
     if (result != null) strOutput += "\nRESULT: $result";
 
     // logs response if shouldDebug is enabled
-    if (WPJsonAPI.instance.shouldDebug()!) log(strOutput);
+    if (WPJsonAPI.instance.shouldDebug() ?? false) log(strOutput);
   }
 
-  /// Checks if a response payload has a bad status (=> 500).
-  ///
-  /// Returns [bool] true if status is => 500.
-  bool _jsonHasBadStatus(dynamic json) {
-    return (json["status"] == null || json["status"] >= 500);
+  /// Hides passwords and tokens in [value] before it is logged.
+  dynamic _redact(dynamic value) {
+    const Set<String> secretKeys = {"password", "current_password", "token"};
+    if (value is Map) {
+      return value.map((key, item) =>
+          MapEntry(key, secretKeys.contains(key) ? "[hidden]" : _redact(item)));
+    }
+    if (value is List) {
+      return value.map(_redact).toList();
+    }
+    return value;
+  }
+
+  /// Returns the `data` object from a success response [json].
+  Map<String, dynamic> _dataFromJson(Map<String, dynamic> json) {
+    final dynamic data = json['data'];
+    if (data is! Map) {
+      throw WPServerException(
+        'Unexpected response from the server',
+        status: json['status'] is int ? json['status'] : null,
+      );
+    }
+    return Map<String, dynamic>.from(data);
   }
 
   /// Creates an endpoint with the baseUrl and path.
   ///
   /// Returns [String] of the url route.
   String _urlForRouteType(WPRouteType wpRouteType) {
-    return '${WPJsonAPI.instance.getBaseApi()}${_getRouteUrlForType(wpRouteType)}';
+    return '${WPJsonAPI.instance.getBaseApi()}$apiNamespace${_getRouteUrlForType(wpRouteType)}';
   }
 
-  /// Creates a query parameter which is used for the `wpLogin` method
-  /// set [authType] to specify which method of authentication you want to use.
-  ///
-  /// Returns [String] of the query parameter.
-  String _getAuthQueryForType(WPAuthType authType) {
-    switch (authType) {
-      case WPAuthType.WpEmail:
-        return "?auth=email";
-      case WPAuthType.WpUsername:
-        return "?auth=username";
-      default:
-        {
-          return "";
-        }
-    }
-  }
-
-  /// The routes available for the WP_JSON_API plugin
-  /// set [wpRouteType] and use optional [apiVersion] to change API version.
+  /// The routes available for the WP JSON API plugin (`wpapp/v4`).
   ///
   /// Returns [String] url path for request.
-  String _getRouteUrlForType(
-    WPRouteType wpRouteType, {
-    String apiVersion = 'v3',
-  }) {
+  String _getRouteUrlForType(WPRouteType wpRouteType) {
     switch (wpRouteType) {
-      // AUTH API
-      case WPRouteType.AuthNonce:
-        {
-          return "/wpapp/auth/$apiVersion/nonce";
-        }
-      case WPRouteType.AuthVerify:
-        {
-          return "/wpapp/auth/$apiVersion/verify";
-        }
-      // WORDPRESS API
+      // AUTH
       case WPRouteType.UserLogin:
-        {
-          return "/wpapp/api/$apiVersion/user/login";
-        }
+        return "/auth/login";
       case WPRouteType.UserRegister:
-        {
-          return "/wpapp/api/$apiVersion/user/register";
-        }
+        return "/auth/register";
+      case WPRouteType.UserLogout:
+        return "/auth/logout";
+
+      // WORDPRESS
       case WPRouteType.UserInfo:
-        {
-          return "/wpapp/api/$apiVersion/user/info";
-        }
       case WPRouteType.UserUpdateInfo:
-        {
-          return "/wpapp/api/$apiVersion/update/user/info";
-        }
-      case WPRouteType.UserAddRole:
-        {
-          return "/wpapp/api/$apiVersion/update/user/role/add";
-        }
-      case WPRouteType.UserRemoveRole:
-        {
-          return "/wpapp/api/$apiVersion/update/user/role/remove";
-        }
+        return "/user";
       case WPRouteType.UserUpdatePassword:
-        {
-          return "/wpapp/api/$apiVersion/update/user/password";
-        }
+        return "/user/password";
       case WPRouteType.UserDelete:
-        {
-          return "/wpapp/api/$apiVersion/user/delete";
-        }
+        return "/user/delete";
 
-      // WOOCOMMERCE API
+      // WOOCOMMERCE
       case WPRouteType.WCCustomerInfo:
-        {
-          return "/wpapp/wc/$apiVersion/user/info";
-        }
       case WPRouteType.WCCustomerUpdateInfo:
-        {
-          return "/wpapp/wc/$apiVersion/update/user/info";
-        }
+        return "/wc/customer";
       case WPRouteType.WCPointsAndRewardsUser:
-        {
-          return "/wpapp/wc-points-and-rewards/$apiVersion/user";
-        }
+        return "/wc/points";
       case WPRouteType.WCPointsAndRewardsCalculatePoints:
-        {
-          return "/wpapp/wc-points-and-rewards/$apiVersion/calculate_points";
-        }
-      default:
-        {
-          return "";
-        }
+        return "/wc/points/calculate";
     }
   }
 
-  /// Generates a random string of [length] characters.
-  String _randomString(int length) {
-    const chars = "abcdefghijklmnopqrstuvwxyz0123456789";
-    math.Random rnd = math.Random(DateTime.now().millisecondsSinceEpoch);
-    String result = "";
-    for (var i = 0; i < length; i++) {
-      result += chars[rnd.nextInt(chars.length)];
-    }
-    return result;
-  }
+  /// Reads the WordPress REST error body (`{code, message, data}`) from an
+  /// error [response] and returns the matching exception.
+  Exception _exceptionForResponse(Response response) {
+    String? code;
+    String? message;
+    Map<String, dynamic>? data;
 
-  /// Throws an exception from the [json] status returned from payload.
-  dynamic _throwExceptionForStatusCode(dynamic json) {
-    if (json != null && json['status'] != null) {
-      int? statusCode = json["status"];
-      String message = json["message"] ?? 'Something went wrong';
-
-      switch (statusCode) {
-        case 520:
-          throw UsernameTakenException();
-        case 500:
-          throw Exception(message);
-        case 510:
-          throw WooCommerceNotFoundException();
-        case 540:
-          throw InvalidUserTokenException();
-        case 523:
-          throw InvalidParamsException();
-        case 567:
-          throw Exception(message);
-        case 547:
-          throw InvalidEmailException(message);
-        case 546:
-          throw IncorrectPasswordException(message);
-        case 545:
-          throw InvalidUsernameException(message);
-        case 531:
-          throw ExistingUserLoginException(message);
-        case 532:
-          throw ExistingUserEmailException(message);
-        case 527:
-          throw UserAlreadyExistException();
-        case 542:
-          throw EmptyUsernameException();
-        default:
-          {
-            throw Exception(
-                'Something went wrong, please check server response');
-          }
+    final dynamic body = response.data;
+    if (body is Map) {
+      if (body['code'] != null) code = body['code'].toString();
+      if (body['message'] is String && (body['message'] as String).isNotEmpty) {
+        message = body['message'];
+      }
+      if (body['data'] is Map) {
+        data = Map<String, dynamic>.from(body['data']);
       }
     }
+
+    int? retryAfter = _parseInt(data?['retry_after']) ??
+        _parseInt(response.headers.value('retry-after'));
+
+    return _exceptionForError(
+      code: code,
+      message: message,
+      status: response.statusCode,
+      data: data,
+      retryAfter: retryAfter,
+    );
+  }
+
+  /// Maps a WP JSON API error [code] to an exception.
+  ///
+  /// Codes without a dedicated exception return a [WPServerException]
+  /// carrying the [code], [message], [status] and [data].
+  Exception _exceptionForError(
+      {String? code,
+      String? message,
+      int? status,
+      Map<String, dynamic>? data,
+      int? retryAfter}) {
+    switch (code) {
+      case 'wpapp_unauthorized':
+        return InvalidUserTokenException(message);
+      case 'wpapp_privileged_user':
+        return PrivilegedUserException(message);
+      case 'wpapp_invalid_credentials':
+        return InvalidCredentialsException(message);
+      case 'wpapp_login_blocked':
+        return LoginBlockedException(
+            message ?? 'The login was blocked, please try again later');
+      case 'wpapp_too_many_attempts':
+        return TooManyAttemptsException(message, retryAfter);
+      case 'wpapp_registration_disabled':
+        return RegistrationDisabledException(message);
+      case 'wpapp_username_taken':
+        return UsernameTakenException(message);
+      case 'wpapp_email_exists':
+        return UserAlreadyExistException(message);
+      case 'wpapp_invalid_email':
+        return InvalidEmailException(message ?? 'The email is not valid');
+      case 'wpapp_weak_password':
+        return WeakPasswordException(message);
+      case 'wpapp_meta_key_not_allowed':
+        return MetaKeyNotAllowedException(message, data?['key']?.toString());
+      case 'wpapp_incorrect_password':
+        return IncorrectPasswordException(
+            message ?? 'The password is incorrect');
+      case 'wpapp_woocommerce_missing':
+        return WooCommerceNotFoundException(message);
+      case 'wpapp_points_rewards_missing':
+        return PointsAndRewardsNotFoundException(message);
+      case 'wpapp_invalid_params':
+      case 'rest_missing_callback_param':
+      case 'rest_invalid_param':
+        return InvalidParamsException(message);
+      default:
+        return WPServerException(
+          message ?? 'Something went wrong, please check the server response',
+          code: code,
+          status: status,
+          data: data,
+        );
+    }
+  }
+
+  /// Parses an int from a number or numeric string [value].
+  int? _parseInt(dynamic value) {
+    if (value is num) return value.toInt();
+    if (value is String) return int.tryParse(value.trim());
+    return null;
   }
 }

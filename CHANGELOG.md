@@ -1,3 +1,40 @@
+## [5.0.0] - 2026-10-12
+
+Requires the WP JSON API WordPress plugin **5.0 or later**. All requests now use the plugin's `wpapp/v4` API. See "Migrating from 4.x" in the README.
+
+### Breaking changes
+* All requests go to `/wp-json/wpapp/v4/...`. The v3 routes are no longer used
+* The token is sent in the `Authorization: Bearer` and `X-WPApp-Token` headers, never in the request body
+* Removed nonce support: `wpNonce()`, `wpNonceVerify()`, `WPNonceResponse`, `WPNonceVerifiedResponse`, `WPRouteType.AuthNonce` and `WPRouteType.AuthVerify`
+* Removed `wpUserAddRole()`, `wpUserRemoveRole()`, `WPUserAddRoleResponse`, `WPUserRemoveRoleResponse`, `WPRouteType.UserAddRole` and `WPRouteType.UserRemoveRole`. Roles must be managed on the server
+* `wpLogin()` sends a single `login` field. Pass `login:` (username or email), or `email:` / `username:` as before. Removed the `authType` parameter and the `WPAuthType` enum
+* `wpLogin()`, `wpRegister()` and `wcRegister()`: replaced `tokenExpiryAt` / `expiry` with `expiresIn` (seconds) and added `deviceName`
+* `wpRegister()` and `wcRegister()`: replaced `args` with `firstName`, `lastName` and `metaData` (allow-listed keys only). The username is no longer generated on the device; the server generates one when it is empty
+* `wpResetPassword()` requires `currentPassword`
+* `wpUserDelete()` requires `password`. Removed `reassign`
+* `wpLogout()` now calls `POST /auth/logout` to revoke the token, then clears the stored user even if the request fails. Returns `Future<bool>` (true if the server revoked the token)
+* `WPUserLoginResponse.data` and `WPUserRegisterResponse.data` are the v4 Auth object: `token`, `expiresAt` and `user`. Replaces `userId`, `userToken`, `expiry`, `email`, `username`, `firstName`, `lastName`, `avatar` and `createdAt`
+* `WPUserInfoResponse.data`: removed `userNicename` and `userStatus`; `metaData` only contains allow-listed keys
+* `WPUserInfoUpdatedResponse.data` is the updated user and `WCCustomerUpdatedResponse.data` is the updated customer
+* `wcUpdateCustomerInfo()`: removed `shippingEmail` (not a WooCommerce shipping field)
+* `WpMetaData.unique` is now a `bool?`
+* `wpGetUserInfo()`, `wcCustomerInfo()` and `wcPointsAndRewardsUser()` use `GET`
+* A request is successful only on an HTTP 2xx response. Errors throw typed exceptions mapped from the WordPress REST error `code` (see the README)
+* `WPJsonAPI.wpUserLoggedIn()` returns false when the stored token has expired, or has no expiry (a session saved by 4.x), so users log in again once after upgrading
+* Removed `InvalidNonceException`, `EmptyUsernameException`, `ExistingUserLoginException` (use `UsernameTakenException`), `ExistingUserEmailException` (use `UserAlreadyExistException`) and `InvalidUsernameException` (use `InvalidCredentialsException`)
+
+### Added
+* Exceptions: `InvalidCredentialsException`, `LoginBlockedException`, `PrivilegedUserException`, `TooManyAttemptsException` (with `retryAfter`), `RegistrationDisabledException`, `WeakPasswordException`, `MetaKeyNotAllowedException` (with `key`), `PointsAndRewardsNotFoundException`, `WPServerException` (with `code`, `status` and `data`) and `WPNetworkException` (no response from the server)
+* Existing exceptions accept the server's message, and all exceptions implement `toString()`
+* `WpUser.expiresAt`, `WpUser.expiresAtDateTime`, `WpUser.isTokenExpired` and `WPJsonAPI.wpUserTokenExpiresAt()`
+* `WPRouteType.UserLogout`
+* `WCCustomerInfoResponse.data`: `id`, `createdAt` and `shipping.phone`
+
+### Fixed
+* `meta_data` sent as an empty JSON list (`[]`) no longer throws, and `toJson()` writes `meta_data` back as a map
+* Passwords and tokens are hidden in debug logs
+* Logging out without Nylo now clears flutter_secure_storage instead of only `NyStorage`
+
 ## [4.3.8] - 2026-09-12
 
 ### Changed

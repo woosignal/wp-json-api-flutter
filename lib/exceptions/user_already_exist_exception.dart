@@ -13,7 +13,14 @@
 // IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
 // WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 
+/// Thrown when registering with an email that is already in use.
+///
+/// Server error code: `wpapp_email_exists` (HTTP 409).
 class UserAlreadyExistException implements Exception {
-  String message = 'A user already exists with those credentials';
-  UserAlreadyExistException();
+  String message;
+  UserAlreadyExistException([String? message])
+      : message = message ?? 'A user already exists with those credentials';
+
+  @override
+  String toString() => 'UserAlreadyExistException: $message';
 }

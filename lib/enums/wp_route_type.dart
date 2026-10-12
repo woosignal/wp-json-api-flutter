@@ -15,60 +15,49 @@
 
 // ignore_for_file: constant_identifier_names
 
+/// The routes available in the WP JSON API `wpapp/v4` namespace.
 enum WPRouteType {
-  /// Route type [WPRouteType.UserUpdatePassword] is used to update a WordPress user's password.
-  /// For WordPress
-  UserUpdatePassword,
-
-  /// Route type [WPRouteType.UserUpdateInfo] is used to update a WordPress user's account info.
-  /// For WordPress
-  UserUpdateInfo,
-
-  /// Route type [WPRouteType.UserAddRole] is used to add a role to a WordPress user's account.
-  /// For WordPress
-  UserAddRole,
-
-  /// Route type [WPRouteType.UserRemoveRole] is used to remove a role to a WordPress user's account.
-  /// For WordPress
-  UserRemoveRole,
-
-  /// Route type [WPRouteType.UserInfo] is used to return a WordPress user's info.
-  /// For WordPress
-  UserInfo,
-
-  /// Route type [WPRouteType.UserRegister] is used to Register a user's on WordPress.
-  /// For WordPress
-  UserRegister,
-
-  /// Route type [WPRouteType.UserLogin] is used to Login a user's on WordPress.
-  /// For WordPress
+  /// Route type [WPRouteType.UserLogin] is used to login a user on WordPress.
+  /// `POST /auth/login`
   UserLogin,
 
+  /// Route type [WPRouteType.UserRegister] is used to register a user on
+  /// WordPress (or WooCommerce). `POST /auth/register`
+  UserRegister,
+
+  /// Route type [WPRouteType.UserLogout] is used to revoke the user's token.
+  /// `POST /auth/logout`
+  UserLogout,
+
+  /// Route type [WPRouteType.UserInfo] is used to return a WordPress user's info.
+  /// `GET /user`
+  UserInfo,
+
+  /// Route type [WPRouteType.UserUpdateInfo] is used to update a WordPress user's account info.
+  /// `POST /user`
+  UserUpdateInfo,
+
+  /// Route type [WPRouteType.UserUpdatePassword] is used to update a WordPress user's password.
+  /// `POST /user/password`
+  UserUpdatePassword,
+
   /// Route type [WPRouteType.UserDelete] is used to delete a user from WordPress.
-  /// For WordPress
+  /// `POST /user/delete`
   UserDelete,
 
-  /// Route type [WPRouteType.AuthNonce] is used to get a nonce token to authenticate future API requests.
-  /// For WordPress
-  AuthNonce,
-
-  /// Route type [WPRouteType.AuthVerify] is used to verify an existing nonce token.
-  /// For WordPress
-  AuthVerify,
-
   /// Route type [WPRouteType.WCCustomerInfo] is used to get a Customer's info.
-  /// For WooCommerce
+  /// For WooCommerce. `GET /wc/customer`
   WCCustomerInfo,
 
   /// Route type [WPRouteType.WCCustomerUpdateInfo] is used to Update WooCommerce details for a customer.
-  /// For WooCommerce
+  /// For WooCommerce. `POST /wc/customer`
   WCCustomerUpdateInfo,
 
   /// Route type [WPRouteType.WCPointsAndRewardsUser] is used to get a customers points.
-  /// For WooCommerce Points and Rewards
+  /// For WooCommerce Points and Rewards. `GET /wc/points`
   WCPointsAndRewardsUser,
 
   /// Route type [WPRouteType.WCPointsAndRewardsCalculatePoints] is used to calculate the value of a customer's points.
-  /// For WooCommerce Points and Rewards
+  /// For WooCommerce Points and Rewards. `POST /wc/points/calculate`
   WCPointsAndRewardsCalculatePoints,
 }

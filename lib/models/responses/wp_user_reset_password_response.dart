@@ -13,6 +13,7 @@
 // IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
 // WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 
+/// The response from `POST /user/password`.
 class WPUserResetPasswordResponse {
   List<dynamic>? data;
   String? message;
@@ -21,7 +22,7 @@ class WPUserResetPasswordResponse {
   WPUserResetPasswordResponse({this.data, this.message, this.status});
 
   WPUserResetPasswordResponse.fromJson(Map<String, dynamic> json) {
-    if (json['data'] != null) {
+    if (json['data'] is List) {
       data = json['data'];
     }
     message = json['message'];

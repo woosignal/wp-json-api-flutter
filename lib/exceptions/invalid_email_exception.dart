@@ -13,7 +13,13 @@
 // IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
 // WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 
+/// Thrown when registering with an email that is not valid.
+///
+/// Server error code: `wpapp_invalid_email` (HTTP 400).
 class InvalidEmailException implements Exception {
   String message;
   InvalidEmailException(this.message);
+
+  @override
+  String toString() => 'InvalidEmailException: $message';
 }

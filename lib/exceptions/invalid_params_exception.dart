@@ -13,7 +13,15 @@
 // IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
 // WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 
+/// Thrown when a parameter is missing, has the wrong type or value.
+///
+/// Server error codes: `wpapp_invalid_params`, `rest_missing_callback_param`
+/// and `rest_invalid_param` (HTTP 400).
 class InvalidParamsException implements Exception {
-  String message = 'Invalid parameters, please check the data';
-  InvalidParamsException();
+  String message;
+  InvalidParamsException([String? message])
+      : message = message ?? 'Invalid parameters, please check the data';
+
+  @override
+  String toString() => 'InvalidParamsException: $message';
 }

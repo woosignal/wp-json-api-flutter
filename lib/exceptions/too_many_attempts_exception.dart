@@ -13,7 +13,16 @@
 // IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
 // WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 
-class ExistingUserLoginException implements Exception {
+/// Thrown when the server rate limits a request. [retryAfter] is the number
+/// of seconds to wait before trying again, when the server provides it.
+///
+/// Server error code: `wpapp_too_many_attempts` (HTTP 429).
+class TooManyAttemptsException implements Exception {
   String message;
-  ExistingUserLoginException(this.message);
+  int? retryAfter;
+  TooManyAttemptsException([String? message, this.retryAfter])
+      : message = message ?? 'Too many attempts, please try again later';
+
+  @override
+  String toString() => 'TooManyAttemptsException: $message';
 }

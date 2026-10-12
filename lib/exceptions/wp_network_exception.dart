@@ -13,7 +13,14 @@
 // IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
 // WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 
-class InvalidUsernameException implements Exception {
+/// Thrown when a request fails without a response from the server, e.g. no
+/// internet connection, a timeout or a TLS error. [error] is the underlying
+/// error (usually a `DioException`).
+class WPNetworkException implements Exception {
   String message;
-  InvalidUsernameException(this.message);
+  Object? error;
+  WPNetworkException(this.message, {this.error});
+
+  @override
+  String toString() => 'WPNetworkException: $message';
 }

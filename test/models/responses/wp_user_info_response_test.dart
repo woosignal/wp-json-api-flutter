@@ -11,9 +11,7 @@ void main() {
             'first_name': 'John',
             'last_name': 'Doe',
             'username': 'johndoe',
-            'user_nicename': 'john-doe',
             'display_name': 'John Doe',
-            'user_status': '0',
             'email': 'john@example.com',
             'avatar': 'https://example.com/avatar.png',
             'roles': ['subscriber', 'customer'],
@@ -36,9 +34,7 @@ void main() {
         expect(response.data!.firstName, 'John');
         expect(response.data!.lastName, 'Doe');
         expect(response.data!.username, 'johndoe');
-        expect(response.data!.userNicename, 'john-doe');
         expect(response.data!.displayName, 'John Doe');
-        expect(response.data!.userStatus, '0');
         expect(response.data!.email, 'john@example.com');
         expect(response.data!.avatar, 'https://example.com/avatar.png');
         expect(response.data!.roles, ['subscriber', 'customer']);
@@ -62,6 +58,35 @@ void main() {
 
         expect(response.data!.id, 456);
         expect(response.data!.metaData, isNull);
+      });
+
+      test('should handle metadata encoded as an empty list', () {
+        final Map<String, Object> json = {
+          'data': {
+            'id': 457,
+            'meta_data': [],
+          },
+          'status': 200,
+        };
+
+        final response = WPUserInfoResponse.fromJson(json);
+
+        expect(response.data!.metaData, isNull);
+      });
+
+      test('should wrap a single metadata value in a list', () {
+        final Map<String, Object> json = {
+          'data': {
+            'id': 458,
+            'meta_data': {'billing_city': 'Mos Eisley'},
+          },
+          'status': 200,
+        };
+
+        final response = WPUserInfoResponse.fromJson(json);
+
+        expect(response.data!.getMetaDataArrayWhere('billing_city'),
+            ['Mos Eisley']);
       });
 
       test('should handle null metadata', () {
@@ -120,9 +145,7 @@ void main() {
             firstName: 'Jane',
             lastName: 'Smith',
             username: 'janesmith',
-            userNicename: 'jane-smith',
             displayName: 'Jane Smith',
-            userStatus: '1',
             email: 'jane@example.com',
             avatar: 'https://example.com/jane.png',
             roles: ['subscriber'],
@@ -141,6 +164,26 @@ void main() {
         expect(json['data']['username'], 'janesmith');
         expect(json['data']['display_name'], 'Jane Smith');
         expect(json['data']['roles'], ['subscriber']);
+      });
+
+      test('should serialize metadata as a key -> list map that round trips',
+          () {
+        final Data data = Data.fromJson({
+          'id': 1,
+          'meta_data': {
+            'billing_city': ['Mos Eisley'],
+            'billing_phone': ['555-1234'],
+          },
+        });
+
+        final Map<String, dynamic> json = data.toJson();
+
+        expect(json['meta_data'], {
+          'billing_city': ['Mos Eisley'],
+          'billing_phone': ['555-1234'],
+        });
+        expect(Data.fromJson(json).getMetaDataFirstWhere('billing_city'),
+            'Mos Eisley');
       });
     });
 

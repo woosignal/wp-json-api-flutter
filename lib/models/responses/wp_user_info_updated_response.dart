@@ -13,19 +13,29 @@
 // IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
 // WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 
+import '/models/responses/wp_user_info_response.dart';
+
+/// The response from `POST /user`. [data] is the updated record.
 class WPUserInfoUpdatedResponse {
+  Data? data;
   String? message;
   int? status;
 
-  WPUserInfoUpdatedResponse({this.message, this.status});
+  WPUserInfoUpdatedResponse({this.data, this.message, this.status});
 
   WPUserInfoUpdatedResponse.fromJson(Map<String, dynamic> json) {
+    data = json['data'] is Map
+        ? Data.fromJson(Map<String, dynamic>.from(json['data']))
+        : null;
     message = json['message'];
     status = json['status'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> result = <String, dynamic>{};
+    if (data != null) {
+      result['data'] = data!.toJson();
+    }
     result['message'] = message;
     result['status'] = status;
     return result;

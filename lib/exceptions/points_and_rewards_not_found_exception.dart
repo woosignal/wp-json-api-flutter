@@ -13,7 +13,16 @@
 // IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
 // WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 
-class ExistingUserEmailException implements Exception {
+/// Thrown when WooCommerce Points and Rewards is not active on the
+/// WordPress site.
+///
+/// Server error code: `wpapp_points_rewards_missing` (HTTP 501).
+class PointsAndRewardsNotFoundException implements Exception {
   String message;
-  ExistingUserEmailException(this.message);
+  PointsAndRewardsNotFoundException([String? message])
+      : message = message ??
+            'WooCommerce Points and Rewards is not found on WordPress';
+
+  @override
+  String toString() => 'PointsAndRewardsNotFoundException: $message';
 }

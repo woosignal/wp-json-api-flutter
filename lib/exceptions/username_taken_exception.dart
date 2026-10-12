@@ -13,7 +13,14 @@
 // IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
 // WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 
+/// Thrown when registering with a username that already exists.
+///
+/// Server error code: `wpapp_username_taken` (HTTP 409).
 class UsernameTakenException implements Exception {
-  String message = 'Username taken, try another.';
-  UsernameTakenException();
+  String message;
+  UsernameTakenException([String? message])
+      : message = message ?? 'Username taken, try another.';
+
+  @override
+  String toString() => 'UsernameTakenException: $message';
 }
