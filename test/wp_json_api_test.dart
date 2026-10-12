@@ -21,8 +21,8 @@ void main() {
         expect(WPJsonAPI.version, matches(RegExp(r'^\d+\.\d+\.\d+$')));
       });
 
-      test('should be 5.0.0', () {
-        expect(WPJsonAPI.version, '5.0.0');
+      test('should be 5.0.1', () {
+        expect(WPJsonAPI.version, '5.0.1');
       });
     });
 
