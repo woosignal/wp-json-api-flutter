@@ -1,8 +1,8 @@
 # WordPress and WooCommerce JSON API Dart package for Flutter
 
-You can download the WordPress plugin here [WP JSON API](https://woosignal.com/plugins/wordpress/wp-json-api).
+You can download the WordPress plugin here [WP JSON API](https://woosignal.com/plugins/wordpress/wpapp-json-api).
 
-**Version 5.0 requires the [WP JSON API](https://woosignal.com/plugins/wordpress/wp-json-api) WordPress plugin 5.0 or later.** It uses the plugin's `wpapp/v4` API. Upgrading from 4.x? See [Migrating from 4.x](#migrating-from-4x).
+**Version 5.0 requires the [WP JSON API](https://woosignal.com/plugins/wordpress/wpapp-json-api) WordPress plugin 5.0 or later.** It uses the plugin's `wpapp/v4` API. Upgrading from 4.x? See [Migrating from 4.x](#migrating-from-4x).
 
 ## API features:
 
@@ -22,7 +22,7 @@ You can download the WordPress plugin here [WP JSON API](https://woosignal.com/p
 * Update Customers details
 * Points and Rewards
 
-To use this API you must have the [WP JSON API Plugin](https://woosignal.com/plugins/wordpress/wp-json-api) (5.0 or later) installed first on your WordPress site, you can download it via the WooSignal website.
+To use this API you must have the [WP JSON API Plugin](https://woosignal.com/plugins/wordpress/wpapp-json-api) (5.0 or later) installed first on your WordPress site, you can download it via the WooSignal website.
 
 ### Getting Started #
 In your flutter project add the dependency:
@@ -341,12 +341,12 @@ try {
 * Requests that fail without a response throw `WPNetworkException` instead of a `DioException`.
 
 For help getting started with WooSignal, view our
-[online documentation](https://woosignal.com/docs/flutter/wp-json-api), which offers a more detailed guide.
+[online documentation](https://woosignal.com/docs/flutter/wpapp-json-api), which offers a more detailed guide.
 
 ## Usage
 To use this plugin, add `wp_json_api` as a [dependency in your pubspec.yaml file](https://flutter.io/platform-plugins/).
 
 ## Note
-Install our WordPress plugin "[WP JSON API](https://woosignal.com/plugins/wordpress/wp-json-api)" v5.0 or later to use this flutter plugin. The plugin and this package share major versions: plugin 5.x works with wp_json_api 5.x.
+Install our WordPress plugin "[WP JSON API](https://woosignal.com/plugins/wordpress/wpapp-json-api)" v5.0 or later to use this flutter plugin. The plugin and this package share major versions: plugin 5.x works with wp_json_api 5.x.
 
 Disclaimer: This plugin is not affiliated with or supported by Automattic, Inc. All logos and trademarks are the property of their respective owners.

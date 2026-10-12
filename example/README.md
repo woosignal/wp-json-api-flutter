@@ -2,7 +2,7 @@
 
 A new WooCommerce Flutter project using `wp_json_api` 5.0.
 
-Requires the [WP JSON API](https://woosignal.com/plugins/wordpress/wp-json-api) WordPress plugin **5.0 or later**.
+Requires the [WP JSON API](https://woosignal.com/plugins/wordpress/wpapp-json-api) WordPress plugin **5.0 or later**.
 
 ## Getting Started
 

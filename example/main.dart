@@ -44,7 +44,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
     // INSTALL THE WP JSON API PLUGIN (v5.0 OR LATER)
     // FIRST ON YOUR WORDPRESS STORE
-    // LINK https://woosignal.com/plugins/wordpress/wp-json-api
+    // LINK https://woosignal.com/plugins/wordpress/wpapp-json-api
 
     WPJsonAPI.instance.init(baseUrl: "https://mysite.com");
   }
