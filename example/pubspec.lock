@@ -920,7 +920,7 @@ packages:
       path: ".."
       relative: true
     source: path
-    version: "5.0.1"
+    version: "5.0.2"
   xdg_directories:
     dependency: transitive
     description:

@@ -1,3 +1,7 @@
+## [5.0.2] - 2026-10-12
+
+* Update links to the WP JSON API plugin page and documentation on woosignal.com
+
 ## [5.0.1] - 2026-10-12
 
 * Allow `flutter_secure_storage` 11, so the package installs alongside current Nylo 7 (`nylo_support` 7.30+) and `woosignal` 4.5+

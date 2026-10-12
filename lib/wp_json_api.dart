@@ -27,7 +27,7 @@ import '/models/wp_user.dart';
 import '/networking/network_manager.dart';
 
 /// The version of the wp_json_api
-String _wpJsonAPIVersion = "5.0.1";
+String _wpJsonAPIVersion = "5.0.2";
 
 /// The base class to initialize and use WPJsonAPI.
 ///
